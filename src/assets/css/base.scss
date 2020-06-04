@@ -1,0 +1,21 @@
+@import './reset.scss';
+@import './variable.scss';
+@import './mixin.scss';
+@import '//at.alicdn.com/t/font_1858104_o1b9hewlfh.css';
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  // 解决IScroll拖拽卡顿问题
+  touch-action: none;
+}
+body {
+  @include font_size($font_m);
+  font-family: Helvetica, sans-serif, STHeiTi;
+}
+img {
+  vertical-align: bottom;
+}

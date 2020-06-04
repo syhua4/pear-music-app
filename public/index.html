@@ -1,17 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <meta charset="utf-8" />
+    <!-- IE浏览器运行最新的渲染模式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- SEO 的三大标签 -->
+    <title>雪梨云音乐</title>
+    <meta
+      name="keywords"
+      content="雪梨云音乐, 音乐, 播放器, 下载, 播放, 在线听歌, MV, 音乐网站, 排行榜, 热门歌曲, music"
+    />
+    <meta
+      name="description"
+      content="雪梨云音乐是一款专注发现与分享的音乐产品, 仅用于学习前端框架Vue"
+    />
+
+    <!-- apple 设备上添加书签时的图标 -->
+    <link rel="apple-touch-icon" href="./touch-icon-iphone.png" />
+    <link rel="apple-touch-icon" href="./touch-icon-ipad.png" sizes="152x152" />
+    <link
+      rel="apple-touch-icon"
+      href="./touch-icon-iphone-retina.png"
+      sizes="180x180"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="./touch-icon-ipad-retina.png"
+      sizes="167x167"
+    />
+
+    <!-- 网页图标 -->
+    <link rel="icon" href="./favicon.ico" />
+
+    <!-- 适配移动端 -->
+    <script>
+      let scale = 1.0 / window.devicePixelRatio;
+      let text = `<meta name="viewport" content="width=device-width, initial-scale=${scale}, maximum-scale=${scale}, minimum-scale=${scale}, user-scalable=no">`;
+      document.write(text);
+      document.documentElement.style.fontSize = window.innerWidth / 7.5 + 'px';
+      document.documentElement.setAttribute(
+        'data-dpr',
+        window.devicePixelRatio + ''
+      );
+      document.documentElement.setAttribute('data-theme', 'theme');
+    </script>
   </head>
   <body>
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
     <div id="app"></div>
-    <!-- built files will be auto injected -->
   </body>
 </html>
