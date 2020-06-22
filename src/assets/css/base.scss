@@ -1,7 +1,7 @@
 @import './reset.scss';
 @import './variable.scss';
 @import './mixin.scss';
-@import '//at.alicdn.com/t/font_1858104_o1b9hewlfh.css';
+@import '//at.alicdn.com/t/font_1858104_qlzzbvh9i3f.css';
 html,
 body {
   width: 100%;
@@ -13,8 +13,9 @@ body {
   touch-action: none;
 }
 body {
-  @include font_size($font_m);
-  font-family: Helvetica, sans-serif, STHeiTi;
+  @include font_size($m);
+  font-family: 'PingFang SC', Helvetica, sans-serif, STHeiTi;
+  color: #333;
 }
 img {
   vertical-align: bottom;

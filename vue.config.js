@@ -20,7 +20,8 @@ module.exports = {
         components: '@/components',
         store: '@/store',
         views: '@/views',
-        networks: '@/networks'
+        networks: '@/networks',
+        common: '@/common'
       }
     }
   }

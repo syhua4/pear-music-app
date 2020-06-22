@@ -3,38 +3,52 @@
 $s: 12Px;
 
 /* prettier-ignore */
-$ms: 13Px;
+$ms: 14Px;
 
 /* prettier-ignore */
-$m: 15Px;
+$m: 18Px;
 
 /* prettier-ignore */
-$l: 17Px;
+$l: 30Px;
 
 /* prettier-ignore */
-$xl: 24Px;
+$icon-s: 15Px;
+
+/* prettier-ignore */
+$icon-m: 21Px;
+
+/* prettier-ignore */
+$icon-l: 28Px;
 
 // 背景颜色规范(主要)
-$background-color-theme: #d43c33; //背景主题颜色默认(网易红)
+$background-color-theme: #d64139; //背景主题颜色默认(网易红)
 $background-color-theme1: rgb(34, 213, 156); //背景主题颜色1(QQ绿)
 $background-color-theme2: #333; //背景主题颜色2(夜间模式)
 
 // 背景颜色规范(次要)
-$background-color-sub-theme: #f5f5f5; //背景主题颜色默认(网易红)
-$background-color-sub-theme1: #f5f5f5; //背景主题颜色1(QQ绿)
+$background-color-sub-theme: #f1f1f1; //背景主题颜色默认(网易红)
+$background-color-sub-theme1: #746868; //背景主题颜色1(QQ绿)
 $background-color-sub-theme2: #444; //背景主题颜色2(夜间模式)
 
 // 字体颜色规范(默认)
-$font-color-theme: #666; //字体主题颜色默认(网易)
+$font-color-theme: #999; //字体主题颜色默认(网易)
 $font-color-theme1: #666; //字体主题颜色1(QQ)
 $font-color-theme2: #ddd; //字体主题颜色2(夜间模式)
 
+// 字体颜色2规范(默认)
+$font-color-sub-theme: #d8d8d8; //字体主题颜色默认(网易)
+$font-color-sub-theme1: #666; //字体主题颜色1(QQ)
+$font-color-sub-theme2: #ddd; //字体主题颜色2(夜间模式)
+
 // 字体颜色规范(激活)
-$font-active-color-theme: #d43c33; //字体主题颜色默认(网易红)
+$font-active-color-theme: #d64139; //字体主题颜色默认(网易红)
 $font-active-color-theme1: rgb(34, 213, 156); //字体主题颜色1(QQ绿)
 $font-active-color-theme2: #ffcc33; //字体主题颜色2(夜间模式)
 
 // 边框颜色
-$border-color-theme: #d43c33; //边框主题颜色默认(网易)
+$border-color-theme: #d64139; //边框主题颜色默认(网易)
 $border-color-theme1: rgb(34, 213, 156); //边框主题颜色1(QQ)
 $border-color-theme2: #ffcc33; //边框主题颜色2(夜间模式)
+
+// 渐变背景颜色
+$gradient-color-theme: linear-gradient(to right, #f85246, #e14539);

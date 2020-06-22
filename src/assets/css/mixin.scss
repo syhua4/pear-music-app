@@ -13,8 +13,24 @@
 @mixin font_size($size) {
   @include font_dpr($size);
 }
+
+@mixin nav_header($size) {
+  font-weight: 500;
+  @include font_dpr($size);
+}
+
+@mixin text($size) {
+  font-weight: 400;
+  @include font_dpr($size);
+}
+
+@mixin sub_header($size) {
+  font-weight: 700;
+  @include font_dpr($size);
+}
+
 // 不换行
-@mixin no_wrap() {
+@mixin nowrap() {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -38,7 +54,7 @@
     background: $background-color-theme2;
   }
 }
-@mixin bg_sub_color() {
+@mixin bg_color_sub() {
   background: $background-color-sub-theme;
   [data-theme='theme1'] & {
     background: $background-color-sub-theme1;
@@ -57,6 +73,17 @@
     color: $font-color-theme2;
   }
 }
+
+@mixin font_color_sub() {
+  color: $font-color-sub-theme;
+  [data-theme='theme1'] & {
+    color: $font-color-sub-theme1;
+  }
+  [data-theme='theme2'] & {
+    color: $font-color-sub-theme2;
+  }
+}
+
 @mixin font_active_color() {
   color: $font-active-color-theme;
   [data-theme='theme1'] & {

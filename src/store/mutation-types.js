@@ -1,0 +1,7 @@
+export const SET_SHOW_PLAYER = 'set_show_player'
+export const SET_PLAYING_STATUS = 'set_playing_status'
+export const SET_PLAY_LIST = 'set_play_list'
+export const SET_CURRENT_SONG = 'set_current_song'
+export const SET_CURRENT_INDEX = 'set_current_index'
+export const SET_CHANGE_INDEX = 'set_change_index'
+export const SET_REMOVE_SONG = 'set_remove_song'

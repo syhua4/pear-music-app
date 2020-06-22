@@ -1,0 +1,199 @@
+<template>
+  <div
+    class="playlist-display"
+    v-if="item && Object.keys(item).length > 0"
+    :style="{ backgroundImage: backgroundImage }"
+  >
+    <div class="display-wrapper">
+      <div class="main-display">
+        <div class="display-img-wrapper">
+          <img :src="item.coverImgUrl" />
+          <span><i class="iconfont icon-play-s"></i> {{ item.playCount | round }}</span>
+        </div>
+        <div class="display-content-wrapper">
+          <div class="title">{{ item.name }}</div>
+          <div class="creator">
+            <img :src="item.creator.avatarUrl" class="creator-avatar" />
+            <span class="creator-name">{{ item.creator.nickname }}</span>
+            <i class="iconfont icon-next"></i>
+          </div>
+          <div class="desc">
+            <div class="desc-content">{{ item.description }}</div>
+            <i class="iconfont icon-next"></i>
+          </div>
+        </div>
+      </div>
+      <div class="sub-display">
+        <div class="btn-wrapper">
+          <i class="iconfont icon-comment" />
+          <span class="btn-text">{{ item.commentCount | round }}</span>
+        </div>
+        <div class="btn-wrapper">
+          <i class="iconfont icon-share" />
+          <span class="btn-text">{{ item.shareCount | round }}</span>
+        </div>
+        <div class="btn-wrapper">
+          <i class="iconfont icon-download" />
+          <span class="btn-text">下载</span>
+        </div>
+        <div class="btn-wrapper">
+          <i class="iconfont icon-select" />
+          <span class="btn-text">多选</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { roundCountMixin } from '../../../common/mixin'
+export default {
+  name: 'PlaylistDisplay',
+  mixins: [roundCountMixin],
+  props: {
+    item: {
+      type: Object,
+      default: () => {},
+      required: true
+    }
+  },
+  data() {
+    return {
+      backgroundImage: ''
+    }
+  },
+  watch: {
+    item: {
+      handler(val) {
+        if (Object.keys(val).length > 0) {
+          this.backgroundImage = `url(${val.coverImgUrl})`
+        }
+      }
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+@import 'assets/css/mixin';
+@import 'assets/css/variable';
+
+.playlist-display {
+  width: 100%;
+  height: 600px;
+  position: absolute;
+  top: 0px;
+  bottom: 0;
+  left: 0;
+  bottom: 0;
+  padding-top: 100px;
+  background: #444 no-repeat center;
+  background-size: cover;
+  z-index: 0;
+  &::after {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    right: -40px;
+    bottom: 0px;
+    background: inherit;
+    filter: blur(30px) brightness(70%);
+    z-index: 1;
+    -webkit-transform: translateZ(0);
+    -webkit-perspective: 1000;
+    -webkit-backface-visibility: hidden;
+  }
+  .main-display {
+    display: flex;
+    justify-content: space-between;
+    padding: 65px 24px;
+    z-index: 2;
+    position: relative;
+    .display-img-wrapper {
+      width: 300px;
+      height: 300px;
+      flex: 0 0 auto;
+      position: relative;
+      margin-right: 20px;
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+        box-shadow: 0 5px 10px rgba($color: #000000, $alpha: 0.4);
+      }
+      span {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        color: #fff;
+        line-height: $s;
+        @include font_size($s);
+        .icon-play-s {
+          margin-right: -8px;
+          @include font_size($ms);
+        }
+      }
+    }
+    .display-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      @include font_color_sub();
+      .title,
+      .desc-content {
+        @include clamp(2);
+      }
+      .title {
+        color: #fff;
+      }
+      .creator {
+        display: flex;
+        height: 60px;
+        margin-top: 15px;
+        align-items: center;
+        @include font_size($ms);
+        img {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          margin-right: 5px;
+        }
+      }
+      .desc {
+        display: flex;
+        margin-top: auto;
+        align-items: center;
+        @include font_size($s);
+      }
+      .icon-next {
+        margin-left: 5px;
+        @include font_size($s);
+      }
+    }
+  }
+  .sub-display {
+    height: 110px;
+    width: 100%;
+    color: #fff;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    .btn-wrapper {
+      display: flex;
+      flex-direction: column;
+      .iconfont {
+        margin-bottom: 5px;
+        font-weight: 500;
+        @include font_size($icon_m);
+      }
+      span {
+        @include font_size($s);
+      }
+    }
+  }
+
+  // z-index: 1000;
+}
+</style>
