@@ -80,7 +80,6 @@ export default {
       this.setPlayList(this.items)
       this.setCurrentIndex(index)
       this.setShowPlayer(true)
-      this.setPlayStatus(true)
     }
   }
 }

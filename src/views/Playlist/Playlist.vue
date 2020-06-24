@@ -81,14 +81,12 @@ export default {
       this.setPlayList(this.tracks)
       this.setCurrentIndex(index)
       this.setShowPlayer(true)
-      this.setPlayStatus(true)
     },
     playAll() {
       console.log('object')
       this.setPlayList(this.tracks)
       this.setCurrentIndex(0)
       this.setShowPlayer(true)
-      this.setPlayStatus(true)
     }
   }
 }

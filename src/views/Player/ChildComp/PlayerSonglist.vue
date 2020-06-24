@@ -6,9 +6,9 @@
         <span>({{ songlist.length }})</span>
       </div>
       <div class="list-toolbar">
-        <div class="play-mode">
-          <i class="iconfont icon-loop" />
-          <span>列表循环</span>
+        <div class="play-mode" @click="changeMode">
+          <i class="iconfont" :class="mode" />
+          <span>{{ changeModeText }}</span>
         </div>
         <div class="add-collection">
           <i class="iconfont icon-folder" />
@@ -25,7 +25,10 @@
           :key="track.id"
           @click="changeSong(index)"
         >
-          <div class="track-info" :class="{ active: currentIndex === index }">
+          <div
+            class="track-info"
+            :class="{ active: currentIndex === index, disabled: songAvailable(index) }"
+          >
             <i class="iconfont icon-speaker" v-show="currentIndex === index"></i>
             <span class="track-name">{{ track.name }}</span>
             <span class="artist">{{ track.ar && artists(track.ar) }}</span>
@@ -40,13 +43,13 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { getArtistsMixin } from 'common/mixin'
+import { getArtistsMixin, changeModeMixin } from 'common/mixin'
 
 import Scroll from 'components/common/Scroll/Scroll'
 export default {
   name: 'PlayerSonglist',
   components: { Scroll },
-  mixins: [getArtistsMixin],
+  mixins: [getArtistsMixin, changeModeMixin],
   methods: {
     ...mapActions(['setPlayStatus', 'setCurrentIndex', 'setRemoveSong']),
     play() {
@@ -57,7 +60,6 @@ export default {
     },
     changeSong(index) {
       this.setCurrentIndex(index)
-      this.setPlayStatus(true)
     },
     deleteSong(index) {
       this.setRemoveSong(index)
@@ -70,6 +72,27 @@ export default {
         console.log(index)
         return this.isPlaying && this.currentIndex === index
       }
+    },
+    songAvailable() {
+      return function(index) {
+        return !this.songlist[index].url
+      }
+    },
+    changeModeText() {
+      let text = ''
+      switch (this.playMode) {
+        case 'loop':
+          text = '列表循环'
+          break
+        case 'one':
+          text = '单曲循环'
+          break
+
+        case 'random':
+          text = '随机播放'
+          break
+      }
+      return text
     }
   }
 }
@@ -143,6 +166,10 @@ export default {
       &.active,
       &.active .artist {
         @include font_active_color();
+      }
+      &.disabled,
+      &.disabled .artist {
+        color: #ccc;
       }
       .icon-speaker {
         @include font_size($icon_s);

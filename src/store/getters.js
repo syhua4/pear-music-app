@@ -15,5 +15,8 @@ export default {
   },
   currentIndex(state) {
     return state.currentIndex
+  },
+  playMode(state) {
+    return state.playMode
   }
 }

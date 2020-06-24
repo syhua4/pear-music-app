@@ -3,7 +3,8 @@ import {
   SET_SHOW_PLAYER,
   SET_PLAY_LIST,
   SET_CURRENT_INDEX,
-  SET_REMOVE_SONG
+  SET_REMOVE_SONG,
+  SET_PLAY_MODE
 } from './mutation-types'
 
 import { getSongUrl } from 'networks/recommend'
@@ -39,5 +40,8 @@ export default {
   },
   setRemoveSong({ commit }, index) {
     commit(SET_REMOVE_SONG, index)
+  },
+  setPlayMode({ commit }, modeType) {
+    commit(SET_PLAY_MODE, modeType)
   }
 }

@@ -5,9 +5,11 @@ import {
   SET_CURRENT_SONG,
   SET_CURRENT_INDEX,
   SET_CHANGE_INDEX,
-  SET_REMOVE_SONG
+  SET_REMOVE_SONG,
+  SET_PLAY_MODE
 } from './mutation-types'
 
+import { mode } from './mode-type'
 export default {
   [SET_SHOW_PLAYER](state, payload) {
     state.showPlayer = payload
@@ -31,5 +33,8 @@ export default {
     typeof payload === 'number'
       ? state.songlist.splice(payload, 1)
       : state.songlist.splice(0, state.songlist.length)
+  },
+  [SET_PLAY_MODE](state, payload) {
+    state.playMode = mode[payload]
   }
 }

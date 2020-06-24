@@ -1,6 +1,7 @@
 <template>
   <transition @enter="enter" @leave="leave" :css="false">
-    <div class="player" :style="bgVar" v-show="showPlayer">
+    <div class="player" :style="bgVar" v-show="showPlayer" @click="screenClick">
+      <audio ref="audio" :src="song" preload="auto" @timeupdate="timeUpdate" @ended="end" />
       <nav-bar class="player-nav">
         <i class="iconfont icon-back" slot="left" @click="goBack" />
         <div slot="center" class="header">
@@ -13,9 +14,21 @@
       </nav-bar>
       <player-cd />
       <player-toolbar />
-      <player-controls @toggleSonglist="toggleSonglist" />
+      <player-controls
+        ref="controls"
+        @toggleSonglist="toggleSonglist"
+        @changeProgress="changeProgress"
+        :totalTime="totalTime"
+        :currentTime="currentTime"
+        :ready="ready"
+      />
       <transition name="slide">
-        <player-songlist class="songlist" v-if="songlistToggler" @toggleSonglist="toggleSonglist" />
+        <player-songlist
+          class="songlist"
+          v-if="songlistToggler"
+          @toggleSonglist="toggleSonglist"
+          ref="songlist"
+        />
       </transition>
     </div>
   </transition>
@@ -49,16 +62,67 @@ export default {
       bgVar: {
         '--bg': ''
       },
-      songlistToggler: false
+      songlistToggler: false,
+      audio: null,
+      currentTime: 0,
+      totalTime: 0,
+      ready: false,
+      playedPosition: 0,
+      scrolled: false
+    }
+  },
+  mounted() {
+    this.audio = this.$refs.audio
+    // this.playPromise = this.audio.play()
+    let observer = new MutationObserver(() => {
+      if (this.audio.src && this.audio.src.includes('mp3')) {
+        this.setPlayStatus(false)
+        this.ready = false
+        console.log(' --- url loaded --- ')
+        this.audio.play()
+      }
+    })
+    let config = {
+      childList: true,
+      subtree: true,
+      attributeFilter: ['src']
+    }
+    observer.observe(this.$refs.audio, config)
+
+    this.audio.oncanplaythrough = () => {
+      console.log(' --- ready to play ---')
+      this.totalTime = this.audio.duration
+      this.setPlayStatus(true)
+      this.ready = true
     }
   },
   methods: {
-    ...mapActions(['setShowPlayer']),
+    ...mapActions(['setShowPlayer', 'setPlayStatus']),
+    changeProgress(percent) {
+      this.audio.currentTime = (percent.slice(0, -1) / 100) * this.totalTime
+    },
+    end() {
+      this.$refs.controls.playNext()
+    },
     toggleSonglist(status) {
       this.songlistToggler = status
     },
     goBack() {
       this.setShowPlayer(false)
+    },
+    screenClick(e) {
+      if (this.songlistToggler) {
+        let songlistHeight = this.$refs.songlist.$el.offsetTop
+        if (e.clientY < songlistHeight) {
+          this.toggleSonglist(false)
+        }
+      }
+    },
+    timeUpdate(e) {
+      if (!this.scrolled) {
+        // this.audio.currentTime = this.playedPosition
+        this.currentTime = e.target.currentTime
+      }
     },
     enter(el, done) {
       Velocity(el, 'transition.shrinkIn', { duration: 500 }, function() {
@@ -72,7 +136,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['showPlayer', 'currentPlaying'])
+    ...mapGetters(['showPlayer', 'currentPlaying', 'songlist', 'currentIndex', 'isPlaying']),
+    song() {
+      let url = ''
+      if (this.songlist && this.songlist.length > 0) {
+        if (!this.songlist[this.currentIndex].url) {
+          this.$refs.controls.playNext()
+        }
+        url = this.songlist[this.currentIndex].url
+      }
+      return url
+    }
   },
   watch: {
     currentPlaying: {
@@ -81,6 +155,22 @@ export default {
           this.bgVar['--bg'] = `url("${val.al.picUrl}")`
         }
       }
+    },
+    songlist: {
+      handler(val) {
+        if (val.length === 0) {
+          this.audio.pause()
+          this.toggleSonglist(false)
+          this.setShowPlayer(false)
+        }
+      }
+    },
+    isPlaying(newVal) {
+      newVal && this.audio.src.includes('mp3')
+        ? this.audio.play()
+        : this.audio.play().then(() => {
+            this.audio.pause()
+          })
     }
   }
 }

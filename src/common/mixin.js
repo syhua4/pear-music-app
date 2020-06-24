@@ -51,3 +51,31 @@ export const getArtistsMixin = {
     }
   }
 }
+
+import { mapActions, mapGetters } from 'vuex'
+import { mode } from 'store/mode-type'
+
+export const changeModeMixin = {
+  methods: {
+    ...mapActions(['setPlayMode']),
+    changeMode() {
+      switch (this.playMode) {
+        case mode[0]:
+          this.setPlayMode(1)
+          break
+        case mode[1]:
+          this.setPlayMode(2)
+          break
+        case mode[2]:
+          this.setPlayMode(0)
+          break
+      }
+    }
+  },
+  computed: {
+    ...mapGetters(['playMode']),
+    mode() {
+      return `icon-${this.playMode}`
+    }
+  }
+}
