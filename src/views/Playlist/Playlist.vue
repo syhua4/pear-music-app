@@ -19,22 +19,23 @@
         :subCount="playlistInfo.subscribedCount"
         ref="list"
         @trackClick="trackClick"
+        @dataLoaded="dataLoaded"
       />
     </scroll>
   </div>
 </template>
 
 <script>
-import PlaylistDisplay from './ChildComp/PlaylistDisplay'
-import PlaylistList from './ChildComp/PlaylistList'
-import PlaylistHeader from './ChildComp/PlaylistListHeader'
+import PlaylistDisplay from './ChildComp/PlaylistDisplay';
+import PlaylistList from './ChildComp/PlaylistList';
+import PlaylistHeader from './ChildComp/PlaylistListHeader';
 
-import NavBar from 'components/common/NavBar/NavBar'
-import Scroll from 'components/common/Scroll/Scroll'
+import NavBar from 'components/common/NavBar/NavBar';
+import Scroll from 'components/common/Scroll/Scroll';
 
-import { getPlaylistTrackId, getTrack } from 'networks/recommend.js'
-import { getTracksMixin } from '../../common/mixin'
-import { mapActions } from 'vuex'
+import { getPlaylistTrackId, getTrack } from 'networks/recommend.js';
+import { getTracksMixin } from '../../common/mixin';
+import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'Playlist',
   components: {
@@ -47,15 +48,15 @@ export default {
   mixins: [getTracksMixin],
   created() {
     getPlaylistTrackId(this.$route.params.id).then(res => {
-      this.playlistInfo = res.playlist
-      let ids = this.getTrackIds(res.playlist.trackIds)
+      this.playlistInfo = res.playlist;
+      let ids = this.getTrackIds(res.playlist.trackIds);
       getTrack(ids).then(res => {
-        this.tracks = res.songs
-      })
-    })
+        this.tracks = res.songs;
+      });
+    });
   },
   mounted() {
-    this.offsetTop = this.$refs.list.$el.offsetTop
+    this.offsetTop = this.$refs.list.$el.offsetTop;
   },
   data() {
     return {
@@ -63,33 +64,50 @@ export default {
       tracks: [],
       showFixed: false,
       offsetTop: 0
-    }
+    };
   },
   methods: {
-    ...mapActions(['setPlayList', 'setCurrentIndex', 'setShowPlayer', 'setPlayStatus']),
+    ...mapActions([
+      'setPlayList',
+      'setCurrentIndex',
+      'setShowPlayer',
+      'setPlayStatus',
+      'setIsLoading'
+    ]),
+    dataLoaded() {
+      this.$refs.scroll.refresh();
+    },
     goBack() {
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
     scrollPosition(position) {
       if (this.offsetTop && position.y <= -this.offsetTop) {
-        this.showFixed = true
+        this.showFixed = true;
       } else {
-        this.showFixed = false
+        this.showFixed = false;
       }
     },
     trackClick(index) {
-      this.setPlayList(this.tracks)
-      this.setCurrentIndex(index)
-      this.setShowPlayer(true)
+      if (!this.isLoading) {
+        this.setIsLoading(true);
+      }
+      this.setPlayList(this.tracks);
+      this.setCurrentIndex(index);
+      this.setShowPlayer(true);
     },
     playAll() {
-      console.log('object')
-      this.setPlayList(this.tracks)
-      this.setCurrentIndex(0)
-      this.setShowPlayer(true)
+      if (!this.isLoading) {
+        this.setIsLoading(true);
+      }
+      this.setPlayList(this.tracks);
+      this.setCurrentIndex(0);
+      this.setShowPlayer(true);
     }
+  },
+  computed: {
+    ...mapGetters(['isLoading'])
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

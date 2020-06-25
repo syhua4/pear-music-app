@@ -1,6 +1,6 @@
 <template>
   <div class="player-toolbar">
-    <i class="iconfont icon-heart"></i>
+    <i class="iconfont" :class="isFavourite" @click="toggleFavourite"></i>
     <i class="iconfont icon-download"></i>
     <i class="iconfont icon-comment"></i>
     <i class="iconfont icon-more--line"></i>
@@ -8,9 +8,30 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
-  name: 'PlayerToolbar'
-}
+  name: 'PlayerToolbar',
+  methods: {
+    ...mapActions(['setFavourite', 'setUnfavourite']),
+    toggleFavourite() {
+      let songId = this.currentPlaying.id;
+      this.isFavourite.includes('fill')
+        ? this.setUnfavourite(songId).then(res => this.$toast.show(res, 1000))
+        : this.setFavourite(songId).then(res => this.$toast.show(res, 1000));
+    }
+  },
+  computed: {
+    ...mapGetters(['currentPlaying', 'favouriteList']),
+    isFavourite() {
+      let favClass = 'icon-heart';
+      if (this.currentPlaying && this.favouriteList.includes(this.currentPlaying.id)) {
+        favClass = 'icon-heart-filled';
+      }
+      return favClass;
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -25,6 +46,9 @@ export default {
   justify-content: space-around;
   .iconfont {
     @include font_size($icon_m);
+  }
+  .icon-heart-filled {
+    @include font_active_color();
   }
 }
 </style>

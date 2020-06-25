@@ -1,14 +1,14 @@
 <template>
   <transition @enter="enter" @leave="leave" :css="false">
-    <div class="player" :style="bgVar" v-show="showPlayer" @click="screenClick">
-      <audio ref="audio" :src="song" preload="auto" @timeupdate="timeUpdate" @ended="end" />
+    <div class="player" :style="bgVar" v-show="showPlayer" @click="screenClick" ref="player">
+      <div v-show="!isLoading">
+        <audio ref="audio" :src="song" preload="auto" @timeupdate="timeUpdate" @ended="end" />
+      </div>
       <nav-bar class="player-nav">
         <i class="iconfont icon-back" slot="left" @click="goBack" />
         <div slot="center" class="header">
           <span class="track-name">{{ currentPlaying && currentPlaying.name }}</span>
-          <span class="track-artist">
-            {{ currentPlaying && artists(currentPlaying.ar) }}
-          </span>
+          <span class="track-artist">{{ currentPlaying && artists(currentPlaying.ar) }}</span>
         </div>
         <i class="iconfont icon-share" slot="right"></i>
       </nav-bar>
@@ -35,17 +35,18 @@
 </template>
 
 <script>
-import NavBar from 'components/common/NavBar/NavBar'
-import PlayerCd from './ChildComp/PlayerCD'
-import PlayerToolbar from './ChildComp/PlayerToolbar'
-import PlayerControls from './ChildComp/PlayerControls'
-import PlayerSonglist from './ChildComp/PlayerSonglist'
+import NavBar from 'components/common/NavBar/NavBar';
+import PlayerCd from './ChildComp/PlayerCD';
+import PlayerToolbar from './ChildComp/PlayerToolbar';
+import PlayerControls from './ChildComp/PlayerControls';
+import PlayerSonglist from './ChildComp/PlayerSonglist';
 
-import Velocity from 'velocity-animate'
-import 'velocity-animate/velocity.ui'
+import Velocity from 'velocity-animate';
+import 'velocity-animate/velocity.ui';
 
-import { mapGetters, mapActions } from 'vuex'
-import { getArtistsMixin } from 'common/mixin'
+import { mapGetters, mapActions } from 'vuex';
+import { getArtistsMixin } from 'common/mixin';
+import { shuffle } from 'common/utils';
 
 export default {
   name: 'Player',
@@ -60,7 +61,8 @@ export default {
   data() {
     return {
       bgVar: {
-        '--bg': ''
+        '--bg': '',
+        '--opacity': 0
       },
       songlistToggler: false,
       audio: null,
@@ -69,111 +71,155 @@ export default {
       ready: false,
       playedPosition: 0,
       scrolled: false
-    }
+    };
   },
   mounted() {
-    this.audio = this.$refs.audio
-    // this.playPromise = this.audio.play()
+    this.audio = this.$refs.audio;
     let observer = new MutationObserver(() => {
       if (this.audio.src && this.audio.src.includes('mp3')) {
-        this.setPlayStatus(false)
-        this.ready = false
-        console.log(' --- url loaded --- ')
-        this.audio.play()
+        this.setPlayStatus(false);
+        this.ready = false;
+        console.log(' --- url loaded --- ');
+        this.audio.play();
       }
-    })
+    });
     let config = {
       childList: true,
       subtree: true,
       attributeFilter: ['src']
-    }
-    observer.observe(this.$refs.audio, config)
+    };
+    observer.observe(this.$refs.audio, config);
 
     this.audio.oncanplaythrough = () => {
-      console.log(' --- ready to play ---')
-      this.totalTime = this.audio.duration
-      this.setPlayStatus(true)
-      this.ready = true
-    }
+      console.log(' --- ready to play ---');
+      this.totalTime = this.audio.duration;
+      this.setPlayStatus(true);
+      this.ready = true;
+    };
   },
   methods: {
-    ...mapActions(['setShowPlayer', 'setPlayStatus']),
+    ...mapActions(['setShowPlayer', 'setPlayStatus', 'setShuffledList']),
     changeProgress(percent) {
-      this.audio.currentTime = (percent.slice(0, -1) / 100) * this.totalTime
+      this.audio.currentTime = (percent.slice(0, -1) / 100) * this.totalTime;
     },
     end() {
-      this.$refs.controls.playNext()
+      if (this.playMode === 'loop') {
+        this.$refs.controls.playNext();
+      } else if (this.playMode === 'one') {
+        this.audio.currentTime = 0;
+        this.audio.play();
+      } else {
+        if (!this.isPlaying) {
+          this.unshuffle();
+          this.$refs.controls.playNext();
+        }
+      }
     },
     toggleSonglist(status) {
-      this.songlistToggler = status
+      this.songlistToggler = status;
     },
     goBack() {
-      this.setShowPlayer(false)
+      this.setShowPlayer(false);
     },
     screenClick(e) {
       if (this.songlistToggler) {
-        let songlistHeight = this.$refs.songlist.$el.offsetTop
+        let songlistHeight = this.$refs.songlist.$el.offsetTop;
         if (e.clientY < songlistHeight) {
-          this.toggleSonglist(false)
+          this.toggleSonglist(false);
         }
       }
     },
     timeUpdate(e) {
       if (!this.scrolled) {
         // this.audio.currentTime = this.playedPosition
-        this.currentTime = e.target.currentTime
+        this.currentTime = e.target.currentTime;
       }
+    },
+    unshuffle() {
+      let index = this.songlist.findIndex(song => song.id === this.currentPlaying.id);
+      console.log(index);
+      this.setCurrentIndex(index);
+      // [list[this.currentIndex], list[index]] = [list[index], list[this.currentIndex]];
     },
     enter(el, done) {
       Velocity(el, 'transition.shrinkIn', { duration: 500 }, function() {
-        done()
-      })
+        done();
+      });
     },
     leave(el, done) {
       Velocity(el, 'transition.shrinkOut', { duration: 500 }, function() {
-        done()
-      })
+        done();
+      });
     }
   },
   computed: {
-    ...mapGetters(['showPlayer', 'currentPlaying', 'songlist', 'currentIndex', 'isPlaying']),
+    ...mapGetters([
+      'showPlayer',
+      'currentPlaying',
+      'songlist',
+      'currentIndex',
+      'isPlaying',
+      'playMode',
+      'isLoading'
+    ]),
     song() {
-      let url = ''
-      if (this.songlist && this.songlist.length > 0) {
-        if (!this.songlist[this.currentIndex].url) {
-          this.$refs.controls.playNext()
+      let url = '';
+      if (this.currentPlaying && this.songlist && this.songlist.length > 0) {
+        if (!this.currentPlaying.url) {
+          console.log('no url');
+          this.$refs.controls.playNext();
         }
-        url = this.songlist[this.currentIndex].url
+        url = this.currentPlaying.url;
       }
-      return url
+      return url;
     }
   },
   watch: {
     currentPlaying: {
       handler(val) {
         if (val && Object.keys(val).length > 0) {
-          this.bgVar['--bg'] = `url("${val.al.picUrl}")`
+          let preloader = document.createElement('img');
+          preloader.src = val.al.picUrl;
+          preloader.addEventListener('load', () => {
+            console.log('img load');
+            this.bgVar['--bg'] = `url("${val.al.picUrl}")`;
+            this.bgVar['--opacity'] = 1;
+
+            preloader = null;
+          });
         }
       }
     },
-    songlist: {
-      handler(val) {
-        if (val.length === 0) {
-          this.audio.pause()
-          this.toggleSonglist(false)
-          this.setShowPlayer(false)
-        }
+    songlist(newVal, oldVal) {
+      if (newVal.length === 0) {
+        this.audio.pause();
+        this.toggleSonglist(false);
+        this.setShowPlayer(false);
+      }
+      if (newVal !== oldVal && this.playMode === 'random') {
+        let list = shuffle(this.songlist);
+        let index = list.findIndex(song => song.id === this.songlist[this.currentIndex].id);
+        [list[this.currentIndex], list[index]] = [list[index], list[this.currentIndex]];
+        this.setShuffledList(list);
       }
     },
     isPlaying(newVal) {
       newVal && this.audio.src.includes('mp3')
         ? this.audio.play()
         : this.audio.play().then(() => {
-            this.audio.pause()
-          })
+            this.audio.pause();
+          });
+    },
+    playMode(newVal) {
+      if (newVal === 'random') {
+        let list = shuffle(this.songlist);
+        let index = list.findIndex(song => song.id === this.songlist[this.currentIndex].id);
+        [list[this.currentIndex], list[index]] = [list[index], list[this.currentIndex]];
+        this.setShuffledList(list);
+      }
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -197,7 +243,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0px;
-    background: #444 no-repeat center;
+    background: #666 no-repeat center;
     background-image: var(--bg);
     filter: blur(50px) brightness(50%);
     background-size: cover;
@@ -205,6 +251,8 @@ export default {
     transform: translateZ(0);
     perspective: 1000;
     backface-visibility: hidden;
+    opacity: var(--opacity);
+    transition: opacity 5s ease-out;
     -webkit-transform: translateZ(0);
     -webkit-perspective: 1000;
     -webkit-backface-visibility: hidden;

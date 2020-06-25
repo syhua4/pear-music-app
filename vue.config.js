@@ -21,8 +21,9 @@ module.exports = {
         store: '@/store',
         views: '@/views',
         networks: '@/networks',
-        common: '@/common'
+        common: '@/common',
+        plugin: '@/plugin'
       }
     }
   }
-}
+};

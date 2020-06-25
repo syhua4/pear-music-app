@@ -8,7 +8,10 @@
       <div class="main-display">
         <div class="display-img-wrapper">
           <img :src="item.coverImgUrl" />
-          <span><i class="iconfont icon-play-s"></i> {{ item.playCount | round }}</span>
+          <span>
+            <i class="iconfont icon-play-s"></i>
+            {{ item.playCount | round }}
+          </span>
         </div>
         <div class="display-content-wrapper">
           <div class="title">{{ item.name }}</div>
@@ -46,7 +49,7 @@
 </template>
 
 <script>
-import { roundCountMixin } from '../../../common/mixin'
+import { roundCountMixin } from '../../../common/mixin';
 export default {
   name: 'PlaylistDisplay',
   mixins: [roundCountMixin],
@@ -60,18 +63,18 @@ export default {
   data() {
     return {
       backgroundImage: ''
-    }
+    };
   },
   watch: {
     item: {
       handler(val) {
         if (Object.keys(val).length > 0) {
-          this.backgroundImage = `url(${val.coverImgUrl})`
+          this.backgroundImage = `url(${val.coverImgUrl})`;
         }
       }
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

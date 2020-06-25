@@ -6,6 +6,7 @@
     <div class="cd" :class="!isPlaying ? 'paused' : null">
       <img src="~assets/images/cd_test.png" />
       <div class="cover">
+        <img src="~assets/images/cd-cover.png" v-show="!currentPlaying" />
         <img v-lazy="currentPlaying && currentPlaying.al.picUrl" />
       </div>
     </div>
@@ -13,14 +14,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'PlayerCD',
   computed: {
     ...mapGetters(['isPlaying', 'currentPlaying'])
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

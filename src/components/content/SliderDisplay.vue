@@ -31,10 +31,10 @@
 </template>
 
 <script>
-import { Swiper, SwiperItem } from 'components/common/Slider/Slider.js'
+import { Swiper, SwiperItem } from 'components/common/Slider/Slider.js';
 
-import { roundCountMixin, getArtistsMixin } from '../../common/mixin'
-import { mapActions } from 'vuex'
+import { roundCountMixin, getArtistsMixin } from '../../common/mixin';
+import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'SliderDisplay',
   mixins: [roundCountMixin, getArtistsMixin],
@@ -68,21 +68,32 @@ export default {
             slidesPerColumn: 3
           }
         : { freemode: true, autoplay: '', slidesPerView: 3.3, spaceBetween: 30 }
-    }
+    };
   },
   methods: {
-    ...mapActions(['setPlayList', 'setShowPlayer', 'setPlayStatus', 'setCurrentIndex']),
+    ...mapActions([
+      'setPlayList',
+      'setShowPlayer',
+      'setPlayStatus',
+      'setCurrentIndex',
+      'setIsLoading'
+    ]),
     itemClick(id) {
-      this.$emit('itemClick', id)
+      this.$emit('itemClick', id);
     },
     playSong(index) {
-      console.log(index)
-      this.setPlayList(this.items)
-      this.setCurrentIndex(index)
-      this.setShowPlayer(true)
+      if (!this.isLoading) {
+        this.setIsLoading(true);
+      }
+      this.setPlayList(this.items);
+      this.setCurrentIndex(index);
+      this.setShowPlayer(true);
     }
+  },
+  computed: {
+    ...mapGetters(['isLoading'])
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

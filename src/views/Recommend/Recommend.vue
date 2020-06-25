@@ -13,6 +13,7 @@
         @click="togglePlayer"
       />
     </nav-bar>
+
     <scroll ref="scroll">
       <div class="banner-wrapper">
         <banner :banners="banners" ref="banner" />
@@ -51,17 +52,17 @@
 </template>
 
 <script>
-import TabNav from './ChildComp/RecommendTabNav'
+import TabNav from './ChildComp/RecommendTabNav';
 
-import Scroll from 'components/common/Scroll/Scroll'
-import NavBar from 'components/common/NavBar/NavBar.vue'
+import Scroll from 'components/common/Scroll/Scroll';
+import NavBar from 'components/common/NavBar/NavBar.vue';
 
-import Banner from 'components/content/Banner'
-import SliderDisplay from 'components/content/SliderDisplay'
+import Banner from 'components/content/Banner';
+import SliderDisplay from 'components/content/SliderDisplay';
 
-import { getBanners, getPlaylists, getPlaylistTrackId, getTrack } from 'networks/recommend'
-import { getTracksMixin } from '../../common/mixin'
-import { mapGetters, mapActions } from 'vuex'
+import { getBanners, getPlaylists, getPlaylistTrackId, getTrack } from 'networks/recommend';
+import { getTracksMixin } from '../../common/mixin';
+import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'Recommend',
   components: {
@@ -73,17 +74,17 @@ export default {
   },
   mixins: [getTracksMixin],
   created() {
-    getBanners(2).then(res => (this.banners = res.banners))
-    getPlaylists(6, '华语').then(res => (this.asiaPop = res.playlists))
-    getPlaylists(6, '韩语').then(res => (this.kpop = res.playlists))
+    getBanners(2).then(res => (this.banners = res.banners));
+    getPlaylists(6, '华语').then(res => (this.asiaPop = res.playlists));
+    getPlaylists(6, '韩语').then(res => (this.kpop = res.playlists));
     getPlaylists(1, '欧美').then(res => {
       getPlaylistTrackId(res.playlists[0].id).then(res => {
-        let ids = this.getTrackIds(res.playlist.trackIds, 12)
+        let ids = this.getTrackIds(res.playlist.trackIds, 12);
         getTrack(ids).then(res => {
-          this.tracks = res.songs
-        })
-      })
-    })
+          this.tracks = res.songs;
+        });
+      });
+    });
   },
   data() {
     return {
@@ -91,27 +92,27 @@ export default {
       asiaPop: [],
       kpop: [],
       coverUrl: ''
-    }
+    };
   },
   methods: {
     ...mapActions(['setShowPlayer']),
     playlistClick(id) {
-      this.$router.push(`/playlist/${id}`)
+      this.$router.push(`/playlist/${id}`);
     },
     test(e) {
-      console.log(e)
+      console.log(e);
     },
     playSong(picUrl) {
-      this.coverUrl = picUrl
+      this.coverUrl = picUrl;
     },
     togglePlayer() {
-      this.setShowPlayer(true)
+      this.setShowPlayer(true);
     }
   },
   computed: {
     ...mapGetters(['isPlaying', 'currentPlaying'])
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

@@ -27,9 +27,9 @@
         >
           <div
             class="track-info"
-            :class="{ active: currentIndex === index, disabled: songAvailable(index) }"
+            :class="{ active: currentPlaying.id === track.id, disabled: songAvailable(index) }"
           >
-            <i class="iconfont icon-speaker" v-show="currentIndex === index"></i>
+            <i class="iconfont icon-speaker" v-show="currentPlaying.id === track.id"></i>
             <span class="track-name">{{ track.name }}</span>
             <span class="artist">{{ track.ar && artists(track.ar) }}</span>
           </div>
@@ -42,10 +42,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import { getArtistsMixin, changeModeMixin } from 'common/mixin'
+import { mapActions, mapGetters } from 'vuex';
+import { getArtistsMixin, changeModeMixin } from 'common/mixin';
 
-import Scroll from 'components/common/Scroll/Scroll'
+import Scroll from 'components/common/Scroll/Scroll';
 export default {
   name: 'PlayerSonglist',
   components: { Scroll },
@@ -53,49 +53,49 @@ export default {
   methods: {
     ...mapActions(['setPlayStatus', 'setCurrentIndex', 'setRemoveSong']),
     play() {
-      this.setPlayStatus(!this.isPlaying)
+      this.setPlayStatus(!this.isPlaying);
     },
     toggleSonglist() {
-      this.$emit('toggleSonglist', false)
+      this.$emit('toggleSonglist', false);
     },
     changeSong(index) {
-      this.setCurrentIndex(index)
+      if (this.playMode === 'random') {
+        let songId = this.songlist[index].id;
+        let shuffledIndex = this.shuffledList.findIndex(song => song.id === songId);
+        this.setCurrentIndex(shuffledIndex);
+      } else {
+        this.setCurrentIndex(index);
+      }
     },
     deleteSong(index) {
-      this.setRemoveSong(index)
+      this.setRemoveSong(index);
     }
   },
   computed: {
-    ...mapGetters(['isPlaying', 'currentPlaying', 'songlist', 'currentIndex']),
-    checkCurrentPlaying: function() {
-      return function(index) {
-        console.log(index)
-        return this.isPlaying && this.currentIndex === index
-      }
-    },
+    ...mapGetters(['isPlaying', 'currentPlaying', 'songlist', 'currentIndex', 'shuffledList']),
     songAvailable() {
       return function(index) {
-        return !this.songlist[index].url
-      }
+        return !this.songlist[index].url;
+      };
     },
     changeModeText() {
-      let text = ''
+      let text = '';
       switch (this.playMode) {
         case 'loop':
-          text = '列表循环'
-          break
+          text = '列表循环';
+          break;
         case 'one':
-          text = '单曲循环'
-          break
+          text = '单曲循环';
+          break;
 
         case 'random':
-          text = '随机播放'
-          break
+          text = '随机播放';
+          break;
       }
-      return text
+      return text;
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

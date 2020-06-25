@@ -1,6 +1,7 @@
 <template>
   <div class="playlist-list">
     <playlist-header :item="item" :subCount="subCount" @playAll="trackClick(0)" />
+    <loading :isShow="loading" />
     <div
       class="track-wrapper"
       v-for="(track, index) in item"
@@ -10,8 +11,10 @@
       <span class="index">{{ index + 1 }}</span>
       <div class="track-info">
         <div class="track-title">{{ track.name }}</div>
-        <span class="track-artist">{{ artists(track.ar) }}</span>
-        <span class="track-album">{{ track.al.name }}</span>
+        <div class="track-desc">
+          <span class="track-artist">{{ artists(track.ar) }}</span>
+          <span class="track-album">{{ track.al.name }}</span>
+        </div>
       </div>
       <i class="iconfont icon-more--line" />
     </div>
@@ -19,11 +22,19 @@
 </template>
 
 <script>
-import PlaylistHeader from './PlaylistListHeader'
-import { roundCountMixin, getArtistsMixin } from 'common/mixin'
+import PlaylistHeader from './PlaylistListHeader';
+
+import Loading from 'components/common/Loading/Loading';
+
+import { roundCountMixin, getArtistsMixin } from 'common/mixin';
 export default {
   name: 'PlaylistList',
   mixins: [roundCountMixin, getArtistsMixin],
+  data() {
+    return {
+      loading: true
+    };
+  },
   props: {
     item: {
       type: Array,
@@ -40,13 +51,21 @@ export default {
       default: false
     }
   },
-  components: { PlaylistHeader },
+  components: { PlaylistHeader, Loading },
   methods: {
     trackClick(index) {
-      this.$emit('trackClick', index)
+      this.$emit('trackClick', index);
+    }
+  },
+  watch: {
+    item() {
+      this.$nextTick(function() {
+        this.$emit('dataLoaded');
+        this.loading = false;
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -79,15 +98,15 @@ export default {
       .track-title {
         @include clamp(1);
       }
-      span {
+      .track-desc {
+        @include nowrap();
         color: #666;
         @include font_size($s);
-        @include nowrap();
-      }
-      .track-album::before {
-        content: '-';
-        display: inline-block;
-        padding: 0 5px;
+        .track-album::before {
+          content: '-';
+          display: inline-block;
+          padding: 0 5px;
+        }
       }
     }
 

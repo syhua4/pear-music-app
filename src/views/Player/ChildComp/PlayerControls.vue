@@ -29,9 +29,9 @@
 </template>
 
 <script>
-import { fmtTime } from 'common/utils'
-import { mapActions, mapGetters } from 'vuex'
-import { changeModeMixin } from 'common/mixin'
+import { fmtTime } from 'common/utils';
+import { mapActions, mapGetters } from 'vuex';
+import { changeModeMixin } from 'common/mixin';
 export default {
   name: 'PlayerControls',
   mixins: [changeModeMixin],
@@ -43,7 +43,7 @@ export default {
       curTime: '00:00',
       totTime: '00:00',
       touch: {}
-    }
+    };
   },
   props: {
     currentTime: {
@@ -65,77 +65,73 @@ export default {
   methods: {
     ...mapActions(['setPlayStatus', 'setCurrentIndex', 'setShowPlayer']),
     initProgressBar() {
-      this.playedPercent = '0'
-      this.$refs.totalTime.innerHTML = '00:00'
-      this.$refs.currentTime.innerHTML = '00:00'
+      this.playedPercent = '0';
+      this.$refs.totalTime.innerHTML = '00:00';
+      this.$refs.currentTime.innerHTML = '00:00';
     },
     touchstart(e) {
-      this.touch.initialed = true
-      this.touch.startX = e.touches[0].pageX
-      this.touch.left = this.$refs.progress.clientWidth
+      this.touch.initialed = true;
+      this.touch.startX = e.touches[0].pageX;
+      this.touch.left = this.$refs.progress.clientWidth;
       // e.preventDefault()
       // console.log(this.$refs.test.offsetWidth)
-      console.log(this.touch)
+      console.log(this.touch);
     },
     touchmove(e) {
       if (!this.touch.initialed) {
-        return
+        return;
       }
-      let deltaX = e.touches[0].pageX - this.touch.startX
+      let deltaX = e.touches[0].pageX - this.touch.startX;
       let offsetWidth = Math.min(
         this.$refs.progressBar.clientWidth - this.$refs.dot.offsetWidth,
         Math.max(0, this.touch.left + deltaX)
-      )
+      );
       this.playedPercent = `${(
         (offsetWidth / (this.$refs.progressBar.clientWidth - this.$refs.dot.offsetWidth)) *
         100
-      ).toFixed(0)}%`
+      ).toFixed(0)}%`;
     },
     touchend() {
-      this.touch.initialed = false
-      this.$emit('changeProgress', this.playedPercent)
+      this.touch.initialed = false;
+      this.$emit('changeProgress', this.playedPercent);
     },
     play() {
-      this.setPlayStatus(!this.isPlaying)
+      this.setPlayStatus(!this.isPlaying);
     },
     toggleSonglist() {
-      this.$emit('toggleSonglist', true)
+      this.$emit('toggleSonglist', true);
     },
     playNext() {
-      this.currentIndex === this.songlist.length - 1
-        ? this.setCurrentIndex(0)
-        : this.setCurrentIndex(this.currentIndex + 1)
-      if (this.songlist && !this.songlist[this.currentIndex].url) {
-        this.playNext()
+      this.setCurrentIndex(this.currentIndex + 1);
+      if (this.songlist && !this.currentPlaying.url) {
+        this.playNext();
       }
     },
     playBefore() {
-      this.currentIndex === 0
-        ? this.setCurrentIndex(this.songlist.length - 1)
-        : this.setCurrentIndex(this.currentIndex - 1)
-      if (this.songlist && !this.songlist[this.currentIndex].url) {
-        this.playBefore()
+      this.setCurrentIndex(this.currentIndex - 1);
+      if (this.songlist && !this.currentPlaying.url) {
+        this.playBefore();
       }
     }
   },
   computed: {
-    ...mapGetters(['isPlaying', 'currentIndex', 'songlist'])
+    ...mapGetters(['isPlaying', 'currentIndex', 'songlist', 'currentPlaying'])
   },
   watch: {
     currentTime(newVal) {
-      let time = fmtTime(newVal)
-      this.$refs.currentTime.innerHTML = `${time.minute}:${time.second}`
-      this.playedPercent = `${((newVal / this.totalTime) * 100).toFixed(0)}%`
+      let time = fmtTime(newVal);
+      this.$refs.currentTime.innerHTML = `${time.minute}:${time.second}`;
+      this.playedPercent = `${((newVal / this.totalTime) * 100).toFixed(0)}%`;
     },
     totalTime(newVal) {
-      let time = fmtTime(newVal)
-      this.$refs.totalTime.innerHTML = `${time.minute}:${time.second}`
+      let time = fmtTime(newVal);
+      this.$refs.totalTime.innerHTML = `${time.minute}:${time.second}`;
     },
     currentIndex() {
-      this.initProgressBar()
+      this.initProgressBar();
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

@@ -2,80 +2,85 @@ export const getTracksMixin = {
   data() {
     return {
       tracks: []
-    }
+    };
   },
   methods: {
     getTrackIds(list, num) {
-      let tempTrackIds = ''
+      let tempTrackIds = '';
       if (num !== undefined) {
-        list = list.slice(0, num)
+        list = list.slice(0, num);
       }
       for (const track of list) {
-        tempTrackIds += track.id + ','
+        tempTrackIds += track.id + ',';
       }
-      return tempTrackIds.slice(0, -1)
+      return tempTrackIds.slice(0, -1);
     }
   }
-}
+};
 
 export const roundCountMixin = {
   filters: {
     round: function(val) {
       if (!val) {
-        return ''
+        return '';
       } else if (val >= 10000000) {
-        return Math.ceil(val / 10000000) + '亿'
+        return Math.ceil(val / 10000000) + '亿';
       } else if (val >= 10000) {
-        return Math.ceil(val / 10000) + '万'
+        return Math.ceil(val / 10000) + '万';
       } else {
-        return val
+        return val;
       }
     }
   }
-}
+};
 
 export const getArtistsMixin = {
   computed: {
     artists: function() {
       return function(artistList) {
-        let temp = ''
+        let temp = '';
         if (artistList.length > 1) {
           artistList.forEach(artist => {
-            temp += artist.name + '/'
-          })
-          return temp.slice(0, -1)
+            temp += artist.name + '/';
+          });
+          return temp.slice(0, -1);
         } else {
-          return artistList[0].name
+          return artistList[0].name;
         }
-      }
+      };
     }
   }
-}
+};
 
-import { mapActions, mapGetters } from 'vuex'
-import { mode } from 'store/mode-type'
+import { mapActions, mapGetters } from 'vuex';
+import { mode } from 'store/mode-type';
 
 export const changeModeMixin = {
   methods: {
-    ...mapActions(['setPlayMode']),
+    ...mapActions(['setPlayMode', 'setCurrentIndex']),
     changeMode() {
+      let songId, originalIndex;
       switch (this.playMode) {
         case mode[0]:
-          this.setPlayMode(1)
-          break
+          this.setPlayMode(1);
+          break;
         case mode[1]:
-          this.setPlayMode(2)
-          break
+          this.setPlayMode(2);
+          break;
         case mode[2]:
-          this.setPlayMode(0)
-          break
+          songId = this.currentPlaying.id;
+          originalIndex = this.songlist.findIndex(song => song.id === songId);
+          this.setCurrentIndex(originalIndex);
+          this.setPlayMode(0);
+
+          break;
       }
     }
   },
   computed: {
-    ...mapGetters(['playMode']),
+    ...mapGetters(['playMode', 'songlist', 'currentPlaying']),
     mode() {
-      return `icon-${this.playMode}`
+      return `icon-${this.playMode}`;
     }
   }
-}
+};
