@@ -1,4 +1,4 @@
-import { request } from './request'
+import { request } from './request';
 
 export function getBanners(type) {
   return request({
@@ -6,7 +6,7 @@ export function getBanners(type) {
     params: {
       type
     }
-  })
+  });
 }
 export function getPlaylists(limit, cat) {
   return request({
@@ -15,7 +15,7 @@ export function getPlaylists(limit, cat) {
       limit,
       cat
     }
-  })
+  });
 }
 
 export function getPlaylistTrackId(id) {
@@ -24,7 +24,7 @@ export function getPlaylistTrackId(id) {
     params: {
       id
     }
-  })
+  });
 }
 
 export function getTrack(ids) {
@@ -33,7 +33,7 @@ export function getTrack(ids) {
     params: {
       ids
     }
-  })
+  });
 }
 
 export function getSongUrl(id) {
@@ -42,5 +42,5 @@ export function getSongUrl(id) {
     params: {
       id
     }
-  })
+  });
 }

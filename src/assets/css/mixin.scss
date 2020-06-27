@@ -1,12 +1,24 @@
 @import './variable.scss';
 /*根据dpr计算font-size*/
 @mixin font_dpr($font-size) {
-  font-size: $font-size;
+  font-size: $font-size * 1px;
   [data-dpr='2'] & {
-    font-size: $font-size * 2;
+    font-size: $font-size * 2px;
   }
   [data-dpr='3'] & {
-    font-size: $font-size * 3;
+    font-size: $font-size * 2px;
+  }
+  [data-dpr='1'][is-ios='true'] & {
+    /* prettier-ignore */
+    font-size: $font-size * 1PX;
+  }
+  [data-dpr='2'][is-ios='true'] & {
+    /* prettier-ignore */
+    font-size: $font-size * 2PX;
+  }
+  [data-dpr='3'][is-ios='true'] & {
+    /* prettier-ignore */
+    font-size: $font-size * 3PX;
   }
 }
 /*通过该函数设置字体大小，后期方便统一管理；*/

@@ -1,1 +1,1 @@
-export const mode = ['loop', 'one', 'random']
+export const mode = ['loop', 'one', 'random'];

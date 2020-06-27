@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { roundCountMixin, getArtistsMixin } from 'common/mixin'
+import { roundCountMixin, getArtistsMixin } from 'common/mixin';
 export default {
   name: 'PlaylistList',
   mixins: [roundCountMixin, getArtistsMixin],
@@ -35,10 +35,10 @@ export default {
   },
   methods: {
     playAll() {
-      this.$emit('playAll')
+      this.$emit('playAll');
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

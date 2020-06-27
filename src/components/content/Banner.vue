@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { Swiper, SwiperItem } from 'components/common/Slider/Slider.js'
+import { Swiper, SwiperItem } from 'components/common/Slider/Slider.js';
 export default {
   name: 'Banner',
   components: {
@@ -34,17 +34,17 @@ export default {
           dynamicBullets: true
         }
       }
-    }
+    };
   },
   activated() {
     if (this.$refs.banner) {
-      this.$refs.banner.$refs.mySwiper.$swiper.autoplay.start()
+      this.$refs.banner.$refs.mySwiper.$swiper.autoplay.start();
     }
   },
   deactivated() {
-    this.$refs.banner.$refs.mySwiper.$swiper.autoplay.stop()
+    this.$refs.banner.$refs.mySwiper.$swiper.autoplay.stop();
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

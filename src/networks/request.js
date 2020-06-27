@@ -1,28 +1,28 @@
-import axios from 'axios'
+import axios from 'axios';
 
 export function request(config) {
   const instance = axios.create({
-    baseURL: 'http://10.0.0.65:1122',
+    baseURL: 'https://autumnfish.cn',
     timeout: 4000,
     withCredentials: true
-  })
+  });
   instance.interceptors.request.use(
     config => {
-      return config
+      return config;
     },
     err => {
-      return err
+      return err;
     }
-  )
+  );
 
   instance.interceptors.response.use(
     res => {
-      return res.data
+      return res.data;
     },
     err => {
-      return err
+      return err;
     }
-  )
+  );
 
-  return instance(config)
+  return instance(config);
 }

@@ -64,7 +64,6 @@ export default {
             freemode: true,
             autoplay: '',
             slidesPerView: 1.1,
-            spaceBetween: 30,
             slidesPerColumn: 3
           }
         : { freemode: true, autoplay: '', slidesPerView: 3.3, spaceBetween: 30 }
@@ -109,7 +108,7 @@ export default {
     @include font_color();
     .title,
     .more {
-      margin: 50px 20px 20px 0;
+      margin: 50px 20px 0 0;
     }
     .title {
       @include font_size($m);
@@ -124,6 +123,9 @@ export default {
     }
   }
   .swiper-slide {
+    margin-top: 30px !important;
+    // margin-right: 30px !important;
+
     position: relative;
     .swiper-item-playcount {
       position: absolute;
@@ -139,6 +141,7 @@ export default {
     }
     .icon-play {
       margin-left: auto;
+      margin-right: 30px;
       @include font_active_color();
       @include font_size($icon_m);
     }

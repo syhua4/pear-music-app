@@ -25,5 +25,6 @@ module.exports = {
         plugin: '@/plugin'
       }
     }
-  }
+  },
+  publicPath: process.env.NODE_ENV === 'production' ? './' : ''
 };

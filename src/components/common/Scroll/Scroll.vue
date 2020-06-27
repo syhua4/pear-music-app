@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import BScroll from 'better-scroll'
+import BScroll from 'better-scroll';
 export default {
   name: 'Scroll',
   props: {
@@ -28,7 +28,7 @@ export default {
   data() {
     return {
       scroll: null
-    }
+    };
   },
   mounted() {
     this.scroll = new BScroll(this.$refs.wrapper, {
@@ -37,39 +37,39 @@ export default {
       click: true,
       observeDOM: true,
       useTransition: false
-    })
+    });
 
     if (this.probeType >= 2) {
       this.scroll.on('scroll', position => {
-        this.$emit('scrolling', position)
-      })
+        this.$emit('scrolling', position);
+      });
     }
 
     if (this.pullUpload) {
       this.scroll.on('pullingUp', () => {
-        this.$emit('pullUpLoad')
-      })
+        this.$emit('pullUpLoad');
+      });
     }
 
     let observer = new MutationObserver(() => {
-      this.refresh()
-    })
+      this.refresh();
+    });
 
     let config = {
       childList: true,
       subtree: true,
       attributeFilter: ['height', 'offsetHeight']
-    }
+    };
 
-    observer.observe(this.$refs.wrapper, config)
+    observer.observe(this.$refs.wrapper, config);
   },
   methods: {
     refresh() {
-      console.log('---- refresh ----')
-      this.scroll && this.scroll.refresh && this.scroll.refresh()
+      console.log('---- refresh ----');
+      this.scroll && this.scroll.refresh && this.scroll.refresh();
     },
     getYPosition() {
-      return this.scroll ? this.scroll.y : 0
+      return this.scroll ? this.scroll.y : 0;
     }
     // updateScroller() {
     //   this.scroll.on('scrollEnd', () => {
@@ -87,13 +87,13 @@ export default {
       handler(val) {
         if (val !== 0) {
           setTimeout(() => {
-            this.refresh()
-          }, val)
+            this.refresh();
+          }, val);
         }
       }
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

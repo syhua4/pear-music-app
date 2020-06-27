@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 
-const Recommend = () => import('views/Recommend/Recommend')
-const Playlist = () => import('views/Playlist/Playlist')
+const Recommend = () => import('views/Recommend/Recommend');
+const Playlist = () => import('views/Playlist/Playlist');
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
@@ -21,12 +21,12 @@ const routes = [
     component: Playlist,
     name: 'playlist'
   }
-]
+];
 
 const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
+  mode: process.env.NODE_ENV === 'production' ? '' : 'history',
+  base: process.env.NODE_ENV === 'production' ? 'https://autumnfish.cn' : '',
   routes
-})
+});
 
-export default router
+export default router;

@@ -37,14 +37,14 @@
 
     <!-- 适配移动端 -->
     <script>
+      let isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+console.log(isIOS);
       let scale = 1.0 / window.devicePixelRatio;
       let text = `<meta name="viewport" content="width=device-width, initial-scale=${scale}, maximum-scale=${scale}, minimum-scale=${scale}, user-scalable=no">`;
       document.write(text);
       document.documentElement.style.fontSize = window.innerWidth / 7.5 + 'px';
-      document.documentElement.setAttribute(
-        'data-dpr',
-        window.devicePixelRatio + ''
-      );
+      document.documentElement.setAttribute('data-dpr', Math.floor(window.devicePixelRatio) + '');
+      document.documentElement.setAttribute('is-ios', isIOS);
       document.documentElement.setAttribute('data-theme', 'theme');
     </script>
   </head>

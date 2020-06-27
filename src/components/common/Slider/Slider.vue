@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import { Swiper } from 'vue-awesome-swiper'
-import 'swiper/css/swiper.css'
+import { Swiper } from 'vue-awesome-swiper';
+import 'swiper/css/swiper.css';
 
 export default {
   name: 'Slider',
@@ -35,9 +35,9 @@ export default {
         },
         this.options
       )
-    }
+    };
   }
-}
+};
 </script>
 <style lang="scss">
 @import 'assets/css/mixin';

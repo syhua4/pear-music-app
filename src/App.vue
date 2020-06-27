@@ -10,8 +10,8 @@
   </div>
 </template>
 <script>
-import TabBar from 'components/content/MainTabBar'
-import Player from 'views/Player/Player'
+import TabBar from 'components/content/MainTabBar';
+import Player from 'views/Player/Player';
 
 export default {
   name: 'App',
@@ -19,7 +19,7 @@ export default {
     TabBar,
     Player
   }
-}
+};
 </script>
 <style lang="scss">
 @import 'assets/css/mixin.scss';

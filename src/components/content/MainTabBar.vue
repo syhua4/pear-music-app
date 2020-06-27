@@ -22,14 +22,14 @@
 </template>
 
 <script>
-import { TabBar, TabBarItem } from 'components/common/TabBar/tabbar.js'
+import { TabBar, TabBarItem } from 'components/common/TabBar/tabbar.js';
 export default {
   name: 'MainTabBar',
   components: {
     TabBar,
     TabBarItem
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

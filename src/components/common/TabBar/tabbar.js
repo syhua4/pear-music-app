@@ -1,4 +1,4 @@
-import TabBar from './TabBar.vue'
-import TabBarItem from './TabBarItem.vue'
+import TabBar from './TabBar.vue';
+import TabBarItem from './TabBarItem.vue';
 
-export { TabBar, TabBarItem }
+export { TabBar, TabBarItem };

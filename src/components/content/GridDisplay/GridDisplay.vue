@@ -5,7 +5,7 @@
 <script>
 export default {
   name: 'GridDisplay'
-}
+};
 </script>
 
 <style lang="scss" scoped>

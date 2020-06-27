@@ -2,7 +2,7 @@
   <div id="recommend-view">
     <nav-bar class="main-nav">
       <i class="iconfont icon-listen" slot="left"></i>
-      <div slot="center" class="header">搜索</div>
+      <div slot="center" class="header">dpr{{ test2 }}</div>
       <!-- <i class="iconfont icon-logo" slot="right" v-if="Object.keys(getPlayTrack).length === 0" /> -->
       <img
         slot="right"
@@ -74,6 +74,7 @@ export default {
   },
   mixins: [getTracksMixin],
   created() {
+    console.log('--recommend page loaded-');
     getBanners(2).then(res => (this.banners = res.banners));
     getPlaylists(6, '华语').then(res => (this.asiaPop = res.playlists));
     getPlaylists(6, '韩语').then(res => (this.kpop = res.playlists));
@@ -110,7 +111,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isPlaying', 'currentPlaying'])
+    ...mapGetters(['isPlaying', 'currentPlaying']),
+    test1() {
+      return parseFloat(window.getComputedStyle(document.documentElement).fontSize);
+    },
+    test2() {
+      return Math.floor(window.devicePixelRatio);
+    }
   }
 };
 </script>
@@ -187,7 +194,7 @@ export default {
       @include font_size($s);
     }
     ::v-deep .swiper-container {
-      height: 400px;
+      height: 420px;
       .swiper-slide {
         height: 110px;
       }

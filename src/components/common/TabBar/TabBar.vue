@@ -7,7 +7,7 @@
 <script>
 export default {
   name: 'TabBar'
-}
+};
 </script>
 
 <style lang="scss" scoped>

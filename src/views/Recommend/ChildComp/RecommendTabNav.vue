@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { Swiper, SwiperItem } from 'components/common/Slider/Slider.js'
+import { Swiper, SwiperItem } from 'components/common/Slider/Slider.js';
 
 export default {
   name: 'RecommendTabNav',
@@ -57,14 +57,14 @@ export default {
         slidesPerView: '5.3',
         freeMode: true
       }
-    }
+    };
   },
   computed: {
     date: function() {
-      return new Date().getDate()
+      return new Date().getDate();
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -72,6 +72,7 @@ export default {
 @import 'assets/css/variable';
 
 .recommend-tabnav {
+  margin-top: 30px;
   margin-left: 20px;
   .tabnav {
     margin: 0;
