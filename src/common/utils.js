@@ -23,3 +23,7 @@ export function shuffle(arr) {
   }
   return temp;
 }
+
+export function fmtUrl(url) {
+  return url.split('/:(.+)/')[1];
+}

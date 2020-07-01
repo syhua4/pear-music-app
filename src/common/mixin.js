@@ -52,6 +52,20 @@ export const getArtistsMixin = {
   }
 };
 
+export const getUrlMixin = {
+  computed: {
+    fmtUrl: function() {
+      return function(url) {
+        let temp;
+        if (url) {
+          temp = url.replace(/^https?:/, '');
+        }
+        return temp;
+      };
+    }
+  }
+};
+
 import { mapActions, mapGetters } from 'vuex';
 import { mode } from 'store/mode-type';
 

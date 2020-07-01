@@ -24,8 +24,8 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  mode: process.env.NODE_ENV === 'production' ? '' : 'history',
-  base: process.env.NODE_ENV === 'production' ? 'https://autumnfish.cn' : '',
+  mode: 'hash',
+  // base: '/pear-music-app/',
   routes
 });
 

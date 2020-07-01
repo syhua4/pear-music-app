@@ -2,7 +2,7 @@
   <div id="recommend-view">
     <nav-bar class="main-nav">
       <i class="iconfont icon-listen" slot="left"></i>
-      <div slot="center" class="header">dpr{{ test2 }}</div>
+      <div slot="center" class="header">搜索 dpr{{ test2 }}</div>
       <!-- <i class="iconfont icon-logo" slot="right" v-if="Object.keys(getPlayTrack).length === 0" /> -->
       <img
         slot="right"

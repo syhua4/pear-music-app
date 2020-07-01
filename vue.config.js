@@ -1,4 +1,18 @@
 module.exports = {
+  productionSourceMap: process.env.NODE_ENV === 'production' ? false : true,
+  devServer: {
+    proxy: {
+      '/api': {
+        target: process.env.VUE_APP_SERVER_URL,
+        https: false,
+        changeOrigin: true,
+        ws: false,
+        pathRewrite: {
+          '^/api': ''
+        }
+      }
+    }
+  },
   configureWebpack: {
     module: {
       rules: [

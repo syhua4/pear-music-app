@@ -138,9 +138,12 @@ export default {
 @import 'assets/css/mixin';
 
 .player-control {
-  height: 20%;
+  height: 15%;
   color: #fff;
-  position: relative;
+  position: fixed;
+  top: calc(100px + 75%);
+  left: 0;
+  right: 0;
   z-index: 1;
   margin: 0 24px;
   display: flex;

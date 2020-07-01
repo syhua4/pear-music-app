@@ -3,7 +3,7 @@
     <swiper v-if="banners && banners.length > 0" :options="options" ref="banner">
       <swiper-item v-for="banner in banners" :key="banner.id">
         <a :href="banner.url">
-          <img :src="banner.pic" class="banner-img" />
+          <img :src="fmtUrl(banner.pic)" class="banner-img" />
         </a>
       </swiper-item>
     </swiper>
@@ -12,8 +12,10 @@
 
 <script>
 import { Swiper, SwiperItem } from 'components/common/Slider/Slider.js';
+import { getUrlMixin } from 'common/mixin';
 export default {
   name: 'Banner',
+  mixins: [getUrlMixin],
   components: {
     Swiper,
     SwiperItem

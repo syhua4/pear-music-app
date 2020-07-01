@@ -7,7 +7,7 @@
     <swiper v-if="items && items.length > 0" :options="options" ref="banner">
       <swiper-item v-for="(item, index) in items" :key="item.id">
         <a class="swiper-item-wrapper" v-if="!isSong" @click="itemClick(item.id)">
-          <img v-lazy="item.coverImgUrl" class="swiper-item-img" />
+          <img v-lazy="fmtUrl(item.coverImgUrl)" class="swiper-item-img" />
           <span class="swiper-item-text">{{ item.name }}</span>
           <span class="swiper-item-playcount" v-if="item.playCount">
             <i class="iconfont icon-play-s" />
@@ -15,7 +15,7 @@
           </span>
         </a>
         <a class="swiper-item-wrapper" v-if="isSong" @click="playSong(index)">
-          <img v-lazy="item.al.picUrl" class="swiper-item-img" />
+          <img v-lazy="fmtUrl(item.al.picUrl)" class="swiper-item-img" />
 
           <div class="swiper-item-desc">
             <span class="swiper-item-text">{{ item.name }}</span>
@@ -33,11 +33,11 @@
 <script>
 import { Swiper, SwiperItem } from 'components/common/Slider/Slider.js';
 
-import { roundCountMixin, getArtistsMixin } from '../../common/mixin';
+import { roundCountMixin, getArtistsMixin, getUrlMixin } from 'common/mixin';
 import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'SliderDisplay',
-  mixins: [roundCountMixin, getArtistsMixin],
+  mixins: [roundCountMixin, getArtistsMixin, getUrlMixin],
   components: {
     Swiper,
     SwiperItem

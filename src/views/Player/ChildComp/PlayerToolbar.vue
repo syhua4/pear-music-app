@@ -1,7 +1,9 @@
 <template>
   <div class="player-toolbar">
     <i class="iconfont" :class="isFavourite" @click="toggleFavourite"></i>
-    <i class="iconfont icon-download"></i>
+    <a :href="currentPlaying && currentPlaying.url">
+      <i class="iconfont icon-download"></i>
+    </a>
     <i class="iconfont icon-comment"></i>
     <i class="iconfont icon-more--line"></i>
   </div>
@@ -19,6 +21,10 @@ export default {
       this.isFavourite.includes('fill')
         ? this.setUnfavourite(songId).then(res => this.$toast.show(res, 1000))
         : this.setFavourite(songId).then(res => this.$toast.show(res, 1000));
+    },
+    toggleDownload() {
+      let aEl = document.createElement('a');
+      aEl.download = this.currentPlaying.url;
     }
   },
   computed: {
@@ -41,7 +47,10 @@ export default {
   height: 5%;
   color: #fff;
   display: flex;
-  position: relative;
+  position: fixed;
+  top: calc(100px + 65%);
+  left: 0;
+  right: 0;
   z-index: 2;
   justify-content: space-around;
   .iconfont {

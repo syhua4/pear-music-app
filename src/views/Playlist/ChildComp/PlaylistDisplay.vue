@@ -7,7 +7,7 @@
     <div class="display-wrapper">
       <div class="main-display">
         <div class="display-img-wrapper">
-          <img :src="item.coverImgUrl" />
+          <img v-lazy="fmtUrl(item.coverImgUrl)" />
           <span>
             <i class="iconfont icon-play-s"></i>
             {{ item.playCount | round }}
@@ -16,7 +16,7 @@
         <div class="display-content-wrapper">
           <div class="title">{{ item.name }}</div>
           <div class="creator">
-            <img :src="item.creator.avatarUrl" class="creator-avatar" />
+            <img v-lazy="fmtUrl(item.creator.avatarUrl)" class="creator-avatar" />
             <span class="creator-name">{{ item.creator.nickname }}</span>
             <i class="iconfont icon-next"></i>
           </div>
@@ -49,10 +49,10 @@
 </template>
 
 <script>
-import { roundCountMixin } from '../../../common/mixin';
+import { roundCountMixin, getUrlMixin } from 'common/mixin';
 export default {
   name: 'PlaylistDisplay',
-  mixins: [roundCountMixin],
+  mixins: [roundCountMixin, getUrlMixin],
   props: {
     item: {
       type: Object,
@@ -69,7 +69,7 @@ export default {
     item: {
       handler(val) {
         if (Object.keys(val).length > 0) {
-          this.backgroundImage = `url(${val.coverImgUrl})`;
+          this.backgroundImage = `url(${this.fmtUrl(val.coverImgUrl)})`;
         }
       }
     }

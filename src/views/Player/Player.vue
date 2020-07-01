@@ -12,7 +12,7 @@
         </div>
         <i class="iconfont icon-share" slot="right"></i>
       </nav-bar>
-      <player-cd />
+      <player-cd ref="cd" :size="canvasSize" :bgColor="bgColor" />
       <player-toolbar />
       <player-controls
         ref="controls"
@@ -37,6 +37,7 @@
 <script>
 import NavBar from 'components/common/NavBar/NavBar';
 import PlayerCd from './ChildComp/PlayerCD';
+
 import PlayerToolbar from './ChildComp/PlayerToolbar';
 import PlayerControls from './ChildComp/PlayerControls';
 import PlayerSonglist from './ChildComp/PlayerSonglist';
@@ -44,13 +45,15 @@ import PlayerSonglist from './ChildComp/PlayerSonglist';
 import Velocity from 'velocity-animate';
 import 'velocity-animate/velocity.ui';
 
+import analyze from 'rgbaster';
+
 import { mapGetters, mapActions } from 'vuex';
-import { getArtistsMixin } from 'common/mixin';
+import { getArtistsMixin, getUrlMixin } from 'common/mixin';
 import { shuffle } from 'common/utils';
 
 export default {
   name: 'Player',
-  mixins: [getArtistsMixin],
+  mixins: [getArtistsMixin, getUrlMixin],
   components: {
     NavBar,
     PlayerCd,
@@ -70,10 +73,13 @@ export default {
       totalTime: 0,
       ready: false,
       playedPosition: 0,
-      scrolled: false
+      scrolled: false,
+      bgColor: ''
     };
   },
   mounted() {
+    console.log(window.innerWidth);
+    console.log(window.innerHeight * 0.65);
     this.audio = this.$refs.audio;
     let observer = new MutationObserver(() => {
       if (this.audio.src && this.audio.src.includes('mp3')) {
@@ -102,6 +108,7 @@ export default {
     changeProgress(percent) {
       this.audio.currentTime = (percent.slice(0, -1) / 100) * this.totalTime;
     },
+
     end() {
       if (this.playMode === 'loop') {
         this.$refs.controls.playNext();
@@ -169,22 +176,46 @@ export default {
           console.log('no url');
           this.$refs.controls.playNext();
         }
-        url = this.currentPlaying.url;
+        url = this.fmtUrl(this.currentPlaying.url);
       }
       return url;
+    },
+    canvasSize() {
+      let width = window.innerWidth;
+      let height = window.innerHeight * 0.65;
+      return [width, height];
     }
   },
   watch: {
     currentPlaying: {
-      handler(val) {
+      async handler(val) {
         if (val && Object.keys(val).length > 0) {
+          // let colorthief = new ColorThief();
           let preloader = document.createElement('img');
           preloader.src = val.al.picUrl;
+          preloader.crossOrigin = 'anonymous';
           preloader.addEventListener('load', () => {
             console.log('img load');
-            this.bgVar['--bg'] = `url("${val.al.picUrl}")`;
+            this.bgVar['--bg'] = `url("${this.fmtUrl(val.al.picUrl)}")`;
             this.bgVar['--opacity'] = 1;
+            // this.bgColor = colorthief.getColor(preloader);
+            async function color(img) {
+              let c = await analyze(
+                img,
+                {
+                  ignore: ['rgb(255,255,255)', 'rgb(0,0,0)']
+                },
+                { scale: 0.1 }
+              );
+              return c[0].color;
+            }
 
+            color(preloader.src).then(res => {
+              this.bgColor = res;
+            });
+
+            // console.log(color);
+            // console.log(this.bgColor);
             preloader = null;
           });
         }
@@ -227,6 +258,7 @@ export default {
 
 .player {
   position: fixed;
+  // height: 100%;
   background-color: #444;
   top: 0;
   left: 0;

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export function request(config) {
   const instance = axios.create({
-    baseURL: 'https://autumnfish.cn',
+    baseURL: process.env.NODE_ENV === 'production' ? process.env.VUE_APP_SERVER_URL : '/api',
     timeout: 4000,
     withCredentials: true
   });
