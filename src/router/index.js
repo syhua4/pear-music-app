@@ -3,6 +3,8 @@ import VueRouter from 'vue-router';
 
 const Recommend = () => import('views/Recommend/Recommend');
 const Playlist = () => import('views/Playlist/Playlist');
+const Search = () => import('views/Search/Search');
+const SearchResult = () => import('views/Search/SearchResult');
 
 Vue.use(VueRouter);
 
@@ -14,12 +16,27 @@ const routes = [
   {
     path: '/recommend',
     component: Recommend,
-    name: 'recommend'
+    name: 'recommend',
+    meta: { index: 0 }
   },
   {
     path: '/playlist/:id',
     component: Playlist,
-    name: 'playlist'
+    name: 'playlist',
+    meta: { index: 1 }
+  },
+  {
+    path: '/search',
+    component: Search,
+    name: 'search',
+    meta: { index: 1, prevPath: 'recommend' }
+  },
+  {
+    path: '/search',
+    component: SearchResult,
+    name: 'searchResult',
+    props: true,
+    meta: { index: 2 }
   }
 ];
 

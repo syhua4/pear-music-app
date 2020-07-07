@@ -125,7 +125,6 @@ export default {
   .swiper-slide {
     margin-top: 30px !important;
     // margin-right: 30px !important;
-
     position: relative;
     .swiper-item-playcount {
       position: absolute;

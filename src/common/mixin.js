@@ -20,13 +20,13 @@ export const getTracksMixin = {
 
 export const roundCountMixin = {
   filters: {
-    round: function(val) {
+    round: function(val, roundTo = 0) {
       if (!val) {
         return '';
-      } else if (val >= 10000000) {
-        return Math.ceil(val / 10000000) + '亿';
+      } else if (val >= 100000000) {
+        return (val / 100000000).toFixed(roundTo) + '亿';
       } else if (val >= 10000) {
-        return Math.ceil(val / 10000) + '万';
+        return (val / 10000).toFixed(roundTo) + '万';
       } else {
         return val;
       }
@@ -97,4 +97,15 @@ export const changeModeMixin = {
       return `icon-${this.playMode}`;
     }
   }
+};
+
+import Loading from 'components/common/Loading/Loading';
+
+export const loadingMixin = {
+  data() {
+    return {
+      loading: true
+    };
+  },
+  components: { Loading }
 };

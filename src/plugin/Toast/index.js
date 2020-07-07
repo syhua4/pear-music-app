@@ -2,7 +2,7 @@ import Toast from './Toast.vue';
 const obj = {};
 
 obj.install = function(Vue) {
-  console.log('object installed');
+  console.log('toast installed');
   const toastConstructor = Vue.extend(Toast);
   const toastInstance = new toastConstructor();
   let oDiv = document.createElement('div');

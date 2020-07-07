@@ -12,7 +12,7 @@
         </div>
         <i class="iconfont icon-share" slot="right"></i>
       </nav-bar>
-      <player-cd ref="cd" :size="canvasSize" :bgColor="bgColor" />
+      <player-cd ref="cd" :bgColor="bgColor" />
       <player-toolbar />
       <player-controls
         ref="controls"
@@ -74,19 +74,36 @@ export default {
       ready: false,
       playedPosition: 0,
       scrolled: false,
-      bgColor: ''
+      bgColor: 'white'
     };
   },
   mounted() {
-    console.log(window.innerWidth);
-    console.log(window.innerHeight * 0.65);
     this.audio = this.$refs.audio;
     let observer = new MutationObserver(() => {
       if (this.audio.src && this.audio.src.includes('mp3')) {
         this.setPlayStatus(false);
         this.ready = false;
-        console.log(' --- url loaded --- ');
-        this.audio.play();
+        this.audio.ondurationchange = () => {
+          console.log(' --- get duration ---');
+          this.totalTime = this.audio.duration;
+          console.log(this.audio.readyState);
+          this.audio.play();
+          // this.setPlayStatus(true);
+          // this.ready = true;
+        };
+        this.audio.onprogress = () => {
+          console.log(' --- on progress ---');
+          if (this.audio.readyState < 4) {
+            console.log(this.audio.readyState);
+            this.audio.play();
+          }
+        };
+        this.audio.oncanplaythrough = () => {
+          console.log(' --- can playthrough ---');
+          console.log(this.audio.readyState);
+          this.setPlayStatus(true);
+          this.ready = true;
+        };
       }
     });
     let config = {
@@ -95,13 +112,6 @@ export default {
       attributeFilter: ['src']
     };
     observer.observe(this.$refs.audio, config);
-
-    this.audio.oncanplaythrough = () => {
-      console.log(' --- ready to play ---');
-      this.totalTime = this.audio.duration;
-      this.setPlayStatus(true);
-      this.ready = true;
-    };
   },
   methods: {
     ...mapActions(['setShowPlayer', 'setPlayStatus', 'setShuffledList']),
@@ -179,16 +189,11 @@ export default {
         url = this.fmtUrl(this.currentPlaying.url);
       }
       return url;
-    },
-    canvasSize() {
-      let width = window.innerWidth;
-      let height = window.innerHeight * 0.65;
-      return [width, height];
     }
   },
   watch: {
     currentPlaying: {
-      async handler(val) {
+      handler(val) {
         if (val && Object.keys(val).length > 0) {
           // let colorthief = new ColorThief();
           let preloader = document.createElement('img');
@@ -210,7 +215,7 @@ export default {
               return c[0].color;
             }
 
-            color(preloader.src).then(res => {
+            color(`${preloader.src}?param=50y50`).then(res => {
               this.bgColor = res;
             });
 

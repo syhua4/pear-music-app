@@ -24,17 +24,10 @@
 <script>
 import PlaylistHeader from './PlaylistListHeader';
 
-import Loading from 'components/common/Loading/Loading';
-
-import { roundCountMixin, getArtistsMixin } from 'common/mixin';
+import { roundCountMixin, getArtistsMixin, loadingMixin } from 'common/mixin';
 export default {
   name: 'PlaylistList',
-  mixins: [roundCountMixin, getArtistsMixin],
-  data() {
-    return {
-      loading: true
-    };
-  },
+  mixins: [roundCountMixin, getArtistsMixin, loadingMixin],
   props: {
     item: {
       type: Array,
@@ -51,7 +44,7 @@ export default {
       default: false
     }
   },
-  components: { PlaylistHeader, Loading },
+  components: { PlaylistHeader },
   methods: {
     trackClick(index) {
       this.$emit('trackClick', index);
@@ -60,8 +53,8 @@ export default {
   watch: {
     item() {
       this.$nextTick(function() {
-        this.$emit('dataLoaded');
         this.loading = false;
+        this.$emit('dataLoaded');
       });
     }
   }

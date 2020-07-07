@@ -2,8 +2,9 @@
   <div id="recommend-view">
     <nav-bar class="main-nav">
       <i class="iconfont icon-listen" slot="left"></i>
-      <div slot="center" class="header">搜索 dpr{{ test2 }}</div>
-      <!-- <i class="iconfont icon-logo" slot="right" v-if="Object.keys(getPlayTrack).length === 0" /> -->
+      <div slot="center" class="header" @click="searchBarClick">
+        <search-bar :disable="true" />
+      </div>
       <img
         slot="right"
         class="cd"
@@ -59,6 +60,7 @@ import NavBar from 'components/common/NavBar/NavBar.vue';
 
 import Banner from 'components/content/Banner';
 import SliderDisplay from 'components/content/SliderDisplay';
+import SearchBar from 'components/content/SearchBar';
 
 import { getBanners, getPlaylists, getPlaylistTrackId, getTrack } from 'networks/recommend';
 import { getTracksMixin } from '../../common/mixin';
@@ -70,6 +72,7 @@ export default {
     NavBar,
     TabNav,
     SliderDisplay,
+    SearchBar,
     Scroll
   },
   mixins: [getTracksMixin],
@@ -99,6 +102,9 @@ export default {
     ...mapActions(['setShowPlayer']),
     playlistClick(id) {
       this.$router.push(`/playlist/${id}`);
+    },
+    searchBarClick() {
+      this.$router.push(`/search`);
     },
     test(e) {
       console.log(e);
@@ -135,7 +141,7 @@ export default {
     position: relative;
     z-index: 1;
     .header {
-      @include nav_header($m);
+      flex: 1;
     }
     .icon-listen,
     .icon-logo {

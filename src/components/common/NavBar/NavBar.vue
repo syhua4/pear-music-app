@@ -30,16 +30,21 @@ export default {
   display: flex;
   justify-content: space-between;
   .left-nav,
-  .right-nav {
+  .right-nav,
+  .center-nav {
     height: 84px;
     line-height: 84px;
     margin: 8px 20px 0;
   }
   .center-nav {
+    height: 100%;
+    margin: 0;
     flex: 1;
     text-align: center;
-    line-height: 100px;
-    @include nowrap();
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 }
 </style>

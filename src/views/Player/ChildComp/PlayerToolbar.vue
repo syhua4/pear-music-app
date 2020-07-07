@@ -1,9 +1,7 @@
 <template>
   <div class="player-toolbar">
     <i class="iconfont" :class="isFavourite" @click="toggleFavourite"></i>
-    <a :href="currentPlaying && currentPlaying.url">
-      <i class="iconfont icon-download"></i>
-    </a>
+    <i class="iconfont icon-download"></i>
     <i class="iconfont icon-comment"></i>
     <i class="iconfont icon-more--line"></i>
   </div>
