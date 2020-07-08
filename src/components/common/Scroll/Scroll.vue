@@ -2,14 +2,19 @@
   <div class="scroll-wrapper" ref="wrapper">
     <div class="scroll-content">
       <slot />
+      <loading :isShow="loading" v-if="loading && pullUpload" />
+      <span class="tip" v-else-if="pullUpload && !noTip">数据已加载完毕</span>
     </div>
   </div>
 </template>
 
 <script>
+import { loadingMixin } from 'common/mixin';
+
 import BScroll from 'better-scroll';
 export default {
   name: 'Scroll',
+  mixins: [loadingMixin],
   props: {
     probeType: {
       type: Number,
@@ -27,30 +32,12 @@ export default {
 
   data() {
     return {
-      scroll: null
+      scroll: null,
+      noTip: false
     };
   },
   mounted() {
-    this.scroll = new BScroll(this.$refs.wrapper, {
-      probeType: this.probeType,
-      pullUpload: this.pullUpload,
-      click: true,
-      observeDOM: true,
-      useTransition: false
-    });
-
-    if (this.probeType >= 2) {
-      this.scroll.on('scroll', position => {
-        this.$emit('scrolling', position);
-      });
-    }
-
-    if (this.pullUpload) {
-      this.scroll.on('pullingUp', () => {
-        this.$emit('pullUpLoad');
-      });
-    }
-
+    this.initBscroll();
     let observer = new MutationObserver(() => {
       this.refresh();
     });
@@ -64,22 +51,42 @@ export default {
     observer.observe(this.$refs.wrapper, config);
   },
   methods: {
+    initBscroll() {
+      this.$nextTick(() => {
+        this.scroll = new BScroll(this.$refs.wrapper, {
+          probeType: this.probeType,
+          pullUpLoad: this.pullUpload && { threshold: -50 },
+          click: true,
+          observeDOM: true,
+          useTransition: false
+        });
+
+        if (this.probeType >= 2) {
+          this.scroll.on('scroll', position => {
+            this.$emit('scrolling', position);
+          });
+        }
+
+        if (this.pullUpload) {
+          this.scroll.on('pullingUp', () => {
+            this.$emit('pullUpload');
+          });
+        }
+      });
+    },
     refresh() {
       console.log('---- refresh ----');
       this.scroll && this.scroll.refresh && this.scroll.refresh();
     },
     getYPosition() {
       return this.scroll ? this.scroll.y : 0;
+    },
+    scrollTo(x, y, time = 300) {
+      this.scroll && this.scroll.scrollTo && this.scroll.scrollTo(x, y, time);
+    },
+    finishPullUp() {
+      this.scroll && this.scroll.finishPullUp && this.scroll.finishPullUp();
     }
-    // updateScroller() {
-    //   this.scroll.on('scrollEnd', () => {
-    //     this.refresh()
-    //     console.log(this.scroll.maxScrollY)
-
-    //     this.scroll.maxScrollY = -17612
-    //     console.log(this.scroll.maxScrollY)
-    //   })
-    // }
   },
   watch: {
     refreshDelay: {
@@ -91,13 +98,30 @@ export default {
           }, val);
         }
       }
+    },
+    pullUpload: {
+      handler(val) {
+        if (val) {
+          this.initBscroll();
+        }
+      }
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+@import 'assets/css/mixin';
+
 .scroll-wrapper {
   width: 100%;
+  .tip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 20px;
+    @include font_size($s);
+    @include font_color();
+  }
 }
 </style>

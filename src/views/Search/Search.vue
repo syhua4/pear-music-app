@@ -53,8 +53,8 @@ export default {
     getKeywords().then(res => (this.keywords = res.data));
   },
   mounted() {
-    let input = this.$refs.searchBar.$refs.query;
-    input.focus();
+    // let input = this.$refs.searchBar.$refs.query;
+    // input.focus();
   },
   beforeRouteEnter(to, from, next) {
     console.log(to, from);

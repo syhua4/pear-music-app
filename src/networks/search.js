@@ -15,12 +15,13 @@ export function getSuggest(keywords) {
   });
 }
 
-export function getSearchResult(keywords, type = 1018) {
+export function getSearchResult(keywords, type, offset = 0) {
   return request({
     url: '/search',
     params: {
       keywords,
-      type
+      type,
+      offset
     }
   });
 }

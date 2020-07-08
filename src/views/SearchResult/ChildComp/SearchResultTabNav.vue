@@ -2,7 +2,7 @@
   <div class="search-tabnav">
     <swiper :options="options">
       <swiper-item class="slide" v-for="(title, index) in titles" :key="index">
-        <a class="tabnav" :class="{ active: index === tabIndex }">
+        <a class="tabnav" :class="{ active: index === tabIndex }" @click="tabClick(index)">
           <span class="tabnav-text">{{ title }}</span>
         </a>
       </swiper-item>
@@ -36,6 +36,11 @@ export default {
         freeMode: true
       }
     };
+  },
+  methods: {
+    tabClick(index) {
+      this.$emit('tabClick', index);
+    }
   },
   computed: {
     isActive() {

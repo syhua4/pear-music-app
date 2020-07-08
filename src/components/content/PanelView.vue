@@ -4,7 +4,7 @@
       <span class="panel-title">{{ title }}</span>
       <span class="panel-btn" v-if="btnText.length > 0" @click="btnClick">{{ btnText }}</span>
     </div>
-    <slot name="panel-content" />
+    <slot />
     <a class="panel-footer" v-if="footer.length > 0"
       >{{ footer }}
       <i class="iconfont icon-next" />
@@ -41,8 +41,9 @@ export default {
 <style lang="scss" scoped>
 @import 'assets/css/mixin.scss';
 .panel {
-  padding: 20px 24px 50px;
+  padding: 20px 0 50px;
   .panel-header {
+    padding: 0 24px;
     margin: 20px 0;
     height: 50px;
     line-height: 50px;

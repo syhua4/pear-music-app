@@ -4,7 +4,7 @@ import VueRouter from 'vue-router';
 const Recommend = () => import('views/Recommend/Recommend');
 const Playlist = () => import('views/Playlist/Playlist');
 const Search = () => import('views/Search/Search');
-const SearchResult = () => import('views/Search/SearchResult');
+const SearchResult = () => import('views/SearchResult/SearchResult');
 
 Vue.use(VueRouter);
 
