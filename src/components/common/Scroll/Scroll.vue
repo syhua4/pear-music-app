@@ -3,7 +3,6 @@
     <div class="scroll-content">
       <slot />
       <loading :isShow="loading" v-if="loading && pullUpload" />
-      <span class="tip" v-else-if="pullUpload && !noTip">数据已加载完毕</span>
     </div>
   </div>
 </template>
@@ -71,6 +70,10 @@ export default {
           this.scroll.on('pullingUp', () => {
             this.$emit('pullUpload');
           });
+        }
+
+        if (!this.scroll.maxScrollY && this.pullUpload) {
+          this.loading = false;
         }
       });
     },

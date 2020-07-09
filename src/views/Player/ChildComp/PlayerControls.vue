@@ -82,6 +82,7 @@ export default {
         return;
       }
       let deltaX = e.touches[0].pageX - this.touch.startX;
+      console.log(deltaX, this.$refs.dot.offsetWidth);
       let offsetWidth = Math.min(
         this.$refs.progressBar.clientWidth - this.$refs.dot.offsetWidth,
         Math.max(0, this.touch.left + deltaX)

@@ -2,22 +2,26 @@
   <div class="result-multi">
     <panel-view
       title="单曲"
-      :footer="results.song.more && results.song.moreText"
+      :footer="results.song.more ? results.song.moreText : ''"
       btnText="播放全部"
+      @btnClick="btnClick"
+      @footerClick="footerClick(1)"
       v-if="songs && songs.length !== 0"
     >
-      <song :results="songs" />
+      <song :results="songs" ref="song" :isShow="false" v-bind="$attrs" />
     </panel-view>
     <panel-view
       title="歌单"
-      :footer="results.playList.more && results.playList.moreText"
+      :footer="results.playList.more ? results.playList.moreText : ''"
+      @footerClick="footerClick(2)"
       v-if="playlists && playlists.length !== 0"
     >
       <playlist :results="playlists" />
     </panel-view>
     <panel-view
       title="视频"
-      :footer="results.video.more && results.video.moreText"
+      :footer="results.video.more ? results.video.moreText : ''"
+      @footerClick="footerClick(5)"
       v-if="videos && videos.length !== 0"
     >
       <videos :results="videos" />
@@ -29,14 +33,16 @@
     </panel-view>
     <panel-view
       title="歌手"
-      :footer="results.artist.more && results.artist.moreText"
+      :footer="results.artist.more ? results.artist.moreText : ''"
+      @footerClick="footerClick(3)"
       v-if="artists && artists.length !== 0"
     >
       <artist :results="artists" />
     </panel-view>
     <panel-view
       title="专辑"
-      :footer="results.album.more && results.album.moreText"
+      :footer="results.album.more ? results.album.moreText : ''"
+      @footerClick="footerClick(4)"
       v-if="albums && albums.length !== 0"
     >
       <album :results="albums" />
@@ -67,7 +73,7 @@ export default {
     return {
       songs: [],
       playlists: [],
-      video: [],
+      videos: [],
       sim_querys: [],
       artists: [],
       albums: []
@@ -75,23 +81,31 @@ export default {
   },
   props: {
     results: {
-      type: Object,
+      type: [Object, Array],
       default: () => {},
       required: true
+    }
+  },
+  methods: {
+    btnClick() {
+      this.$refs.song.playSong();
+    },
+    footerClick(index) {
+      this.$emit('changeTabNav', index);
     }
   },
   watch: {
     results: {
       immediate: true,
+      deep: true,
       handler(val) {
         if (val) {
-          this.albums = val.album.albums;
-          this.artists = val.artist.artists;
-          this.playlists = val.playList.playLists;
-          this.songs = val.song.songs;
-          this.videos = val.video.videos;
-          this.sim_querys = val.sim_query.sim_querys;
-          console.log(this.songs);
+          this.albums = val.album ? val.album.albums : [];
+          this.artists = val.artist ? val.artist.artists : [];
+          this.playlists = val.playlist ? val.playList.playLists : [];
+          this.songs = val.song ? val.song.songs : [];
+          this.videos = val.video ? val.video.videos : [];
+          this.sim_querys = val.sim_query ? val.sim_query.sim_querys : [];
         }
       }
     }

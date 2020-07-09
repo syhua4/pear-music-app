@@ -85,22 +85,18 @@ export default {
         this.ready = false;
         this.audio.ondurationchange = () => {
           console.log(' --- get duration ---');
+          this.currentTime = 0;
           this.totalTime = this.audio.duration;
-          console.log(this.audio.readyState);
           this.audio.play();
-          // this.setPlayStatus(true);
-          // this.ready = true;
         };
         this.audio.onprogress = () => {
           console.log(' --- on progress ---');
           if (this.audio.readyState < 4) {
-            console.log(this.audio.readyState);
             this.audio.play();
           }
         };
         this.audio.oncanplaythrough = () => {
           console.log(' --- can playthrough ---');
-          console.log(this.audio.readyState);
           this.setPlayStatus(true);
           this.ready = true;
         };
@@ -128,8 +124,8 @@ export default {
       } else {
         if (!this.isPlaying) {
           this.unshuffle();
-          this.$refs.controls.playNext();
         }
+        this.$refs.controls.playNext();
       }
     },
     toggleSonglist(status) {
@@ -184,7 +180,15 @@ export default {
       if (this.currentPlaying && this.songlist && this.songlist.length > 0) {
         if (!this.currentPlaying.url) {
           console.log('no url');
-          this.$refs.controls.playNext();
+          if (this.songlist.length === 1) {
+            console.log('1111');
+            this.$toast.show('很抱歉,这首歌暂时没有音源。为您返回上一页', 1000);
+            this.goBack();
+          } else {
+            console.log('2222');
+            this.$toast.show('很抱歉,这首歌暂时没有音源。为您播放下一首', 1000);
+            this.$refs.controls.playNext();
+          }
         }
         url = this.fmtUrl(this.currentPlaying.url);
       }

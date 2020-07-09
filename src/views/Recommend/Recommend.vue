@@ -106,9 +106,6 @@ export default {
     searchBarClick() {
       this.$router.push(`/search`);
     },
-    test(e) {
-      console.log(e);
-    },
     playSong(picUrl) {
       this.coverUrl = picUrl;
     },
@@ -117,13 +114,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isPlaying', 'currentPlaying']),
-    test1() {
-      return parseFloat(window.getComputedStyle(document.documentElement).fontSize);
-    },
-    test2() {
-      return Math.floor(window.devicePixelRatio);
-    }
+    ...mapGetters(['isPlaying', 'currentPlaying'])
   }
 };
 </script>

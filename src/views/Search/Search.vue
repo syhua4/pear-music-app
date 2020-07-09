@@ -57,13 +57,14 @@ export default {
     // input.focus();
   },
   beforeRouteEnter(to, from, next) {
-    console.log(to, from);
     next(vm => {
       vm.prevPath = to.meta.prevPath;
       if (from.meta.index === 0) {
         to.meta.prevPath = from.name;
       } else if (from.name === 'searchResult') {
         vm.$refs.searchBar.query = to.meta.prevQuery;
+      } else {
+        vm.$router.replace({ query: {} });
       }
     });
   },

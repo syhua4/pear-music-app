@@ -1,6 +1,9 @@
 <template>
   <div class="result-song" v-if="results && results.length > 0">
-    <div class="song" v-for="(song, index) in results" :key="song.id" @click="playSong(index)">
+    <div class="play-all iconfont" @click="playSong" v-show="isShow || $attrs.isShow">
+      {{ '\ue624' }} 播放全部
+    </div>
+    <div class="song" v-for="(song, index) in results" :key="song.id" @click.stop="playSong(index)">
       <div class="wrapper-left">
         <div class="song-name">{{ song.name }}</div>
         <div class="song-desc">
@@ -19,21 +22,22 @@
 </template>
 
 <script>
-import { getArtistsMixin } from 'common/mixin';
+import { getTrack } from 'networks/recommend';
+import { getArtistsMixin, getTracksMixin } from 'common/mixin';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'SearchSong',
-  mixins: [getArtistsMixin],
+  mixins: [getArtistsMixin, getTracksMixin],
   methods: {
     ...mapActions(['setPlayList', 'setShowPlayer', 'setCurrentIndex', 'setIsLoading']),
     playSong(index) {
       if (!this.isLoading) {
         this.setIsLoading(true);
       }
-      index || index === 0
-        ? this.setPlayList([this.allResults.song.songs[index]])
-        : this.setPlayList(this.allResults.song.songs);
+      typeof index === 'number'
+        ? this.setPlayList([this.tracks[index]])
+        : this.setPlayList(this.tracks);
       this.setCurrentIndex(0);
       this.setShowPlayer(true);
     }
@@ -46,6 +50,22 @@ export default {
       type: Array,
       default: () => [],
       required: true
+    },
+    isShow: {
+      type: Boolean,
+      default: true
+    }
+  },
+  watch: {
+    results: {
+      immediate: true,
+      deep: true,
+      handler(val) {
+        let ids = this.getTrackIds(val);
+        getTrack(ids).then(res => {
+          this.tracks = res.songs;
+        });
+      }
     }
   }
 };
@@ -56,6 +76,14 @@ export default {
 
 .result-song {
   margin: 0 24px;
+  .play-all {
+    padding-top: 20px;
+    height: 60px;
+    line-height: 60px;
+    &.iconfont {
+      @include font_size($m);
+    }
+  }
   .song {
     border-top: 1px solid #eee;
     border-bottom: 1px solid #eee;

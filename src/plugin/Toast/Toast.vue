@@ -39,9 +39,11 @@ export default {
   transform: translate3d(-50%, -50%, 0);
   background-color: rgba(0, 0, 0, 0.75);
   color: #fff;
-  padding: 0.16rem 0.2rem;
-  border-radius: 0.1rem;
+  padding: 10px;
+  border-radius: 10px;
   z-index: 999;
+  text-align: center;
+  word-wrap: break-word;
   .text {
     @include font_size($ms);
   }

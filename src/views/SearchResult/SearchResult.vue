@@ -15,7 +15,7 @@
       @pullUpload="loadMore"
       ref="scroll"
     >
-      <component :is="currentTab" v-bind="currentProps"></component>
+      <component :is="currentTab" v-bind="currentProps" @changeTabNav="tabClick"></component>
     </scroll>
   </div>
 </template>
@@ -70,14 +70,8 @@ export default {
     next();
   },
   methods: {
-    test() {
-      // console.log(position);
-    },
     goBack() {
       this.$router.go(-1);
-    },
-    goPlaylist(id) {
-      this.$router.push(`/playlist/${id}`);
     },
     async loadMore() {
       if (this.tabNavIndex !== 0) {
@@ -86,7 +80,7 @@ export default {
         let offset = this.results[key].list[key].length;
         await getSearchResult(this.query, id, offset).then(res => {
           console.log(res.result);
-          if (res.result.hasMore) {
+          if (res.result.hasMore && res.result[key].length) {
             this.results[key].list[key].push(...res.result[key]);
             console.log('数据请求完毕');
           } else {
@@ -101,11 +95,6 @@ export default {
       this.tabNavIndex = index;
       this.$refs.scroll.scrollTo(0, 0);
       this.$refs.scroll.refresh();
-      let key = Object.keys(this.results)[index];
-      let hasMore = this.results[key].list.hasMore;
-      if (index !== 0 && !hasMore) {
-        this.$refs.scroll.loading = false;
-      }
     }
   },
   computed: {

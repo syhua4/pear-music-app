@@ -5,7 +5,7 @@
       <span class="panel-btn" v-if="btnText.length > 0" @click="btnClick">{{ btnText }}</span>
     </div>
     <slot />
-    <a class="panel-footer" v-if="footer.length > 0"
+    <a class="panel-footer" v-if="footer.length > 0" @click="footerClick"
       >{{ footer }}
       <i class="iconfont icon-next" />
     </a>
@@ -33,6 +33,9 @@ export default {
   methods: {
     btnClick() {
       this.$emit('btnClick');
+    },
+    footerClick() {
+      this.$emit('footerClick');
     }
   }
 };

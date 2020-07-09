@@ -4,7 +4,7 @@
       v-for="playlist in results"
       :key="playlist.id"
       class="playlist"
-      @click="goPlaylist(playlist.id)"
+      @click.once="goPlaylist(playlist.id)"
     >
       <div class="wrapper-left">
         <img v-lazy="fmtUrl(playlist.coverImgUrl)" class="playlist-img" />
@@ -13,7 +13,7 @@
         <div class="playlist-name">{{ playlist.name }}</div>
         <div class="playlist-desc">
           <span class="playlist-track-count">{{ playlist.trackCount }}首音乐</span>
-          <span class="playlist-creator">by {{ playlist.creator.nickname }},</span>
+          <span class="playlist-creator">by {{ 'unknown' || playlist.creator.nickname }},</span>
           <span class="playlist-play-count">播放{{ playlist.playCount | round(1) }}次</span>
         </div>
       </div>

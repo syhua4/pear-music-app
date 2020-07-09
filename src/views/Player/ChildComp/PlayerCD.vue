@@ -14,7 +14,12 @@
       ref="cd"
     >
       <div class="cover">
-        <img v-lazy="currentPlaying && fmtUrl(currentPlaying.al.picUrl)" />
+        <img
+          v-lazy="
+            currentPlaying &&
+              fmtUrl(currentPlaying.al ? currentPlaying.al.picUrl : currentPlaying.album.picUrl)
+          "
+        />
       </div>
     </div>
   </div>
