@@ -67,6 +67,7 @@ export default {
   @include bg_color();
 
   .tabnav {
+    color: #fff;
     height: 49px;
     margin: 0;
     display: flex;

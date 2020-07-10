@@ -2,43 +2,43 @@
   <div class="recommend-tabnav">
     <swiper :options="options">
       <swiper-item class="slide">
-        <a class="tabnav">
+        <router-link class="tabnav" to="/recommend/songs">
           <div class="tabnav-icon">
             <span class="date">{{ date }}</span>
             <i class="iconfont icon-calender" />
           </div>
           <span class="tabnav-text">每日推荐</span>
-        </a>
+        </router-link>
       </swiper-item>
       <swiper-item class="slide">
-        <a class="tabnav">
+        <router-link class="tabnav" to="/">
           <i class="iconfont icon-playlist1" />
           <span class="tabnav-text">歌单</span>
-        </a>
+        </router-link>
       </swiper-item>
       <swiper-item class="slide">
-        <a class="tabnav">
+        <router-link class="tabnav" to="/">
           <i class="iconfont icon-top" />
           <span class="tabnav-text">排行榜</span>
-        </a>
+        </router-link>
       </swiper-item>
       <swiper-item class="slide">
-        <a class="tabnav">
+        <router-link class="tabnav" to="/">
           <i class="iconfont icon-radio" />
           <span class="tabnav-text">电台</span>
-        </a>
+        </router-link>
       </swiper-item>
       <swiper-item class="slide">
-        <a class="tabnav">
+        <router-link class="tabnav" to="/">
           <i class="iconfont icon-stream" />
           <span class="tabnav-text">直播</span>
-        </a>
+        </router-link>
       </swiper-item>
       <swiper-item class="slide">
-        <a class="tabnav">
+        <router-link class="tabnav" to="/">
           <i class="iconfont icon-digi-album" />
           <span class="tabnav-text">数字专辑</span>
-        </a>
+        </router-link>
       </swiper-item>
     </swiper>
   </div>

@@ -22,6 +22,10 @@ export default {
     return state.isLoading;
   },
 
+  isLogin(state) {
+    return state.isLogin;
+  },
+
   isPlaying(state) {
     return state.isPlaying;
   },

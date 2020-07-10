@@ -102,7 +102,7 @@ export default {
         if (val) {
           this.albums = val.album ? val.album.albums : [];
           this.artists = val.artist ? val.artist.artists : [];
-          this.playlists = val.playlist ? val.playList.playLists : [];
+          this.playlists = val.playList ? val.playList.playLists : [];
           this.songs = val.song ? val.song.songs : [];
           this.videos = val.video ? val.video.videos : [];
           this.sim_querys = val.sim_query ? val.sim_query.sim_querys : [];

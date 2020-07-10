@@ -74,6 +74,8 @@ export default {
 
         if (!this.scroll.maxScrollY && this.pullUpload) {
           this.loading = false;
+        } else if (!this.scroll.maxScrollY) {
+          this.refresh();
         }
       });
     },

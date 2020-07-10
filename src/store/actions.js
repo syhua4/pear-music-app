@@ -8,10 +8,12 @@ import {
   SET_SHUFFLED_LIST,
   SET_LOADING,
   SET_FAVOURITE,
-  SET_UNFAVOURITE
+  SET_UNFAVOURITE,
+  SET_LOGIN
 } from './mutation-types';
 
 import { getSongUrl } from 'networks/recommend';
+import { signIn } from 'networks/login';
 
 function getIds(list) {
   let ids = list
@@ -21,6 +23,7 @@ function getIds(list) {
     .join(',');
   return ids;
 }
+
 export default {
   setCurrentIndex({ commit }, index) {
     commit(SET_CURRENT_INDEX, index);
@@ -55,11 +58,24 @@ export default {
     commit(SET_SHUFFLED_LIST, list);
   },
 
-  async setUnfavourite({ commit }, id) {
-    await commit(SET_UNFAVOURITE, id);
-    return '已取消喜欢';
+  async setLogin({ commit }, loginInfo) {
+    console.log(loginInfo);
+    let msg, status;
+    await signIn(loginInfo.email, loginInfo.password).then(res => {
+      if (res.code === 502) {
+        msg = res.msg;
+        status = false;
+      } else if (res.code === 501) {
+        msg = '您输入的邮箱未验证';
+        status = false;
+      } else if (res.code === 200) {
+        msg = '登录成功';
+        status = true;
+      }
+    });
+    commit(SET_LOGIN, status);
+    return msg;
   },
-
   async setPlayList({ commit }, list) {
     let songUrl;
     await getSongUrl(getIds(list)).then(res => {
@@ -71,5 +87,10 @@ export default {
     }));
     commit(SET_PLAY_LIST, temp);
     commit(SET_LOADING, false);
+  },
+
+  async setUnfavourite({ commit }, id) {
+    await commit(SET_UNFAVOURITE, id);
+    return '已取消喜欢';
   }
 };

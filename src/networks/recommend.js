@@ -8,12 +8,13 @@ export function getBanners(type) {
     }
   });
 }
-export function getPlaylists(limit, cat) {
+export function getPlaylists(limit, cat, order = 'hot') {
   return request({
-    url: '/top/playlist/highquality',
+    url: '/top/playlist',
     params: {
       limit,
-      cat
+      cat,
+      order
     }
   });
 }
@@ -42,5 +43,11 @@ export function getSongUrl(id) {
     params: {
       id
     }
+  });
+}
+
+export function getDailySong() {
+  return request({
+    url: '/recommend/songs'
   });
 }

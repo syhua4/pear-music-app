@@ -51,6 +51,7 @@ export default {
       this.playlistInfo = res.playlist;
       let ids = this.getTrackIds(res.playlist.trackIds);
       getTrack(ids).then(res => {
+        console.log(res);
         this.tracks = res.songs;
       });
     });

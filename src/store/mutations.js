@@ -8,7 +8,8 @@ import {
   SET_SHUFFLED_LIST,
   SET_LOADING,
   SET_FAVOURITE,
-  SET_UNFAVOURITE
+  SET_UNFAVOURITE,
+  SET_LOGIN
 } from './mutation-types';
 
 import { mode } from './mode-type';
@@ -30,6 +31,10 @@ export default {
 
   [SET_LOADING](state, payload) {
     state.isLoading = payload;
+  },
+
+  [SET_LOGIN](state, payload) {
+    state.isLogin = payload;
   },
 
   [SET_PLAY_LIST](state, payload) {

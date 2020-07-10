@@ -7,5 +7,6 @@ export default {
   shuffledList: null,
   favouriteList: [],
   currentIndex: 0,
-  playMode: mode[0]
+  playMode: mode[0],
+  isLogin: false
 };

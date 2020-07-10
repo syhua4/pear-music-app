@@ -41,3 +41,13 @@ export function debounce(func, delay) {
     }, delay);
   };
 }
+
+export function isEmail(val) {
+  const pattern = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/;
+  const neteaseDomain = '163.com';
+  if (pattern.test(val)) {
+    let domain = val.substring(val.indexOf('@') + 1);
+    if (neteaseDomain === domain) return true;
+  }
+  return false;
+}

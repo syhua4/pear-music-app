@@ -3,7 +3,7 @@ import axios from 'axios';
 export function request(config) {
   const instance = axios.create({
     baseURL: process.env.NODE_ENV === 'production' ? process.env.VUE_APP_SERVER_URL : '/api',
-    timeout: 4000,
+    timeout: 10000,
     withCredentials: true
   });
   instance.interceptors.request.use(

@@ -49,6 +49,9 @@
         <div slot="more" class="more">查看更多</div>
       </slider-display>
     </scroll>
+    <transition :name="transitionName">
+      <router-view />
+    </transition>
   </div>
 </template>
 
@@ -95,7 +98,8 @@ export default {
       banners: [],
       asiaPop: [],
       kpop: [],
-      coverUrl: ''
+      coverUrl: '',
+      transitionName: ''
     };
   },
   methods: {
@@ -115,6 +119,12 @@ export default {
   },
   computed: {
     ...mapGetters(['isPlaying', 'currentPlaying'])
+  },
+  beforeRouteUpdate(to, from, next) {
+    to.meta.index === 0 && from.matched.length > 1
+      ? (this.transitionName = 'right')
+      : (this.transitionName = 'right');
+    next();
   }
 };
 </script>
@@ -222,6 +232,7 @@ export default {
     }
   }
 }
+
 @keyframes spin {
   0% {
     transform: rotate(0);
