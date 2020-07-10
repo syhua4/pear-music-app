@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 const Recommend = () => import('views/Recommend/Recommend');
 const RecommendSong = () => import('views/Recommend/ChildComp/RecommendDaily');
 const Playlist = () => import('views/Playlist/Playlist');
+const PlaylistSquare = () => import('views/PlaylistSquare/PlaylistSquare');
 const Search = () => import('views/Search/Search');
 const SearchResult = () => import('views/SearchResult/SearchResult');
 const Login = () => import('views/Login/Login');
@@ -28,11 +29,12 @@ const routes = [
       }
     ]
   },
+  { path: '/playlists', component: PlaylistSquare, name: 'playlist-square', meta: { index: 1 } },
   {
     path: '/playlist/:id',
     component: Playlist,
     name: 'playlist',
-    meta: { index: 1 }
+    meta: { index: 2 }
   },
   {
     path: '/search',

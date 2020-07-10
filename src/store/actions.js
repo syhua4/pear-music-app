@@ -59,7 +59,6 @@ export default {
   },
 
   async setLogin({ commit }, loginInfo) {
-    console.log(loginInfo);
     let msg, status;
     await signIn(loginInfo.email, loginInfo.password).then(res => {
       if (res.code === 502) {

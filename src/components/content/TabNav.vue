@@ -1,5 +1,5 @@
 <template>
-  <div class="search-tabnav">
+  <div class="tabnav">
     <swiper :options="options">
       <swiper-item class="slide" v-for="(title, index) in titles" :key="index">
         <a class="tabnav" :class="{ active: index === tabIndex }" @click="tabClick(index)">
@@ -7,6 +7,7 @@
         </a>
       </swiper-item>
     </swiper>
+    <slot name="more" />
   </div>
 </template>
 
@@ -45,8 +46,6 @@ export default {
   computed: {
     isActive() {
       return function(index) {
-        console.log(index);
-
         return index;
       };
     }
@@ -58,7 +57,7 @@ export default {
 @import 'assets/css/mixin';
 @import 'assets/css/variable';
 
-.search-tabnav {
+.tabnav {
   color: #fff;
   height: 50px;
   margin-top: -1px;

@@ -15,17 +15,19 @@
     <scroll ref="scroll" :probeType="3" @scrolling="scrollPosition">
       <div class="list-wrapper">
         <div class="play-all iconfont" @click="playSong">{{ '\ue624' }} 播放全部</div>
+        <loading :isShow="loading" v-if="loading" />
         <div
+          v-else
           class="song-wrapper"
           v-for="(song, index) in songs"
           :key="index"
           @click="playSong(index)"
         >
-          <img v-lazy="song.al.picUrl" />
+          <img v-lazy="fmtUrl(song.al.picUrl)" />
           <div class="song-desc">
             <div class="title">{{ song.name }}</div>
-            <span class="artist">{{ artists(song.ar) }}</span
-            ><span class="album">{{ song.al.name }}</span>
+            <span class="artist">{{ artists(song.ar) }}</span>
+            <span class="album">{{ song.al.name }}</span>
           </div>
           <i class="iconfont icon-more" />
         </div>
@@ -38,14 +40,14 @@
 import NavBar from 'components/common/NavBar/NavBar';
 import Scroll from 'components/common/Scroll/Scroll';
 import { fmtTime } from 'common/utils';
-import { getArtistsMixin } from 'common/mixin';
+import { getArtistsMixin, getUrlMixin, loadingMixin } from 'common/mixin';
 import { getDailySong } from 'networks/recommend';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'RecommendDaily',
   components: { NavBar, Scroll },
-  mixins: [getArtistsMixin],
+  mixins: [getArtistsMixin, getUrlMixin, loadingMixin],
   data() {
     return {
       date: { day: 1, month: 1 },
@@ -87,6 +89,13 @@ export default {
     },
     scrollPosition(position) {
       position.y <= -300 ? (this.showFixed = true) : (this.showFixed = false);
+    }
+  },
+  watch: {
+    songs() {
+      this.$nextTick(function() {
+        this.loading = false;
+      });
     }
   }
 };

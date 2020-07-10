@@ -11,7 +11,7 @@
         </router-link>
       </swiper-item>
       <swiper-item class="slide">
-        <router-link class="tabnav" to="/">
+        <router-link class="tabnav" to="/playlists">
           <i class="iconfont icon-playlist1" />
           <span class="tabnav-text">歌单</span>
         </router-link>

@@ -24,8 +24,8 @@
 import Scroll from 'components/common/Scroll/Scroll';
 import NavBar from 'components/common/NavBar/NavBar';
 import SearchBar from 'components/content/SearchBar';
+import TabNav from 'components/content/TabNav';
 
-import TabNav from './ChildComp/SearchResultTabNav';
 import SearchMulti from './ChildComp/SearchMulti';
 import Song from './ChildComp/SearchSong';
 import Playlist from './ChildComp/SearchPlaylist';

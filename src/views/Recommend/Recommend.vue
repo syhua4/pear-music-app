@@ -82,9 +82,9 @@ export default {
   created() {
     console.log('--recommend page loaded-');
     getBanners(2).then(res => (this.banners = res.banners));
-    getPlaylists(6, '华语').then(res => (this.asiaPop = res.playlists));
-    getPlaylists(6, '韩语').then(res => (this.kpop = res.playlists));
-    getPlaylists(1, '欧美').then(res => {
+    getPlaylists('华语', 6).then(res => (this.asiaPop = res.playlists));
+    getPlaylists('韩语', 6).then(res => (this.kpop = res.playlists));
+    getPlaylists('欧美', 1).then(res => {
       getPlaylistTrackId(res.playlists[0].id).then(res => {
         let ids = this.getTrackIds(res.playlist.trackIds, 12);
         getTrack(ids).then(res => {

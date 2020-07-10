@@ -8,13 +8,12 @@ export function getBanners(type) {
     }
   });
 }
-export function getPlaylists(limit, cat, order = 'hot') {
+export function getPlaylists(cat, limit = 30) {
   return request({
     url: '/top/playlist',
     params: {
-      limit,
       cat,
-      order
+      limit
     }
   });
 }
