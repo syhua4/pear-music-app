@@ -6,14 +6,27 @@
       <i class="iconfont icon-back" slot="right" />
     </nav-bar>
     <tab-nav :titles="getTabNavTitles" :tabIndex="tabNavIndex" @tabClick="tabClick" class="tab">
-      <i class="icon-category iconfont" slot="more" />
+      <router-link to="/playlists/category" slot="more">
+        <i class="icon-category iconfont"
+      /></router-link>
     </tab-nav>
-    <scroll>
+    <transition :name="transitionName">
+      <router-view />
+    </transition>
+    <loading :isShow="loading" v-if="loading" />
+    <scroll v-else :pullUpload="true" @pullUpload="loadMore" ref="scroll">
       <carousel
-        :results="category[tabNavIndex].list.playlists.slice(30, 33)"
-        v-if="tabNavIndex === 0"
+        :results="category[tabNavIndex].list.playlists.slice(0, 3)"
+        v-if="tabNavIndex === 0 && category[tabNavIndex].list.playlists"
       />
-      <grid :results="category[tabNavIndex].list.playlists" />
+      <grid
+        v-if="category[tabNavIndex].list.playlists"
+        :results="
+          tabNavIndex !== 0
+            ? category[tabNavIndex].list.playlists
+            : category[tabNavIndex].list.playlists.slice(3)
+        "
+      />
     </scroll>
   </div>
 </template>
@@ -27,30 +40,34 @@ import Scroll from 'components/common/Scroll/Scroll';
 import TabNav from 'components/content/TabNav';
 
 import { getPlaylists } from 'networks/recommend';
+import { loadingMixin } from 'common/mixin';
+
 export default {
   name: 'PlaylistSquare',
   components: { Grid, Carousel, NavBar, Scroll, TabNav },
-  created() {
+  mixins: [loadingMixin],
+  async created() {
+    await getPlaylists(this.category[0].name, 33).then(res => {
+      this.category[0].list = res;
+    });
     this.category.slice(1).map(cat => {
       getPlaylists(cat.name).then(res => {
         cat.list = res;
       });
     });
-    getPlaylists(this.category[0].name, 33).then(res => {
-      this.category[0].list = res;
-    });
   },
   data() {
     return {
       category: [
-        { name: '全部', list: [], alias: '推荐' },
-        { name: '华语', list: [] },
         { name: '流行', list: [] },
-        { name: '电子', list: [] },
+        { name: '华语', list: [] },
         { name: '摇滚', list: [] },
-        { name: '民谣', list: [] }
+        { name: '学习', list: [] },
+        { name: '怀旧', list: [] },
+        { name: '综艺', list: [] }
       ],
-      tabNavIndex: 0
+      tabNavIndex: 0,
+      transitionName: ''
     };
   },
   methods: {
@@ -58,15 +75,59 @@ export default {
       this.$router.go(-1);
     },
     tabClick(index) {
+      console.log(index);
       this.tabNavIndex = index;
+      this.$refs.scroll && this.$refs.scroll.scrollTo(0, 0);
+      this.$refs.scroll && this.$refs.scroll.refresh();
+    },
+    async loadMore() {
+      let name = this.category[this.tabNavIndex].name;
+      let offset = this.category[this.tabNavIndex].list.playlists.length;
+      await getPlaylists(name, 30, offset).then(res => {
+        if (res.more && res.playlists.length) {
+          this.category[this.tabNavIndex].list.playlists.push(...res.playlists);
+          console.log(this.category[this.tabNavIndex]);
+          console.log('数据请求完毕');
+        } else {
+          this.$refs.scroll.loading = false;
+          console.log('没有数据了');
+        }
+      });
+      this.$refs.scroll.finishPullUp();
     }
+  },
+  beforeRouteUpdate(to, from, next) {
+    if (to.path === '/playlists/category') {
+      to.meta.titles = this.getTabNavTitles;
+    }
+    if (from.path === '/playlists/category') {
+      if (typeof from.meta.activeTab === 'number') {
+        this.tabNavIndex = from.meta.activeTab;
+      }
+    }
+    if (to.meta.index > from.meta.index) {
+      this.transitionName = 'right';
+    } else {
+      this.transitionName = 'left';
+    }
+    next();
   },
   computed: {
     getTabNavTitles() {
       let titles = this.category.map(cat => {
-        return cat.alias || cat.name;
+        return cat.name;
       });
       return titles;
+    }
+  },
+  watch: {
+    category: {
+      deep: true,
+      handler() {
+        this.$nextTick(function() {
+          this.loading = false;
+        });
+      }
     }
   }
 };

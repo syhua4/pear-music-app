@@ -308,6 +308,9 @@ export default {
       display: flex;
       flex-direction: column;
       text-align: center;
+      .track-name {
+        @include clamp(1);
+      }
       .track-name,
       .track-artist {
         height: 50px;

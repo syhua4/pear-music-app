@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     submit(query) {
-      this.$router.push({ name: 'searchResult', query: { q: query } });
+      this.$emit('submit', query);
     }
   }
 };

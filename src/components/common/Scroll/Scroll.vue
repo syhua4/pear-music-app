@@ -106,6 +106,7 @@ export default {
     },
     pullUpload: {
       handler(val) {
+        console.log('exec pullupload');
         if (val) {
           this.initBscroll();
         }

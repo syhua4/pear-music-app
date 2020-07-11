@@ -1,8 +1,8 @@
 <template>
   <div class="tabnav">
     <swiper :options="options">
-      <swiper-item class="slide" v-for="(title, index) in titles" :key="index">
-        <a class="tabnav" :class="{ active: index === tabIndex }" @click="tabClick(index)">
+      <swiper-item class="slide" v-for="(title, index) in titles" :key="title">
+        <a class="tabnav" :class="{ active: index === tabIndex }" @click.stop="tabClick(index)">
           <span class="tabnav-text">{{ title }}</span>
         </a>
       </swiper-item>
@@ -41,13 +41,6 @@ export default {
   methods: {
     tabClick(index) {
       this.$emit('tabClick', index);
-    }
-  },
-  computed: {
-    isActive() {
-      return function(index) {
-        return index;
-      };
     }
   }
 };

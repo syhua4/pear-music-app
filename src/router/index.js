@@ -5,6 +5,9 @@ const Recommend = () => import('views/Recommend/Recommend');
 const RecommendSong = () => import('views/Recommend/ChildComp/RecommendDaily');
 const Playlist = () => import('views/Playlist/Playlist');
 const PlaylistSquare = () => import('views/PlaylistSquare/PlaylistSquare');
+const PlaylistCategoryList = () => import('views/PlaylistSquare/ChildComp/PlaylistCategoryList');
+const PlaylistCategory = () => import('views/PlaylistSquare/ChildComp/PlaylistCategory');
+
 const Search = () => import('views/Search/Search');
 const SearchResult = () => import('views/SearchResult/SearchResult');
 const Login = () => import('views/Login/Login');
@@ -29,7 +32,24 @@ const routes = [
       }
     ]
   },
-  { path: '/playlists', component: PlaylistSquare, name: 'playlist-square', meta: { index: 1 } },
+  {
+    path: '/playlists',
+    component: PlaylistSquare,
+    name: 'playlist-square',
+    meta: { index: 1 },
+    children: [
+      {
+        path: 'category',
+        meta: { index: 2 },
+        component: PlaylistCategoryList
+      },
+      {
+        path: ':cat',
+        meta: { index: 3 },
+        component: PlaylistCategory
+      }
+    ]
+  },
   {
     path: '/playlist/:id',
     component: Playlist,
@@ -43,7 +63,7 @@ const routes = [
     meta: { index: 1, prevPath: 'recommend' }
   },
   {
-    path: '/search',
+    path: '/search/:q',
     component: SearchResult,
     name: 'searchResult',
     props: true,

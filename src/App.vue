@@ -17,7 +17,7 @@ export default {
   name: 'App',
   data() {
     return {
-      keepAliveComp: ['recommend', 'playlist-square'],
+      keepAliveComp: ['Recommend', 'PlaylistSquare'],
       transitionName: ''
     };
   },

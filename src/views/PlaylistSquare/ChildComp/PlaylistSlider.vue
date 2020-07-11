@@ -2,9 +2,9 @@
   <div class="playlist-carousel">
     <swiper :options="options">
       <swiper-item v-for="item in results" :key="item.id">
-        <div class="wrapper">
+        <div class="wrapper" @click="goPlaylist(item.id)">
           <div class="img-wrapper">
-            <img v-lazy="fmtUrl(item.coverImgUrl)" />
+            <img :src="fmtUrl(item.coverImgUrl)" />
             <i class="iconfont icon-play-btn" />
           </div>
           <div class="title">{{ item.name }}</div>
@@ -44,6 +44,12 @@ export default {
       type: Array,
       default: () => [],
       required: true
+    }
+  },
+  methods: {
+    goPlaylist(id) {
+      console.log('111');
+      this.$router.push(`/playlist/${id}`);
     }
   }
 };

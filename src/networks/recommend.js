@@ -8,12 +8,13 @@ export function getBanners(type) {
     }
   });
 }
-export function getPlaylists(cat, limit = 30) {
+export function getPlaylists(cat, limit = 30, offset = 0) {
   return request({
     url: '/top/playlist',
     params: {
-      cat,
-      limit
+      cat: decodeURIComponent(cat),
+      limit,
+      offset
     }
   });
 }
@@ -45,8 +46,18 @@ export function getSongUrl(id) {
   });
 }
 
-export function getDailySong() {
+export function getDailySong(cookie) {
   return request({
-    url: '/recommend/songs'
+    url: `/recommend/songs?timestamps=${Date.now()}`,
+    method: 'post',
+    params: {
+      cookie
+    }
+  });
+}
+
+export function getPlaylistCategory() {
+  return request({
+    url: '/playlist/catlist'
   });
 }

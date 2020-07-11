@@ -56,14 +56,20 @@ export default {
     };
   },
   created() {
-    getDailySong().then(res => {
-      if (res.code === 200) {
-        this.songs = res.data.dailySongs;
-      }
-    });
+    if (this.isLogin && this.cookie) {
+      getDailySong(this.cookie).then(res => {
+        if (res.code === 200) {
+          this.songs = res.data.dailySongs;
+        } else {
+          this.$toast.show(res, 2000);
+        }
+      });
+    } else {
+      this.$toast.show('请先登录', 1000);
+    }
   },
   computed: {
-    ...mapGetters(['isLogin', 'isLoading']),
+    ...mapGetters(['isLogin', 'isLoading', 'cookie']),
     getDate() {
       let timestamp = new Date().getTime();
       let time = fmtTime(timestamp / 1000);

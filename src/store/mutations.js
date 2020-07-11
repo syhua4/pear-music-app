@@ -9,11 +9,16 @@ import {
   SET_LOADING,
   SET_FAVOURITE,
   SET_UNFAVOURITE,
-  SET_LOGIN
+  SET_LOGIN,
+  SET_COOKIE
 } from './mutation-types';
 
 import { mode } from './mode-type';
 export default {
+  [SET_COOKIE](state, payload) {
+    state.cookie = payload;
+  },
+
   [SET_CURRENT_INDEX](state, payload) {
     if (state.songlist && payload === state.songlist.length) {
       payload = 0;

@@ -6,6 +6,7 @@ src/common/test_account.js
 # local env files
 .env.local
 .env.*.local
+.env.*
 
 # Log files
 npm-debug.log*

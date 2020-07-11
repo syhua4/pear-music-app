@@ -9,7 +9,8 @@ import {
   SET_LOADING,
   SET_FAVOURITE,
   SET_UNFAVOURITE,
-  SET_LOGIN
+  SET_LOGIN,
+  SET_COOKIE
 } from './mutation-types';
 
 import { getSongUrl } from 'networks/recommend';
@@ -61,6 +62,7 @@ export default {
   async setLogin({ commit }, loginInfo) {
     let msg, status;
     await signIn(loginInfo.email, loginInfo.password).then(res => {
+      console.log(res);
       if (res.code === 502) {
         msg = res.msg;
         status = false;
@@ -69,6 +71,7 @@ export default {
         status = false;
       } else if (res.code === 200) {
         msg = '登录成功';
+        commit(SET_COOKIE, res.cookie);
         status = true;
       }
     });

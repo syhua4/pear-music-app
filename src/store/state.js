@@ -8,5 +8,6 @@ export default {
   favouriteList: [],
   currentIndex: 0,
   playMode: mode[0],
-  isLogin: false
+  isLogin: false,
+  cookie: ''
 };

@@ -1,7 +1,8 @@
 import { request } from './request';
 export function signIn(email, password) {
   return request({
-    url: '/login',
+    method: 'post',
+    url: `/login?timestamps=${Date.now()}`,
     params: {
       email,
       password

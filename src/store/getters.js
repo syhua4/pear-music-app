@@ -1,4 +1,8 @@
 export default {
+  cookie(state) {
+    return state.cookie;
+  },
+
   currentIndex(state) {
     return state.currentIndex;
   },

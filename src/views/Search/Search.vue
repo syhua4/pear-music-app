@@ -7,7 +7,7 @@
       <span slot="right" @click="goBack">取消</span>
     </nav-bar>
     <scroll class="scroll">
-      <component :is="currentComponent" v-bind="currentProps"></component>
+      <component :is="currentComponent" v-bind="currentProps" @submit="submit"></component>
     </scroll>
   </div>
 </template>
@@ -38,7 +38,7 @@ export default {
       this.$router.push({ name: this.prevPath });
     },
     submit(query) {
-      this.$router.replace({ name: 'searchResult', query: { q: query } });
+      this.$router.push(`/search/${query}`);
     },
     suggest(query) {
       this.query = query;

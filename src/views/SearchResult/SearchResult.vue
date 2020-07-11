@@ -55,7 +55,7 @@ export default {
     };
   },
   created() {
-    this.query = this.$route.query.q;
+    this.query = this.$route.params.q;
     Object.keys(this.results).map(elem => {
       getSearchResult(this.query, this.results[elem].id).then(res => {
         this.results[elem].list = res.result;
@@ -65,8 +65,16 @@ export default {
   mounted() {
     this.$refs.searchBar.query = this.query;
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      if (typeof from.meta.searchTabIndex === 'number') {
+        vm.tabNavIndex = from.meta.searchTabIndex;
+      }
+    });
+  },
   beforeRouteLeave(to, from, next) {
     to.meta.prevQuery = this.query;
+    to.meta.searchTabIndex = this.tabNavIndex;
     next();
   },
   methods: {

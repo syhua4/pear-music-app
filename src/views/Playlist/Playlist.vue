@@ -48,8 +48,13 @@ export default {
   mixins: [getTracksMixin],
   created() {
     getPlaylistTrackId(this.$route.params.id).then(res => {
+      let ids;
       this.playlistInfo = res.playlist;
-      let ids = this.getTrackIds(res.playlist.trackIds);
+      if (res.playlist.trackIds.length > 800) {
+        ids = this.getTrackIds(res.playlist.trackIds.slice(0, 800));
+      } else {
+        ids = this.getTrackIds(res.playlist.trackIds);
+      }
       getTrack(ids).then(res => {
         console.log(res);
         this.tracks = res.songs;
