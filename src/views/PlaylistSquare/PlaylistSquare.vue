@@ -6,13 +6,8 @@
       <i class="iconfont icon-back" slot="right" />
     </nav-bar>
     <tab-nav :titles="getTabNavTitles" :tabIndex="tabNavIndex" @tabClick="tabClick" class="tab">
-      <router-link to="/playlists/category" slot="more">
-        <i class="icon-category iconfont"
-      /></router-link>
+      <i class="icon-category iconfont" slot="more" @click="clickMore" />
     </tab-nav>
-    <transition :name="transitionName">
-      <router-view />
-    </transition>
     <loading :isShow="loading" v-if="loading" />
     <scroll v-else :pullUpload="true" @pullUpload="loadMore" ref="scroll">
       <carousel
@@ -28,6 +23,9 @@
         "
       />
     </scroll>
+    <transition name="right">
+      <router-view />
+    </transition>
   </div>
 </template>
 
@@ -71,8 +69,13 @@ export default {
     };
   },
   methods: {
+    clickMore() {
+      console.log('11111');
+      this.$router.push({ name: 'playlist-category', params: { title: this.getTabNavTitles } });
+    },
+
     goBack() {
-      this.$router.go(-1);
+      this.$router.push({ path: '/recommend' });
     },
     tabClick(index) {
       console.log(index);
@@ -104,11 +107,6 @@ export default {
       if (typeof from.meta.activeTab === 'number') {
         this.tabNavIndex = from.meta.activeTab;
       }
-    }
-    if (to.meta.index > from.meta.index) {
-      this.transitionName = 'right';
-    } else {
-      this.transitionName = 'left';
     }
     next();
   },
@@ -142,7 +140,7 @@ export default {
     position: relative;
     z-index: 1;
     .icon-back {
-      @include font_size($icon_s);
+      @include font_size($icon_ms);
     }
     .right-nav .icon-back {
       color: transparent;

@@ -1,44 +1,54 @@
 <template>
   <div class="search">
     <nav-bar class="nav">
+      <i slot="left" @click="goBack" class="iconfont icon-back" />
+
       <div slot="center" class="bar">
-        <search-bar ref="searchBar" @submit="submit" @suggest="suggest" />
+        <search-bar
+          ref="searchBar"
+          @submit="submit"
+          @suggest="suggest"
+          @click.native="clearSearch"
+        />
       </div>
-      <span slot="right" @click="goBack">取消</span>
     </nav-bar>
-    <scroll class="scroll">
-      <component :is="currentComponent" v-bind="currentProps" @submit="submit"></component>
-    </scroll>
+    <component :is="currentComponent" v-bind="currentProps" @submit="submit" />
   </div>
 </template>
 
 <script>
 import NavBar from 'components/common/NavBar/NavBar';
-import Scroll from 'components/common/Scroll/Scroll';
 import SearchBar from 'components/content/SearchBar';
 
 import SearchKeywords from './ChildComp/SearchKeywords';
 import SearchSuggest from './ChildComp/SearchSuggest';
 
 import { getKeywords, getSuggest } from 'networks/search';
+import SearchResult from '../SearchResult/SearchResult';
 
 export default {
   name: 'Search',
-  components: { NavBar, Scroll, SearchBar, SearchKeywords },
+  components: { NavBar, SearchBar, SearchKeywords },
   data() {
     return {
       prevPath: '',
       query: '',
       keywords: [],
-      suggests: []
+      suggests: [],
+      goSearch: false
     };
   },
   methods: {
+    clearSearch() {
+      this.query = '';
+      this.goSearch = false;
+    },
     goBack() {
-      this.$router.push({ name: this.prevPath });
+      this.$router.push('/recommend');
     },
     submit(query) {
-      this.$router.push(`/search/${query}`);
+      this.query = query;
+      this.goSearch = true;
     },
     suggest(query) {
       this.query = query;
@@ -49,24 +59,22 @@ export default {
       }
     }
   },
-  created() {
-    getKeywords().then(res => (this.keywords = res.data));
-  },
-  mounted() {
-    // let input = this.$refs.searchBar.$refs.query;
-    // input.focus();
-  },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      vm.prevPath = to.meta.prevPath;
-      if (from.meta.index === 0) {
-        to.meta.prevPath = from.name;
-      } else if (from.name === 'searchResult') {
-        vm.$refs.searchBar.query = to.meta.prevQuery;
-      } else {
-        vm.$router.replace({ query: {} });
+      if (from.name === 'playlist') {
+        vm.query = from.meta.prevQuery;
+        vm.goSearch = true;
       }
     });
+  },
+  beforeRouteLeave(to, from, next) {
+    if (to.name === 'playlist') {
+      to.meta.prevQuery = this.query;
+    }
+    next();
+  },
+  created() {
+    getKeywords().then(res => (this.keywords = res.data));
   },
   computed: {
     currentComponent() {
@@ -74,12 +82,31 @@ export default {
       this.suggests && this.suggests.length !== 0
         ? (curComp = SearchSuggest)
         : (curComp = SearchKeywords);
+
+      if (this.goSearch) {
+        curComp = SearchResult;
+      }
       return curComp;
     },
     currentProps() {
-      return this.suggests && this.suggests.length !== 0
-        ? { suggests: this.suggests, input: this.query }
-        : { keywords: this.keywords };
+      let curProps;
+      this.suggests && this.suggests.length !== 0
+        ? (curProps = { suggests: this.suggests, input: this.query })
+        : (curProps = { keywords: this.keywords });
+      if (this.goSearch) {
+        curProps = { query: this.query };
+      }
+      return curProps;
+    }
+  },
+  watch: {
+    query: {
+      immediate: true,
+      handler(val) {
+        if (val) {
+          this.$refs.searchBar.query = val;
+        }
+      }
     }
   }
 };
@@ -99,18 +126,12 @@ export default {
       display: flex;
       align-items: center;
     }
-    span {
+    .icon-back {
       color: #fff;
-      @include font_size($ms);
+      @include font_size($icon_ms);
     }
   }
-  .scroll {
-    position: fixed;
-    top: 100px;
-    bottom: 100px;
-    left: 0;
-    right: 0;
-  }
+
   .search-word {
     margin: 0 24px;
   }

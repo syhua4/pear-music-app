@@ -29,12 +29,13 @@ export default {
   @include font_size($m);
   display: flex;
   justify-content: space-between;
+  align-items: center;
   .left-nav,
   .right-nav,
   .center-nav {
     height: 84px;
     line-height: 84px;
-    margin: 8px 20px 0;
+    margin: 0 20px;
   }
   .center-nav {
     height: 100%;

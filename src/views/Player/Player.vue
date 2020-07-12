@@ -324,7 +324,7 @@ export default {
     }
     .icon-back,
     .icon-share {
-      @include font_size($icon_m);
+      @include font_size($icon_ms);
       font-weight: 500;
     }
   }

@@ -5,11 +5,9 @@ const Recommend = () => import('views/Recommend/Recommend');
 const RecommendSong = () => import('views/Recommend/ChildComp/RecommendDaily');
 const Playlist = () => import('views/Playlist/Playlist');
 const PlaylistSquare = () => import('views/PlaylistSquare/PlaylistSquare');
-const PlaylistCategoryList = () => import('views/PlaylistSquare/ChildComp/PlaylistCategoryList');
 const PlaylistCategory = () => import('views/PlaylistSquare/ChildComp/PlaylistCategory');
 
 const Search = () => import('views/Search/Search');
-const SearchResult = () => import('views/SearchResult/SearchResult');
 const Login = () => import('views/Login/Login');
 
 Vue.use(VueRouter);
@@ -39,19 +37,15 @@ const routes = [
     meta: { index: 1 },
     children: [
       {
+        name: 'playlist-category',
         path: 'category',
         meta: { index: 2 },
-        component: PlaylistCategoryList
-      },
-      {
-        path: ':cat',
-        meta: { index: 3 },
         component: PlaylistCategory
       }
     ]
   },
   {
-    path: '/playlist/:id',
+    path: '/playlists/:id',
     component: Playlist,
     name: 'playlist',
     meta: { index: 2 }
@@ -60,14 +54,7 @@ const routes = [
     path: '/search',
     component: Search,
     name: 'search',
-    meta: { index: 1, prevPath: 'recommend' }
-  },
-  {
-    path: '/search/:q',
-    component: SearchResult,
-    name: 'searchResult',
-    props: true,
-    meta: { index: 2 }
+    meta: { index: 1 }
   },
   {
     path: '/account',

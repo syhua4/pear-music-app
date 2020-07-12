@@ -130,7 +130,7 @@ export default {
     color: #fff;
     background-color: transparent;
     .icon-back {
-      @include font_size($icon_m);
+      @include font_size($icon_ms);
     }
     .icon-more--line {
       @include font_size($icon_l);

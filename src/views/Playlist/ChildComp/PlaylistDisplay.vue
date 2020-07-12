@@ -119,6 +119,15 @@ export default {
       flex: 0 0 auto;
       position: relative;
       margin-right: 20px;
+      &:after {
+        content: '';
+        display: block;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0) 25%);
+      }
       img {
         width: 100%;
         height: 100%;
@@ -127,10 +136,11 @@ export default {
       }
       span {
         position: absolute;
-        top: 15px;
-        right: 20px;
+        z-index: 1;
+        top: 10px;
+        right: 16px;
+        align-self: flex-start;
         color: #fff;
-        line-height: $s;
         @include font_size($s);
         .icon-play-s {
           margin-right: -8px;

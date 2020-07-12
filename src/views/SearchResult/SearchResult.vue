@@ -1,11 +1,11 @@
 <template>
   <div class="result">
-    <nav-bar class="nav">
+    <!-- <nav-bar class="nav">
       <i slot="left" class="iconfont icon-back" @click="goBack" />
       <div slot="center" class="bar">
         <search-bar ref="searchBar" @click.native="goBack" />
       </div>
-    </nav-bar>
+    </nav-bar> -->
     <tab-nav :titles="getTabNavTitles" :tabIndex="tabNavIndex" @tabClick="tabClick" />
     <loading :isShow="loading" v-if="loading" />
     <scroll
@@ -42,7 +42,7 @@ export default {
   mixins: [loadingMixin],
   data() {
     return {
-      query: '',
+      // query: '',
       results: {
         multi: { name: '综合', id: 1018, list: [] },
         songs: { name: '单曲', id: 1, list: [] },
@@ -55,22 +55,18 @@ export default {
     };
   },
   created() {
-    this.query = this.$route.params.q;
     Object.keys(this.results).map(elem => {
       getSearchResult(this.query, this.results[elem].id).then(res => {
         this.results[elem].list = res.result;
       });
     });
   },
-  mounted() {
-    this.$refs.searchBar.query = this.query;
-  },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      if (typeof from.meta.searchTabIndex === 'number') {
-        vm.tabNavIndex = from.meta.searchTabIndex;
-      }
-    });
+  props: {
+    query: {
+      type: String,
+      default: '',
+      required: true
+    }
   },
   beforeRouteLeave(to, from, next) {
     to.meta.prevQuery = this.query;
@@ -202,7 +198,7 @@ export default {
     }
   }
   .icon-back {
-    @include font_size($icon_s);
+    @include font_size($icon_ms);
     color: #fff;
   }
 

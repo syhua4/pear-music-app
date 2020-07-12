@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     goPlaylist(id) {
-      this.$router.push(`/playlist/${id}`);
+      this.$router.push(`/playlists/${id}`);
     }
   }
 };

@@ -69,7 +69,7 @@ export default {
   .nav {
     color: #fff;
     .icon-back {
-      @include font_size($icon_s);
+      @include font_size($icon_ms);
     }
     .right-nav .icon-back {
       color: transparent;

@@ -105,7 +105,7 @@ export default {
   methods: {
     ...mapActions(['setShowPlayer']),
     playlistClick(id) {
-      this.$router.push(`/playlist/${id}`);
+      this.$router.push(`/playlists/${id}`);
     },
     searchBarClick() {
       this.$router.push(`/search`);

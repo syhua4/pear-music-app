@@ -1,10 +1,5 @@
 <template>
-  <div class="playlist-category">
-    <nav-bar class="nav">
-      <i class="iconfont icon-back" slot="left" @click="goBack" />
-      <div class="header" slot="center">所有歌单</div>
-      <i class="iconfont icon-back" slot="right" />
-    </nav-bar>
+  <div class="category-list">
     <scroll>
       <div class="category" v-for="(cat, i) in categories" :key="cat + i">
         <div class="cat-name">{{ cat }}</div>
@@ -22,13 +17,12 @@
 </template>
 
 <script>
-import NavBar from 'components/common/NavBar/NavBar';
 import Scroll from 'components/common/Scroll/Scroll';
 
 import { getPlaylistCategory } from 'networks/recommend';
 export default {
   name: 'PlaylistCategoryList',
-  components: { NavBar, Scroll },
+  components: { Scroll },
   data() {
     return {
       categories: [],
@@ -50,18 +44,8 @@ export default {
     });
   },
   methods: {
-    goBack() {
-      this.$router.go(-1);
-    },
     toCategory(name) {
-      let main_cat = this.$route.meta.titles;
-      let index = main_cat.indexOf(name);
-      if (index >= 0) {
-        this.$route.meta.activeTab = index;
-        this.goBack();
-      } else {
-        this.$router.push(`/playlists/${name}`);
-      }
+      this.$emit('toCategory', name);
     }
   }
 };
@@ -69,28 +53,10 @@ export default {
 
 <style lang="scss" scoped>
 @import 'assets/css/mixin.scss';
-.playlist-category {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  background-color: #fff;
-  .nav {
-    position: relative;
-    color: #fff;
-    z-index: 1;
-    .icon-back {
-      @include font_size($icon_m);
-    }
-    .right-nav i {
-      color: transparent;
-    }
-  }
+.category-list {
   .scroll-wrapper {
     position: fixed;
-    top: 100px;
+    top: 110px;
     bottom: 0;
     left: 0;
     right: 0;

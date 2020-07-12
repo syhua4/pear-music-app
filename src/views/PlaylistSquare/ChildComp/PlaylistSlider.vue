@@ -49,7 +49,7 @@ export default {
   methods: {
     goPlaylist(id) {
       console.log('111');
-      this.$router.push(`/playlist/${id}`);
+      this.$router.push(`/playlists/${id}`);
     }
   }
 };

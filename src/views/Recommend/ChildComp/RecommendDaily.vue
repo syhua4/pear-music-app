@@ -123,7 +123,7 @@ export default {
     background-color: transparent;
     .icon-back {
       color: #fff;
-      @include font_size($icon_m);
+      @include font_size($icon_ms);
     }
   }
   .top {

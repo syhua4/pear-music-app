@@ -74,7 +74,14 @@ export default {
   .right-enter-active,
   .right-leave-active,
   .left-leave-active {
+    will-change: transform;
     transition: all 0.5s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #fff;
   }
 }
 </style>
