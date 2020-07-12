@@ -1,19 +1,19 @@
 <template>
   <div id="tabbar">
     <tab-bar>
-      <tab-bar-item path="recommend">
+      <tab-bar-item path="/recommend">
         <i class="iconfont icon-logo " slot="tabbar-icon" />
         <div class="item-text" slot="tabbar-text">发现音乐</div>
       </tab-bar-item>
-      <tab-bar-item path="mine">
+      <tab-bar-item path="/mine">
         <i class="iconfont icon-music" slot="tabbar-icon" />
         <div class="item-text" slot="tabbar-text">我的音乐</div>
       </tab-bar-item>
-      <tab-bar-item path="video">
+      <tab-bar-item path="/video">
         <i class="iconfont icon-friends" slot="tabbar-icon" />
         <div class="item-text" slot="tabbar-text">朋友</div>
       </tab-bar-item>
-      <tab-bar-item path="account">
+      <tab-bar-item path="/account">
         <i class="iconfont icon-user" slot="tabbar-icon" />
         <div class="item-text" slot="tabbar-text">账号</div>
       </tab-bar-item>

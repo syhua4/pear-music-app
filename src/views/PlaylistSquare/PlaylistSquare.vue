@@ -156,7 +156,7 @@ export default {
       &::after {
         position: absolute;
         content: '';
-        border: 2px solid #d64139;
+        border-bottom: 4px solid #d64139;
         bottom: 0;
         left: 50%;
         transform: translate3d(-50%, 30%, 0);
@@ -164,9 +164,8 @@ export default {
       }
     }
   }
-  .tab {
+  .tabnav {
     position: relative;
-    border-bottom: 1px solid #ccc;
     .icon-category {
       position: absolute;
       background-color: #fff;
@@ -176,6 +175,7 @@ export default {
       @include font_size($icon_m);
     }
   }
+
   .scroll-wrapper {
     position: fixed;
     top: 150px;

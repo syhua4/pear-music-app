@@ -201,11 +201,11 @@ export default {
       flex: 1;
     }
   }
-
   .icon-back {
     @include font_size($icon_s);
     color: #fff;
   }
+
   .scroll {
     position: fixed;
     top: 150px;
