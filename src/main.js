@@ -5,7 +5,6 @@ import store from './store';
 import fastclick from 'fastclick';
 import './assets/css/base.scss';
 import VueLazyLoad from 'vue-lazyload';
-
 import Toast from 'plugin/Toast/index';
 
 fastclick.attach(document.body);

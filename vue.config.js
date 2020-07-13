@@ -40,5 +40,9 @@ module.exports = {
       }
     }
   },
-  publicPath: process.env.NODE_ENV === 'production' ? './' : ''
+  publicPath: process.env.NODE_ENV === 'production' ? './' : '',
+  transpileDependencies: [
+    'swiper', // 将可能不会被编译的依赖写到该数组
+    'dom7'
+  ]
 };

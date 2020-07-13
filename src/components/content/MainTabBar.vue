@@ -3,15 +3,15 @@
     <tab-bar>
       <tab-bar-item path="/recommend">
         <i class="iconfont icon-logo " slot="tabbar-icon" />
-        <div class="item-text" slot="tabbar-text">发现音乐</div>
+        <div class="item-text" slot="tabbar-text">发现</div>
       </tab-bar-item>
       <tab-bar-item path="/mine">
         <i class="iconfont icon-music" slot="tabbar-icon" />
-        <div class="item-text" slot="tabbar-text">我的音乐</div>
+        <div class="item-text" slot="tabbar-text">我的</div>
       </tab-bar-item>
-      <tab-bar-item path="/video">
-        <i class="iconfont icon-friends" slot="tabbar-icon" />
-        <div class="item-text" slot="tabbar-text">朋友</div>
+      <tab-bar-item path="/radio">
+        <i class="iconfont icon-radio" slot="tabbar-icon" />
+        <div class="item-text" slot="tabbar-text">电台</div>
       </tab-bar-item>
       <tab-bar-item path="/account">
         <i class="iconfont icon-user" slot="tabbar-icon" />
@@ -38,16 +38,16 @@ export default {
 #tabbar {
   .icon-logo,
   .icon-music,
-  .icon-friends,
+  .icon-radio,
   .icon-user {
-    @include font_size($icon_m);
+    @include font_size($icon_ms);
   }
   .item-text {
     @include font_size($s);
   }
   .router-link-exact-active .icon-logo::before,
   .router-link-exact-active .icon-music::before,
-  .router-link-exact-active .icon-friends::before,
+  .router-link-exact-active .icon-radio::before,
   .router-link-exact-active .icon-user::before {
     color: #fff;
     border-radius: 50%;

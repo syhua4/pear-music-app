@@ -17,28 +17,22 @@
         </router-link>
       </swiper-item>
       <swiper-item class="slide">
-        <router-link class="tabnav" to="/">
+        <router-link class="tabnav" to="/toplist">
           <i class="iconfont icon-top" />
           <span class="tabnav-text">排行榜</span>
         </router-link>
       </swiper-item>
       <swiper-item class="slide">
-        <router-link class="tabnav" to="/">
-          <i class="iconfont icon-radio" />
-          <span class="tabnav-text">电台</span>
-        </router-link>
-      </swiper-item>
-      <swiper-item class="slide">
-        <router-link class="tabnav" to="/">
+        <a class="tabnav" @click="noFunc">
           <i class="iconfont icon-stream" />
           <span class="tabnav-text">直播</span>
-        </router-link>
+        </a>
       </swiper-item>
       <swiper-item class="slide">
-        <router-link class="tabnav" to="/">
+        <a class="tabnav" @click="noFunc">
           <i class="iconfont icon-digi-album" />
           <span class="tabnav-text">数字专辑</span>
-        </router-link>
+        </a>
       </swiper-item>
     </swiper>
   </div>
@@ -54,7 +48,7 @@ export default {
     return {
       options: {
         autoplay: '',
-        slidesPerView: '5.3',
+        slidesPerView: '4.5',
         freeMode: true
       }
     };
@@ -62,6 +56,11 @@ export default {
   computed: {
     date: function() {
       return new Date().getDate();
+    }
+  },
+  methods: {
+    noFunc() {
+      this.$toast.show('功能还没完成哦', 1000);
     }
   }
 };

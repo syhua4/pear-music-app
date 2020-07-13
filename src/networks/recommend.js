@@ -61,3 +61,9 @@ export function getPlaylistCategory() {
     url: '/playlist/catlist'
   });
 }
+
+export function getToplist() {
+  return request({
+    url: '/toplist/detail'
+  });
+}

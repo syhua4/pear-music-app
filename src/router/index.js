@@ -2,11 +2,15 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 
 const Recommend = () => import('views/Recommend/Recommend');
+const Radio = () => import('views/Radio/Radio');
+const RadioCategory = () => import('views/Radio/ChildComp/RadioCategory');
+const RadioToplist = () => import('views/Radio/ChildComp/RadioToplist');
+const RadioProgram = () => import('views/Radio/ChildComp/RadioProgram');
 const RecommendSong = () => import('views/Recommend/ChildComp/RecommendDaily');
 const Playlist = () => import('views/Playlist/Playlist');
 const PlaylistSquare = () => import('views/PlaylistSquare/PlaylistSquare');
 const PlaylistCategory = () => import('views/PlaylistSquare/ChildComp/PlaylistCategory');
-
+const Toplist = () => import('views/Toplist/Toplist');
 const Search = () => import('views/Search/Search');
 const Login = () => import('views/Login/Login');
 
@@ -30,6 +34,32 @@ const routes = [
       }
     ]
   },
+  { path: '/toplist', component: Toplist, name: 'toplist', meta: { index: 1 } },
+  {
+    path: '/radio',
+    component: Radio,
+    name: 'radio',
+    meta: { index: 0 },
+    children: [
+      {
+        name: 'radio-category',
+        path: 'category',
+        component: RadioCategory,
+        meta: { index: 1 }
+      },
+      {
+        path: 'toplist',
+        component: RadioToplist,
+        meta: { index: 1 }
+      },
+      {
+        path: 'program/:id',
+        component: RadioProgram,
+        meta: { index: 1 }
+      }
+    ]
+  },
+
   {
     path: '/playlists',
     component: PlaylistSquare,
