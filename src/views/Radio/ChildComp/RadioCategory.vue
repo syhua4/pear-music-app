@@ -5,19 +5,26 @@
       <div slot="center">{{ Object.keys(catInfo).length ? catInfo.name : '电台分类' }}</div>
       <i class="iconfont icon-back" slot="right" />
     </nav-bar>
-    <transition :name="Object.keys(catInfo).length ? 'right' : 'left'">
-      <component :is="currentComponent" v-bind="currentProp" @categoryClick="categoryClick" />
-    </transition>
+    <!-- <transition :name="Object.keys(catInfo).length ? 'right' : 'left'"> -->
+    <loading :isShow="loading" />
+    <component
+      :is="currentComponent"
+      v-bind="currentProp"
+      @contentLoaded="contentLoaded"
+      @categoryClick="categoryClick"
+    />
+    <!-- </transition> -->
   </div>
 </template>
 
 <script>
 import CatList from './RadioCategoryList';
 import CatInfo from './RadioCategoryInfo';
-
+import { loadingMixin } from 'common/mixin';
 import NavBar from 'components/common/NavBar/NavBar';
 export default {
   name: 'RadioCategory',
+  mixins: [loadingMixin],
   components: { NavBar },
   data() {
     return {
@@ -31,7 +38,11 @@ export default {
   },
   methods: {
     categoryClick(item) {
+      this.loading = true;
       this.catInfo = item;
+    },
+    contentLoaded() {
+      this.loading = false;
     },
     goBack() {
       Object.keys(this.catInfo).length ? (this.catInfo = {}) : this.$router.push('/radio');

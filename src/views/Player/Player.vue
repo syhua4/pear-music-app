@@ -205,7 +205,7 @@ export default {
           preloader.crossOrigin = 'anonymous';
           preloader.addEventListener('load', () => {
             console.log('img load');
-            this.bgVar['--bg'] = `url("${this.fmtUrl(val.al.picUrl)}")`;
+            this.bgVar['--bg'] = `url("${this.fmtUrl(val.al.picUrl + '?param=50y50')}")`;
             this.bgVar['--opacity'] = 1;
             // this.bgColor = colorthief.getColor(preloader);
             async function color(img) {

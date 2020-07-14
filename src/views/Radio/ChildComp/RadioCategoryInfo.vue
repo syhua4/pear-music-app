@@ -1,13 +1,13 @@
 <template>
   <div class="radio-cat-info" v-if="results.length">
-    <scroll>
+    <scroll :pullUpload="true" @pullUpload="loadMore" ref="scroll">
       <div
         class="program-wrapper"
         v-for="radio in results"
         :key="radio.id"
         @click.stop="toProgram(radio.id)"
       >
-        <img v-lazy="radio.picUrl" />
+        <img v-lazy="fmtUrl(radio.picUrl)" />
         <div class="program-info">
           <div class="name">
             {{ radio.name }}
@@ -15,7 +15,7 @@
           <div class="rcmdtext">{{ radio.rcmdtext }}</div>
           <div class="desc">
             <span class="program-count"> {{ `节目:${radio.programCount},` }}</span>
-            <span class="sub-count">{{ `订阅:${radio.subCount} ` }}</span>
+            <span class="sub-count">订阅:{{ radio.subCount | round(1) }}</span>
           </div>
         </div>
       </div>
@@ -25,9 +25,11 @@
 
 <script>
 import Scroll from 'components/common/Scroll/Scroll';
+import { getUrlMixin, roundCountMixin } from 'common/mixin';
 import { getHotRadioByCat } from 'networks/radio';
 export default {
   name: 'RadioCategoryInfo',
+  mixins: [getUrlMixin, roundCountMixin],
   components: { Scroll },
 
   created() {
@@ -50,6 +52,27 @@ export default {
   methods: {
     toProgram(id) {
       this.$router.push(`/radio/program/${id}`);
+    },
+    async loadMore() {
+      let offset = this.results.length;
+      await getHotRadioByCat(this.id, offset).then(res => {
+        if (res.hasMore && res.djRadios.length) {
+          this.results.push(...res.djRadios);
+        } else {
+          this.$refs.scroll.loading = false;
+        }
+      });
+      this.$refs.scroll.finishPullUp();
+    }
+  },
+  watch: {
+    results: {
+      deep: true,
+      handler() {
+        this.$nextTick(function() {
+          this.$emit('contentLoaded');
+        });
+      }
     }
   }
 };

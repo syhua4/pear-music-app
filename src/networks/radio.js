@@ -40,13 +40,10 @@ export function getProgramToplist() {
   });
 }
 
-// 24小时节目榜 (榜单页面 lim=3, 点进去 lim=100)
-export function getDailyToplist(limit) {
+// 24小时节目榜
+export function getDailyToplist() {
   return request({
-    url: '/dj/program/toplist/hours',
-    params: {
-      limit
-    }
+    url: '/dj/program/toplist/hours'
   });
 }
 

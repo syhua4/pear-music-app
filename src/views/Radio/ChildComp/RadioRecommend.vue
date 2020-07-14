@@ -1,5 +1,6 @@
 <template>
   <div class="radio-recommend" v-if="results && results.length">
+    <loading :isShow="loading" />
     <div class="wrapper" v-for="result in results" :key="result.categoryId">
       <div class="header" @click.stop="toCategory(result)">
         {{ result.categoryName }}
@@ -13,7 +14,7 @@
           @click.stop="toProgram(radio.id)"
         >
           <div class="img-wrapper">
-            <img v-lazy="radio.picUrl" />
+            <img v-lazy="fmtUrl(radio.picUrl)" />
             <span>{{ radio.name }}</span>
           </div>
           <span class="radio-name">{{ radio.rcmdText }}</span>
@@ -24,8 +25,10 @@
 </template>
 
 <script>
+import { getUrlMixin, loadingMixin } from 'common/mixin';
 export default {
   name: 'RadioRecommend',
+  mixins: [getUrlMixin, loadingMixin],
   props: {
     results: {
       type: Array,
@@ -40,6 +43,16 @@ export default {
     },
     toProgram(id) {
       this.$router.push(`/radio/program/${id}`);
+    }
+  },
+  watch: {
+    results: {
+      deep: true,
+      handler() {
+        this.$nextTick(function() {
+          this.loading = false;
+        });
+      }
     }
   }
 };

@@ -35,11 +35,9 @@ export default {
   created() {
     getBanner().then(res => {
       this.banners = res.data;
-      console.log(res);
     });
 
     getRecommendRadio().then(res => {
-      console.log(res);
       this.recommend = res.data;
     });
   }

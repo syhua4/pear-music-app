@@ -10,7 +10,7 @@
           @click.stop="categoryClick(item)"
         >
           <div class="inner">
-            <img v-lazy="item.picUrl" />
+            <img v-lazy="fmtUrl(item.picUrl)" />
             <span class="cat-name">{{ item.name }}</span>
           </div>
         </div>
@@ -24,7 +24,7 @@
           @click.stop="categoryClick(item)"
         >
           <div class="inner">
-            <img v-lazy="item.picUrl" />
+            <img v-lazy="fmtUrl(item.picUrl)" />
             <span class="cat-name">{{ item.name }}</span>
           </div>
         </div>
@@ -35,9 +35,11 @@
 
 <script>
 import Scroll from 'components/common/Scroll/Scroll';
+import { getUrlMixin } from 'common/mixin';
 import { getCategory } from 'networks/radio';
 export default {
   name: 'RadioCategoryList',
+  mixins: [getUrlMixin],
   components: { Scroll },
   data() {
     return {
@@ -45,8 +47,8 @@ export default {
       catList: []
     };
   },
-  async created() {
-    await getCategory().then(res => {
+  created() {
+    getCategory().then(res => {
       res.categories.slice(0, 6).map(item => {
         this.hotCatList.push({ picUrl: item.pic84x84IdUrl, name: item.name, id: item.id });
       });
@@ -59,6 +61,16 @@ export default {
     categoryClick(item) {
       let itemInfo = { name: item.name, id: item.id };
       this.$emit('categoryClick', itemInfo);
+    }
+  },
+  watch: {
+    catList: {
+      deep: true,
+      handler() {
+        this.$nextTick(function() {
+          this.$emit('contentLoaded');
+        });
+      }
     }
   }
 };

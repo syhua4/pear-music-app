@@ -1,49 +1,104 @@
 <template>
   <div class="program">
     <nav-bar class="nav">
-      <i class="iconfont icon-back" slot="left" />
+      <i class="iconfont icon-back" slot="left" @click="goBack" />
       <div slot="center">电台</div>
     </nav-bar>
-    <div class="cover" :style="{ backgroundImage: `url(${result.picUrl})` }">
+    <div class="cover" :style="{ backgroundImage: `url(${fmtUrl(result.picUrl)})` }">
       <div class="cover-text">
         <div class="dj-name">{{ result.name }}</div>
         <div class="dj-sub">{{ result.subCount | round }}人订阅</div>
       </div>
     </div>
-    <div class="tabbar"><span>详情</span><span>节目</span></div>
+    <div class="tabbar">
+      <span
+        v-for="(item, index) in tabbar"
+        :key="item"
+        :class="{ active: index === activeTab }"
+        @click.stop="tabClick(index)"
+        >{{ item }}</span
+      >
+    </div>
     <div class="component-wrapper">
-      <component :is="currentComponent" v-bind="currentProp" />
+      <loading :isShow="loading" />
+      <component
+        :is="currentComponent"
+        v-bind="currentProp"
+        @playProgram="playProgram"
+        @contentLoaded="contentLoaded"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import ProgramDesc from './RadioProgramDesc';
 import ProgramList from './RadioProgramList';
-import { roundCountMixin } from 'common/mixin';
-import { getRadioDetail } from 'networks/radio';
+import { roundCountMixin, getTracksMixin, getUrlMixin, loadingMixin } from 'common/mixin';
+import { getRadioDetail, getProgramList } from 'networks/radio';
 import NavBar from 'components/common/NavBar/NavBar';
+import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'RadioProgram',
   components: { NavBar },
-  mixins: [roundCountMixin],
+  mixins: [roundCountMixin, getTracksMixin, getUrlMixin, loadingMixin],
   data() {
     return {
-      result: []
+      result: [],
+      programs: [],
+      tracks: [],
+      tabbar: ['详情', '节目'],
+      activeTab: 1
     };
   },
   created() {
     let rid = this.$route.params.id;
     getRadioDetail(rid).then(res => {
       this.result = res.djRadio;
-      console.log(res.djRadio);
+    });
+    getProgramList(rid).then(res => {
+      this.programs = res.programs;
+      res.programs.map(song => {
+        this.tracks.push({
+          id: song.mainSong.id,
+          name: song.name,
+          al: { picUrl: song.coverUrl },
+          ar: [{ name: song.radio.name }]
+        });
+      });
     });
   },
   computed: {
+    ...mapGetters(['isLoading']),
     currentComponent() {
-      return ProgramList;
+      return this.activeTab === 1 ? ProgramList : ProgramDesc;
     },
     currentProp() {
-      return ProgramList;
+      return this.activeTab === 1 ? { list: this.programs } : { results: this.result };
+    }
+  },
+  methods: {
+    ...mapActions(['setPlayList', 'setShowPlayer', 'setCurrentIndex', 'setIsLoading']),
+    contentLoaded() {
+      this.loading = false;
+    },
+    goBack() {
+      this.$router.go(-1);
+    },
+    playProgram(index) {
+      if (!this.isLoading) {
+        this.setIsLoading(true);
+      }
+      this.setPlayList(this.tracks);
+      this.setCurrentIndex(index);
+      this.setShowPlayer(true);
+    },
+    tabClick(index) {
+      if (this.loading) {
+        this.$toast.show('正在努力加载哦', 1000);
+      } else {
+        this.activeTab = index;
+      }
     }
   }
 };
@@ -77,6 +132,7 @@ export default {
     height: 35%;
     background-size: cover;
     background-repeat: no-repeat;
+    background-position: center;
     z-index: 1;
     &::after {
       content: '';
@@ -90,9 +146,12 @@ export default {
     }
     .cover-text {
       position: absolute;
-      bottom: 10%;
+      bottom: 15%;
       left: 20px;
       color: #fff;
+    }
+    .dj-sub {
+      @include font_size($ms);
     }
   }
   .tabbar {
@@ -108,6 +167,11 @@ export default {
     border-radius: 30px 30px 0 0;
     @include font_size($ms);
     z-index: 1;
+    .active {
+      border-bottom: 3px solid;
+      border-color: $font-active-color-theme;
+      @include font_active_color();
+    }
   }
   .component-wrapper {
     position: absolute;

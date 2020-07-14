@@ -1,9 +1,14 @@
 <template>
   <div class="program-list" v-if="list && list.length">
-    <div class="header">共{{ count }}期</div>
+    <div class="header">共{{ list.length }}期</div>
     <scroll>
-      <div class="song-wrapper" v-for="(program, index) in list" :key="program.id">
-        <div class="index">{{ count - (index % count) }}</div>
+      <div
+        class="song-wrapper"
+        v-for="(program, index) in list"
+        :key="program.id"
+        @click="playProgram(index)"
+      >
+        <div class="index">{{ list.length - (index % list.length) }}</div>
         <div class="song-info">
           <div class="title">{{ program.name }}</div>
           <div class="song-desc">
@@ -11,7 +16,9 @@
             <span class="play-count "
               ><i class="iconfont icon-play-s" />{{ program.listenerCount | round(1) }}</span
             >
-            <span class="duration"><i class="iconfont icon-duration" />{{ program.duration }}</span>
+            <span class="duration"
+              ><i class="iconfont icon-duration" />{{ getTime(program.duration) }}</span
+            >
           </div>
         </div>
         <i class="iconfont icon-more" />
@@ -24,22 +31,16 @@
 import Scroll from 'components/common/Scroll/Scroll';
 import { fmtTime } from 'common/utils';
 import { roundCountMixin } from 'common/mixin';
-import { getProgramList } from 'networks/radio';
 export default {
   name: 'RadioProgramList',
   mixins: [roundCountMixin],
   components: { Scroll },
-  data() {
-    return {
-      list: [],
-      count: 0
-    };
-  },
-  async created() {
-    await getProgramList(this.$route.params.id).then(res => {
-      this.list = res.programs;
-      this.count = res.count;
-    });
+  props: {
+    list: {
+      type: Array,
+      default: () => [],
+      required: true
+    }
   },
   computed: {
     getDate() {
@@ -49,6 +50,27 @@ export default {
           ('' + time.date).length !== 1 ? time.date : '0' + time.date
         }`;
       };
+    },
+    getTime() {
+      return function(duration) {
+        let time = fmtTime(duration / 1000);
+        return `${time.minute}:${time.second}`;
+      };
+    }
+  },
+  methods: {
+    playProgram(index) {
+      this.$emit('playProgram', index);
+    }
+  },
+  watch: {
+    list: {
+      deep: true,
+      handler() {
+        this.$nextTick(function() {
+          this.$emit('contentLoaded');
+        });
+      }
     }
   }
 };
@@ -65,6 +87,7 @@ export default {
     padding: 0 24px;
     position: relative;
     z-index: 1;
+    top: -5px;
   }
   .scroll-wrapper {
     position: fixed;
@@ -79,11 +102,11 @@ export default {
       padding: 20px 0;
       color: #999;
       .index {
-        width: 5%;
+        width: 10%;
         margin-right: 10px;
       }
       .song-info {
-        width: 80%;
+        width: 75%;
 
         .title {
           color: #333;
@@ -102,7 +125,11 @@ export default {
           @include font_size($ms);
           .icon-play-s,
           .icon-duration {
+            margin-right: 5px;
             @include font_size($icon_s);
+          }
+          .icon-duration {
+            margin-right: 10px;
           }
         }
       }
