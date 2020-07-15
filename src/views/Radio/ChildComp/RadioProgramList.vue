@@ -29,7 +29,7 @@
 
 <script>
 import Scroll from 'components/common/Scroll/Scroll';
-import { fmtTime } from 'common/utils';
+import { fmtDate, fmtDuration } from 'common/utils';
 import { roundCountMixin } from 'common/mixin';
 export default {
   name: 'RadioProgramList',
@@ -45,7 +45,7 @@ export default {
   computed: {
     getDate() {
       return function(date) {
-        let time = fmtTime(date / 1000);
+        let time = fmtDate(date / 1000);
         return `${('' + time.month).length !== 1 ? time.month : '0' + time.month}-${
           ('' + time.date).length !== 1 ? time.date : '0' + time.date
         }`;
@@ -53,8 +53,8 @@ export default {
     },
     getTime() {
       return function(duration) {
-        let time = fmtTime(duration / 1000);
-        return `${time.minute}:${time.second}`;
+        let time = fmtDuration(duration);
+        return `${time.minutes}:${time.seconds}`;
       };
     }
   },

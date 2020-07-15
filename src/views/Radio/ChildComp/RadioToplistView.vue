@@ -93,10 +93,12 @@ export default {
       deep: true,
       handler() {
         this.$nextTick(function() {
+          console.log('子组件数据接收完毕');
           this.$emit('contentLoaded');
         });
         if (!this.isRadio) {
           this.$nextTick(function() {
+            this.tracks = [];
             this.toplist.map(song => {
               this.tracks.push({
                 id: song.program.mainSong.id,

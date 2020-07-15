@@ -27,7 +27,7 @@ import NavBar from 'components/common/NavBar/NavBar';
 import Scroll from 'components/common/Scroll/Scroll';
 
 import { loadingMixin } from 'common/mixin';
-import { fmtTime } from 'common/utils';
+import { fmtDate } from 'common/utils';
 import { getProgramToplist, getDailyToplist, getRadioToplist } from 'networks/radio';
 
 export default {
@@ -43,20 +43,24 @@ export default {
       activeTab: 1
     };
   },
-  created() {
-    getProgramToplist().then(res => {
+  async created() {
+    await getProgramToplist().then(res => {
       this.program = res.toplist;
+      console.log('program loaded');
     });
-    getRadioToplist().then(res => {
+    await getRadioToplist().then(res => {
       this.radio = res.toplist;
+      console.log('radio loaded');
     });
-    getDailyToplist().then(res => {
+    await getDailyToplist().then(res => {
       this.daily = res.data;
+      console.log('daily loaded');
     });
   },
   methods: {
     contentLoaded() {
       this.loading = false;
+      console.log('父组件收到了');
     },
 
     goBack() {
@@ -90,7 +94,7 @@ export default {
       return curProp;
     },
     getDate() {
-      let time = fmtTime(this.daily.updateTime / 1000);
+      let time = fmtDate(this.daily.updateTime / 1000);
       return `${time.month}月${time.date}日`;
     }
   }

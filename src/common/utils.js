@@ -1,27 +1,28 @@
-export function fmtTime(time) {
+export function fmtDate(time) {
   let a = new Date(time * 1000);
   let year = a.getFullYear();
   let month = a.getMonth() + 1;
   let date = a.getDate();
-  let day = Math.floor(time / (60 * 60 * 24));
-  day = day >= 10 ? day : '0' + day;
-  let hour = Math.floor(time / (60 * 60));
-  hour = hour >= 10 ? hour : '0' + hour;
-  let minute = Math.floor((time / 60) % 60);
-  minute = minute >= 10 ? minute : '0' + minute;
-  let second = Math.floor(time % 60);
-  second = second >= 10 ? second : '0' + second;
   return {
     year,
     month,
-    date,
-    day,
-    hour,
-    minute,
-    second
+    date
   };
 }
 
+export function fmtDuration(duration) {
+  let days = Math.floor(duration / 1000 / 60 / 60 / 24);
+  let hours = Math.floor(duration / 1000 / 60 / 60 - 24 * days);
+  let minutes = Math.floor(duration / 1000 / 60 - 24 * 60 * days - 60 * hours);
+  let seconds = (duration / 1000 - 24 * 60 * 60 * days - 60 * 60 * hours - 60 * minutes).toFixed(0);
+  if (hours) {
+    minutes += hours * 60;
+  }
+  return {
+    minutes: minutes < 10 ? '0' + minutes : minutes,
+    seconds: seconds < 10 ? '0' + seconds : seconds
+  };
+}
 export function shuffle(arr) {
   let temp = [...arr];
   for (let i = temp.length - 1; i > 0; i--) {

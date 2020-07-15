@@ -39,7 +39,7 @@
 <script>
 import NavBar from 'components/common/NavBar/NavBar';
 import Scroll from 'components/common/Scroll/Scroll';
-import { fmtTime } from 'common/utils';
+import { fmtDate } from 'common/utils';
 import { getArtistsMixin, getUrlMixin, loadingMixin } from 'common/mixin';
 import { getDailySong } from 'networks/recommend';
 import { mapGetters, mapActions } from 'vuex';
@@ -72,7 +72,7 @@ export default {
     ...mapGetters(['isLogin', 'isLoading', 'cookie']),
     getDate() {
       let timestamp = new Date().getTime();
-      let time = fmtTime(timestamp / 1000);
+      let time = fmtDate(timestamp / 1000);
 
       return {
         month: ('' + time.month).length < 2 ? '0' + time.month : time.month,

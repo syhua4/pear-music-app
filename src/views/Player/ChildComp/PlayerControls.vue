@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { fmtTime } from 'common/utils';
+import { fmtDuration } from 'common/utils';
 import { mapActions, mapGetters } from 'vuex';
 import { changeModeMixin } from 'common/mixin';
 export default {
@@ -120,13 +120,13 @@ export default {
   },
   watch: {
     currentTime(newVal) {
-      let time = fmtTime(newVal);
-      this.$refs.currentTime.innerHTML = `${time.minute}:${time.second}`;
+      let time = fmtDuration(newVal * 1000);
+      this.$refs.currentTime.innerHTML = `${time.minutes}:${time.seconds}`;
       this.playedPercent = `${((newVal / this.totalTime) * 100).toFixed(0)}%`;
     },
     totalTime(newVal) {
-      let time = fmtTime(newVal);
-      this.$refs.totalTime.innerHTML = `${time.minute}:${time.second}`;
+      let time = fmtDuration(newVal * 1000);
+      this.$refs.totalTime.innerHTML = `${time.minutes}:${time.seconds}`;
     },
     currentIndex() {
       this.initProgressBar();

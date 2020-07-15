@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { fmtTime } from 'common/utils';
+import { fmtDuration } from 'common/utils';
 import { getUrlMixin, roundCountMixin } from 'common/mixin';
 export default {
   name: 'SearchVideo',
@@ -35,8 +35,8 @@ export default {
   computed: {
     getTime() {
       return function(time) {
-        let ms = fmtTime(time / 1000);
-        return `${ms.minute}:${ms.second}`;
+        let ms = fmtDuration(time);
+        return `${ms.minutes}:${ms.seconds}`;
       };
     }
   }

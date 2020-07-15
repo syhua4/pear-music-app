@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { fmtTime } from 'common/utils';
+import { fmtDate } from 'common/utils';
 
 import { getArtistsMixin, getUrlMixin, roundCountMixin } from 'common/mixin';
 
@@ -33,7 +33,7 @@ export default {
   computed: {
     getDate() {
       return function(time) {
-        let date = fmtTime(time / 1000);
+        let date = fmtDate(time / 1000);
         return `${date.year}-${date.month}-${date.date}`;
       };
     }
