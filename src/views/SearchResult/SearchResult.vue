@@ -84,7 +84,7 @@ export default {
         let offset = this.results[key].list[key].length;
         await getSearchResult(this.query, id, offset).then(res => {
           console.log(res.result);
-          if (res.result.hasMore && res.result[key].length) {
+          if (res.result.hasMore || res.result[key].length) {
             this.results[key].list[key].push(...res.result[key]);
             console.log('数据请求完毕');
           } else {

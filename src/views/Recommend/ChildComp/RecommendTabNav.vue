@@ -23,6 +23,12 @@
         </router-link>
       </swiper-item>
       <swiper-item class="slide">
+        <router-link class="tabnav" to="/artist">
+          <i class="iconfont icon-artist-fill" />
+          <span class="tabnav-text">歌手</span>
+        </router-link>
+      </swiper-item>
+      <swiper-item class="slide">
         <a class="tabnav" @click="noFunc">
           <i class="iconfont icon-stream" />
           <span class="tabnav-text">直播</span>

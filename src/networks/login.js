@@ -15,3 +15,10 @@ export function signOut() {
     url: '/logout'
   });
 }
+
+export function getUserInfo(uid) {
+  return request({
+    url: '/user/detail',
+    params: { uid }
+  });
+}

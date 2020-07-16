@@ -23,6 +23,7 @@
       :footer="results.video.more ? results.video.moreText : ''"
       @footerClick="footerClick(5)"
       v-if="videos && videos.length !== 0"
+      @click.native="noFunc"
     >
       <videos :results="videos" />
     </panel-view>
@@ -92,6 +93,9 @@ export default {
     },
     footerClick(index) {
       this.$emit('changeTabNav', index);
+    },
+    noFunc() {
+      this.$toast.show('demo不包括视频哦', 1000);
     }
   },
   watch: {

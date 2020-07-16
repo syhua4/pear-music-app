@@ -1,5 +1,5 @@
 <template>
-  <div class="result-video" v-if="results && results.length > 0">
+  <div class="result-video" v-if="results && results.length > 0" @click="noFunc">
     <div v-for="video in results" :key="video.id" class="video">
       <div class="wrapper-left">
         <img v-lazy="fmtUrl(video.coverUrl)" class="video-img" />
@@ -38,6 +38,11 @@ export default {
         let ms = fmtDuration(time);
         return `${ms.minutes}:${ms.seconds}`;
       };
+    }
+  },
+  methods: {
+    noFunc() {
+      this.$toast.show('demo不包括视频哦', 1000);
     }
   }
 };

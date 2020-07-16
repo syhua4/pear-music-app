@@ -43,7 +43,7 @@ export default {
       let name = this.cat;
       let offset = this.results.length;
       await getPlaylists(name, 30, offset).then(res => {
-        if (res.more && res.playlists.length) {
+        if (res.more || res.playlists.length) {
           // console.log(...res.playlists);
           res.playlists.map(item => {
             this.results.push(item);

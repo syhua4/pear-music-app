@@ -87,7 +87,7 @@ export default {
       let name = this.category[this.tabNavIndex].name;
       let offset = this.category[this.tabNavIndex].list.playlists.length;
       await getPlaylists(name, 30, offset).then(res => {
-        if (res.more && res.playlists.length) {
+        if (res.more || res.playlists.length) {
           this.category[this.tabNavIndex].list.playlists.push(...res.playlists);
           console.log(this.category[this.tabNavIndex]);
           console.log('数据请求完毕');

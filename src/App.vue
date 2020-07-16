@@ -47,7 +47,7 @@ export default {
     bottom: 0;
   }
   .player {
-    z-index: 1;
+    z-index: 100;
   }
   .main-tab {
     @include bg_color_sub();

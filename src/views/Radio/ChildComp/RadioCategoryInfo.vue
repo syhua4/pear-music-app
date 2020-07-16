@@ -56,7 +56,7 @@ export default {
     async loadMore() {
       let offset = this.results.length;
       await getHotRadioByCat(this.id, offset).then(res => {
-        if (res.hasMore && res.djRadios.length) {
+        if (res.hasMore || res.djRadios.length) {
           this.results.push(...res.djRadios);
         } else {
           this.$refs.scroll.loading = false;

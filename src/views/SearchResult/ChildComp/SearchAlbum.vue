@@ -1,6 +1,6 @@
 <template>
   <div class="result-album" v-if="results && results.length > 0">
-    <div v-for="album in results" :key="album.id" class="album">
+    <div v-for="album in results" :key="album.id" class="album" @click.once="albumClick(album.id)">
       <div class="wrapper-left">
         <img v-lazy="fmtUrl(album.picUrl)" class="album-img" />
       </div>
@@ -28,6 +28,12 @@ export default {
       type: Array,
       default: () => [],
       required: true
+    }
+  },
+  methods: {
+    albumClick(id) {
+      console.log('object');
+      this.$router.push(`/album/${id}`);
     }
   },
   computed: {
