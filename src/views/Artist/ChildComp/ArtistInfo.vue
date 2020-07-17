@@ -6,7 +6,7 @@
     <div v-if="artistInfo && artistInfo.length" class="cover-wrapper">
       <img class="bg" :src="fmtUrl($route.params.bgUrl)" />
       <div class="cover">
-        <img :src="artistInfo[0].avatar" />
+        <img :src="fmtUrl(artistInfo[0].avatar)" />
         <div class="name">{{ artistInfo[0].name }}</div>
         <div class="follow-wrapper">
           <span>关注 {{ artistInfo[0].follows }}</span>
@@ -42,7 +42,7 @@ import Album from './ArtistAlbum';
 import Profile from './ArtistProfile';
 import NavBar from 'components/common/NavBar/NavBar';
 import Scroll from 'components/common/Scroll/Scroll';
-import { getUserInfo } from 'networks/login';
+import { getUserInfo } from 'networks/user';
 import { getUrlMixin, roundCountMixin, loadingMixin } from 'common/mixin';
 
 export default {

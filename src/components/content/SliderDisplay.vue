@@ -23,7 +23,11 @@
               <span>{{ artists(item.ar) }}</span>
             </div>
           </div>
-          <i v-if="item.ar && item.al" class="iconfont icon-play" />
+          <i
+            v-if="item.ar && item.al"
+            class="iconfont"
+            :class="changeIcon ? changeIcon : 'icon-play'"
+          />
         </a>
       </swiper-item>
     </swiper>
@@ -54,6 +58,10 @@ export default {
     isSong: {
       type: Boolean,
       default: false
+    },
+    changeIcon: {
+      type: String,
+      default: ''
     }
   },
   data() {

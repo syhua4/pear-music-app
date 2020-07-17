@@ -6,7 +6,7 @@
       :key="album.id"
       @click="albumClick(album.id)"
     >
-      <img v-lazy="album.picUrl" />
+      <img v-lazy="fmtUrl(album.picUrl)" />
       <div class="album-info">
         <div class="title">
           {{ album.name }}
@@ -23,9 +23,11 @@
 <script>
 import { getArtistAlbum } from 'networks/artist';
 import { fmtDate } from 'common/utils';
+import { getUrlMixin } from 'common/mixin';
 
 export default {
   name: 'ArtistAlbum',
+  mixins: [getUrlMixin],
   data() {
     return {
       albums: []

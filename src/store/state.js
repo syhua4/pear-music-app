@@ -9,5 +9,6 @@ export default {
   currentIndex: 0,
   playMode: mode[0],
   isLogin: false,
-  cookie: ''
+  cookie: '',
+  profile: {}
 };

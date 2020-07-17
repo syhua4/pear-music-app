@@ -5,18 +5,19 @@
       <span class="play-all">播放全部</span>
       <span class="total-count">(共{{ item.length }}首)</span>
     </div>
-    <div class="collection-btn">
+    <div class="collection-btn" v-if="!myList">
       <i class="iconfont icon-plus" />
-      <span>收藏 ({{ subCount | round }})</span>
+      <span>收藏 {{ subCount | round }}</span>
     </div>
   </div>
 </template>
 
 <script>
-import { roundCountMixin, getArtistsMixin } from 'common/mixin';
+import { roundCountMixin } from 'common/mixin';
+import { mapGetters } from 'vuex';
 export default {
   name: 'PlaylistList',
-  mixins: [roundCountMixin, getArtistsMixin],
+  mixins: [roundCountMixin],
   props: {
     item: {
       type: Array,
@@ -31,12 +32,19 @@ export default {
     isFixed: {
       type: Boolean,
       default: false
+    },
+    myList: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
     playAll() {
       this.$emit('playAll');
     }
+  },
+  computed: {
+    ...mapGetters(['profile'])
   }
 };
 </script>

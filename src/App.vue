@@ -83,5 +83,18 @@ export default {
     bottom: 0;
     background-color: #fff;
   }
+
+  .slide-enter-active {
+    transition: all 300ms;
+  }
+
+  .slide-enter {
+    transform: translate3d(0, 100%, 0);
+  }
+
+  .slide-leave-active {
+    transform: translate3d(0, 200%, 0);
+    transition: all 800ms;
+  }
 }
 </style>

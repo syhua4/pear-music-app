@@ -10,3 +10,4 @@ export const SET_FAVOURITE = 'set_favorite';
 export const SET_UNFAVOURITE = 'set_unfavorite';
 export const SET_LOGIN = 'set_login';
 export const SET_COOKIE = 'set_cookie';
+export const SET_USER_PROFILE = 'set_user_profile';

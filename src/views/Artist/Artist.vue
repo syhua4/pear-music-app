@@ -36,7 +36,7 @@
         :key="artist.id"
         @click="artistClick(artist)"
       >
-        <img v-lazy="artist.picUrl" />
+        <img v-lazy="fmtUrl(artist.picUrl)" />
         <span class="name">{{ artist.name }}</span>
       </div>
     </scroll>
@@ -47,12 +47,12 @@
 import Scroll from 'components/common/Scroll/Scroll';
 import NavBar from 'components/common/NavBar/NavBar';
 
-import { loadingMixin } from 'common/mixin';
+import { loadingMixin, getUrlMixin } from 'common/mixin';
 import { getArtistList } from 'networks/artist';
 export default {
   name: 'Artist',
   components: { NavBar, Scroll },
-  mixins: [loadingMixin],
+  mixins: [loadingMixin, getUrlMixin],
   created() {
     getArtistList().then(res => {
       this.artists = res.artists;

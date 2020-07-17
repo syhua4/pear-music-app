@@ -10,11 +10,12 @@ import {
   SET_FAVOURITE,
   SET_UNFAVOURITE,
   SET_LOGIN,
-  SET_COOKIE
+  SET_COOKIE,
+  SET_USER_PROFILE
 } from './mutation-types';
 
 import { getSongUrl } from 'networks/recommend';
-import { signIn } from 'networks/login';
+import { signIn } from 'networks/user';
 
 function getIds(list) {
   let ids = list
@@ -59,6 +60,10 @@ export default {
     commit(SET_SHUFFLED_LIST, list);
   },
 
+  setUserProfile({ commit }, profile) {
+    commit(SET_USER_PROFILE, profile);
+  },
+
   async setLogin({ commit }, loginInfo) {
     let msg, status;
     await signIn(loginInfo.email, loginInfo.password).then(res => {
@@ -72,10 +77,12 @@ export default {
       } else if (res.code === 200) {
         msg = '登录成功';
         commit(SET_COOKIE, res.cookie);
+        commit(SET_USER_PROFILE, res.profile);
         status = true;
       }
     });
     commit(SET_LOGIN, status);
+
     return msg;
   },
   async setPlayList({ commit }, list) {

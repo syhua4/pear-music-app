@@ -5,7 +5,7 @@
         <i class="iconfont icon-logo " slot="tabbar-icon" />
         <div class="item-text" slot="tabbar-text">发现</div>
       </tab-bar-item>
-      <tab-bar-item path="/mine">
+      <tab-bar-item path="/user">
         <i class="iconfont icon-music" slot="tabbar-icon" />
         <div class="item-text" slot="tabbar-text">我的</div>
       </tab-bar-item>

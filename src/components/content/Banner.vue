@@ -2,7 +2,7 @@
   <div class="banner">
     <swiper v-if="banners && banners.length > 0" :options="options" ref="banner">
       <swiper-item v-for="(banner, index) in banners" :key="banner.id || banner.targetId + index">
-        <a :href="banner.url">
+        <a>
           <img :src="fmtUrl(banner.pic)" class="banner-img" />
         </a>
       </swiper-item>

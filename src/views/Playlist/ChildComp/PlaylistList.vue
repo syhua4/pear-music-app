@@ -1,7 +1,8 @@
 <template>
   <div class="playlist-list">
-    <playlist-header :item="item" :subCount="subCount" @playAll="trackClick(0)" />
-    <loading :isShow="loading" />
+    <playlist-header :item="item" :subCount="subCount" @playAll="trackClick(0)" :myList="myList" />
+    <loading :isShow="loading" v-if="!newList" />
+    <span class="add-btn" @click="addSong" v-if="newList">添加歌曲</span>
     <div
       class="track-wrapper"
       v-for="(track, index) in item"
@@ -42,10 +43,22 @@ export default {
     isFixed: {
       type: Boolean,
       default: false
+    },
+
+    myList: {
+      type: Boolean,
+      default: false
+    },
+    newList: {
+      type: Boolean,
+      default: false
     }
   },
   components: { PlaylistHeader },
   methods: {
+    addSong() {
+      this.$emit('addSong');
+    },
     trackClick(index) {
       this.$emit('trackClick', index);
     }
@@ -71,6 +84,19 @@ export default {
   top: 550px;
   bottom: 0;
   width: 100%;
+  .add-btn {
+    display: block;
+    position: absolute;
+    top: 150px;
+    left: 50%;
+    padding: 10px 100px;
+    border: 2px solid;
+    border-radius: 30px;
+    border-color: $border-color-theme;
+    transform: translateX(-50%);
+    @include font_size($ms);
+    @include font_active_color();
+  }
   .track-wrapper {
     // position: relative;
     display: flex;

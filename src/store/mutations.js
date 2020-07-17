@@ -10,7 +10,8 @@ import {
   SET_FAVOURITE,
   SET_UNFAVOURITE,
   SET_LOGIN,
-  SET_COOKIE
+  SET_COOKIE,
+  SET_USER_PROFILE
 } from './mutation-types';
 
 import { mode } from './mode-type';
@@ -66,6 +67,12 @@ export default {
 
   [SET_SHUFFLED_LIST](state, payload) {
     state.shuffledList = payload;
+  },
+
+  [SET_USER_PROFILE](state, payload) {
+    state.profile['uid'] = payload.userId;
+    state.profile['nickname'] = payload.nickname;
+    state.profile['avatar'] = payload.avatarUrl;
   },
 
   [SET_UNFAVOURITE](state, payload) {

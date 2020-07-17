@@ -109,7 +109,6 @@ export default {
   }
   .main-display {
     display: flex;
-    justify-content: space-between;
     padding: 65px 24px;
     z-index: 2;
     position: relative;

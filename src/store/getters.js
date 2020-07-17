@@ -48,5 +48,9 @@ export default {
 
   songlist(state) {
     return state.songlist;
+  },
+
+  profile(state) {
+    return state.profile;
   }
 };

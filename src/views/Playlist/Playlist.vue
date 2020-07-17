@@ -10,18 +10,23 @@
       v-show="showFixed"
       :item="tracks"
       :subCount="playlistInfo.subscribedCount"
+      :myList="myPlaylist"
       class="fixed"
       @playAll="trackClick(0)"
     />
     <scroll ref="scroll" :probeType="3" @scrolling="scrollPosition">
       <playlist-list
+        :newList="newList"
         :item="tracks"
         :subCount="playlistInfo.subscribedCount"
+        :myList="myPlaylist"
         ref="list"
+        @addSong="addSong"
         @trackClick="trackClick"
         @dataLoaded="dataLoaded"
       />
     </scroll>
+    <add-song v-show="toggleAddMenu" />
   </div>
 </template>
 
@@ -29,6 +34,7 @@
 import PlaylistDisplay from './ChildComp/PlaylistDisplay';
 import PlaylistList from './ChildComp/PlaylistList';
 import PlaylistHeader from './ChildComp/PlaylistListHeader';
+import AddSong from './ChildComp/PlaylistAdd';
 
 import NavBar from 'components/common/NavBar/NavBar';
 import Scroll from 'components/common/Scroll/Scroll';
@@ -41,6 +47,7 @@ export default {
   components: {
     NavBar,
     Scroll,
+    AddSong,
     PlaylistDisplay,
     PlaylistList,
     PlaylistHeader
@@ -50,15 +57,22 @@ export default {
     getPlaylistTrackId(this.$route.params.id).then(res => {
       let ids;
       this.playlistInfo = res.playlist;
-      if (res.playlist.trackIds.length > 800) {
-        ids = this.getTrackIds(res.playlist.trackIds.slice(0, 800));
+      this.playlistInfo.creator.userId === this.profile.uid
+        ? (this.myPlaylist = true)
+        : (this.myPlaylist = false);
+      if (!res.playlist.trackIds.length) {
+        this.newList = true;
       } else {
-        ids = this.getTrackIds(res.playlist.trackIds);
+        if (res.playlist.trackIds.length > 800) {
+          ids = this.getTrackIds(res.playlist.trackIds.slice(0, 800));
+        } else {
+          ids = this.getTrackIds(res.playlist.trackIds);
+        }
+        getTrack(ids).then(res => {
+          console.log(res);
+          this.tracks = res.songs;
+        });
       }
-      getTrack(ids).then(res => {
-        console.log(res);
-        this.tracks = res.songs;
-      });
     });
   },
   mounted() {
@@ -69,7 +83,10 @@ export default {
       playlistInfo: {},
       tracks: [],
       showFixed: false,
-      offsetTop: 0
+      offsetTop: 0,
+      newList: false,
+      toggleAddMenu: false,
+      myPlaylist: false
     };
   },
   methods: {
@@ -80,6 +97,9 @@ export default {
       'setPlayStatus',
       'setIsLoading'
     ]),
+    addSong() {
+      this.toggleAddMenu = true;
+    },
     dataLoaded() {
       this.$refs.scroll.refresh();
     },
@@ -111,7 +131,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isLoading'])
+    ...mapGetters(['isLoading', 'profile'])
   }
 };
 </script>
