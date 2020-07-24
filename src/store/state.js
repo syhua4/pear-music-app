@@ -5,9 +5,9 @@ export default {
   isPlaying: false,
   songlist: null,
   shuffledList: null,
-  favouriteList: [],
   currentIndex: 0,
   playMode: mode[0],
+  historyList: [],
   isLogin: false,
   cookie: '',
   profile: {}

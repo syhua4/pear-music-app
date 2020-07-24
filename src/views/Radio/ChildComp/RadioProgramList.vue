@@ -1,40 +1,38 @@
 <template>
   <div class="program-list" v-if="list && list.length">
     <div class="header">共{{ list.length }}期</div>
-    <scroll>
-      <div
-        class="song-wrapper"
-        v-for="(program, index) in list"
-        :key="program.id"
-        @click="playProgram(index)"
-      >
-        <div class="index">{{ list.length - (index % list.length) }}</div>
-        <div class="song-info">
+    <div
+      class="song-wrapper"
+      v-for="(program, index) in list"
+      :key="program.id"
+      @click="playProgram(index)"
+    >
+      <song-view>
+        <div class="index" slot="left">{{ list.length - (index % list.length) }}</div>
+        <div class="song-info" slot="center">
           <div class="title">{{ program.name }}</div>
-          <div class="song-desc">
-            <span class="date">{{ getDate(program.createTime) }}</span>
-            <span class="play-count "
-              ><i class="iconfont icon-play-s" />{{ program.listenerCount | round(1) }}</span
-            >
-            <span class="duration"
-              ><i class="iconfont icon-duration" />{{ getTime(program.duration) }}</span
-            >
-          </div>
+          <span class="date">{{ getDate(program.createTime) }}</span>
+          <span class="play-count "
+            ><i class="iconfont icon-play-s" />{{ program.listenerCount | round(1) }}</span
+          >
+          <span class="duration"
+            ><i class="iconfont icon-duration" />{{ getTime(program.duration) }}</span
+          >
         </div>
-        <i class="iconfont icon-more" />
-      </div>
-    </scroll>
+        <i class="iconfont icon-more--line" slot="right" />
+      </song-view>
+    </div>
   </div>
 </template>
 
 <script>
-import Scroll from 'components/common/Scroll/Scroll';
 import { fmtDate, fmtDuration } from 'common/utils';
 import { roundCountMixin } from 'common/mixin';
+import SongView from '../../../components/content/SongView.vue';
 export default {
   name: 'RadioProgramList',
+  components: { SongView },
   mixins: [roundCountMixin],
-  components: { Scroll },
   props: {
     list: {
       type: Array,
@@ -89,54 +87,33 @@ export default {
     z-index: 1;
     top: -5px;
   }
-  .scroll-wrapper {
-    position: fixed;
-    top: calc(35% + 180px);
-    bottom: 0;
-    right: 0;
-    left: 0;
-    .song-wrapper {
-      display: flex;
-      align-items: center;
-      margin: 0 24px;
-      padding: 20px 0;
-      color: #999;
-      .index {
-        width: 10%;
-        margin-right: 10px;
-      }
-      .song-info {
-        width: 75%;
 
-        .title {
-          color: #333;
-          @include clamp(1);
-          @include font_size($m);
+  .song-wrapper {
+    display: flex;
+    .index {
+      min-width: 50px;
+      margin-right: 10px;
+    }
+    .song-info {
+      width: 75%;
+
+      .play-count,
+      .duration {
+        margin-left: 20px;
+        @include font_size($ms);
+        .icon-play-s,
+        .icon-duration {
+          margin-right: 5px;
+          @include font_size($icon_s);
         }
-        .song-desc {
-          display: flex;
-          align-items: center;
-          padding-top: 10px;
-          @include clamp(1);
-        }
-        .play-count,
-        .duration {
-          margin-left: 20px;
-          @include font_size($ms);
-          .icon-play-s,
-          .icon-duration {
-            margin-right: 5px;
-            @include font_size($icon_s);
-          }
-          .icon-duration {
-            margin-right: 10px;
-          }
+        .icon-duration {
+          margin-right: 10px;
         }
       }
-      .icon-more {
-        margin-left: auto;
-        @include font_size($icon_ms);
-      }
+    }
+    .icon-more {
+      margin-left: auto;
+      @include font_size($icon_ms);
     }
   }
 }

@@ -7,11 +7,11 @@ import {
   SET_PLAY_MODE,
   SET_SHUFFLED_LIST,
   SET_LOADING,
-  SET_FAVOURITE,
-  SET_UNFAVOURITE,
   SET_LOGIN,
   SET_COOKIE,
-  SET_USER_PROFILE
+  SET_USER_PROFILE,
+  SET_HISTORY_SONG,
+  SET_HISTORY_LIST
 } from './mutation-types';
 
 import { getSongUrl } from 'networks/recommend';
@@ -31,17 +31,16 @@ export default {
     commit(SET_CURRENT_INDEX, index);
   },
 
-  async setFavourite({ commit }, id) {
-    await commit(SET_FAVOURITE, id);
-    return '已添加到我喜欢的音乐';
+  setHistoryList({ commit }, list) {
+    commit(SET_HISTORY_LIST, list);
+  },
+
+  setHistorySong({ commit }, song) {
+    commit(SET_HISTORY_SONG, song);
   },
 
   setIsLoading({ commit }, status) {
     commit(SET_LOADING, status);
-  },
-
-  setRemoveSong({ commit }, index) {
-    commit(SET_REMOVE_SONG, index);
   },
 
   setPlayMode({ commit }, modeType) {
@@ -50,6 +49,10 @@ export default {
 
   setPlayStatus({ commit }, flag) {
     commit(SET_PLAYING_STATUS, flag);
+  },
+
+  setRemoveSong({ commit }, index) {
+    commit(SET_REMOVE_SONG, index);
   },
 
   setShowPlayer({ commit }, flag) {
@@ -85,9 +88,10 @@ export default {
 
     return msg;
   },
-  async setPlayList({ commit }, list) {
+  async setPlayList({ commit, state }, list) {
     let songUrl;
-    await getSongUrl(getIds(list)).then(res => {
+    let cookie = state.isLogin ? state.cookie : '';
+    await getSongUrl(getIds(list), cookie).then(res => {
       songUrl = res.data;
     });
     let temp = list.map(track => ({
@@ -96,10 +100,5 @@ export default {
     }));
     commit(SET_PLAY_LIST, temp);
     commit(SET_LOADING, false);
-  },
-
-  async setUnfavourite({ commit }, id) {
-    await commit(SET_UNFAVOURITE, id);
-    return '已取消喜欢';
   }
 };

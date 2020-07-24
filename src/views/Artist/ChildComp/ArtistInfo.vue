@@ -1,11 +1,10 @@
 <template>
-  <div class="artist-info">
+  <div class="artist-info" v-if="artistInfo.length">
     <nav-bar class="nav">
       <i class="iconfont icon-back" @click="goBack" slot="left" />
     </nav-bar>
-    <div v-if="artistInfo && artistInfo.length" class="cover-wrapper">
-      <img class="bg" :src="fmtUrl($route.params.bgUrl)" />
-      <div class="cover">
+    <scroll-view height="20%" ref="scrollView">
+      <div class="cover" slot="cover" :style="{ '--height': coverHeight + 'px' }">
         <img :src="fmtUrl(artistInfo[0].avatar)" />
         <div class="name">{{ artistInfo[0].name }}</div>
         <div class="follow-wrapper">
@@ -13,26 +12,28 @@
           <span>粉丝 {{ artistInfo[0].followeds | round(1) }}</span>
         </div>
       </div>
-    </div>
-    <div class="tabbar">
-      <span
-        v-for="(item, index) in tabbar"
-        :key="item"
-        :class="{ active: index === activeTab }"
-        @click.stop="tabClick(index)"
-        >{{ item }}</span
-      >
-    </div>
 
-    <scroll :pullUpload="true" @pullUpload="loadMore" ref="scroll">
-      <loading :isShow="loading" />
-      <component
-        :is="currentComponent"
-        @noData="noData"
-        @contentLoaded="contentLoaded"
-        ref="comp"
-      />
-    </scroll>
+      <div class="tabbar" slot="tab">
+        <span
+          v-for="(item, index) in tabbar"
+          :key="item"
+          :class="{ active: index === activeTab }"
+          @click.stop="tabClick(index)"
+          >{{ item }}</span
+        >
+      </div>
+
+      <div class="component-wrapper " slot="component">
+        <loading :isShow="loading" />
+        <component
+          :is="currentComponent"
+          :id="id"
+          @noData="noData"
+          @contentLoaded="contentLoaded"
+          ref="comp"
+        />
+      </div>
+    </scroll-view>
   </div>
 </template>
 
@@ -41,32 +42,40 @@ import TopSongs from './ArtistTopSongs';
 import Album from './ArtistAlbum';
 import Profile from './ArtistProfile';
 import NavBar from 'components/common/NavBar/NavBar';
-import Scroll from 'components/common/Scroll/Scroll';
+import ScrollView from 'components/content/ScrollView.vue';
+
 import { getUserInfo } from 'networks/user';
 import { getUrlMixin, roundCountMixin, loadingMixin } from 'common/mixin';
 
 export default {
   name: 'ArtistInfo',
-  components: { NavBar, Scroll },
+  components: { NavBar, ScrollView },
   mixins: [getUrlMixin, roundCountMixin, loadingMixin],
   data() {
     return {
       artistInfo: [],
       tabbar: ['歌曲', '专辑', '关于TA'],
-      activeTab: 0
+      activeTab: 0,
+      coverHeight: 0,
+      id: 0
     };
   },
-  created() {
-    getUserInfo(this.$route.params.uid).then(res => {
-      let info = res.profile;
-      this.artistInfo.push({
-        name: info.artistName,
-        avatar: info.avatarUrl,
-        mainAuthType: info.mainAuthType,
-        followeds: info.followeds,
-        follows: info.follows
+  async created() {
+    if (this.$route.params.id) {
+      await getUserInfo(this.$route.params.id).then(res => {
+        this.id = res.profile.artistId;
+        this.artistInfo.push({
+          name: res.profile.artistName,
+          avatar: res.profile.avatarUrl,
+          mainAuthType: res.profile.mainAuthType,
+          followeds: res.profile.followeds,
+          follows: res.profile.follows
+        });
       });
-    });
+    }
+  },
+  updated() {
+    this.coverHeight = this.$refs.scrollView.$refs.cover.clientHeight;
   },
   methods: {
     contentLoaded() {
@@ -120,7 +129,7 @@ export default {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 100px;
   z-index: 2;
   background-color: #fff;
   .nav {
@@ -132,72 +141,44 @@ export default {
       @include font_size($icon_ms);
     }
   }
-  .cover-wrapper {
+  .cover {
+    color: #fff;
     position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     top: 0;
     left: 0;
     right: 0;
-    height: 25%;
+    padding: 0 24px;
+    height: var(--height);
+    background: #444;
+    background-image: url('~assets/images/bg_default.jpg');
+
     z-index: 1;
-    padding-top: 100px;
-    overflow: hidden;
-    background-color: #444;
-
-    .bg {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      height: calc(100% + 100px);
-      background: #444;
-      object-position: center;
-      object-fit: cover;
-      filter: brightness(0.65);
-      &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: #000;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0) 25%);
-      }
+    img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: block;
+      margin-bottom: 20px;
     }
-
-    .cover {
-      position: absolute;
-      bottom: 15%;
-      left: 24px;
-      font-weight: 500;
-      color: #fff;
-      img {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        display: block;
-        margin-bottom: 20px;
-      }
-      .follow-wrapper {
-        color: #eee;
-        @include font_size($s);
-        span {
-          margin-right: 20px;
-        }
+    .follow-wrapper {
+      color: #eee;
+      @include font_size($s);
+      span {
+        margin-right: 20px;
       }
     }
   }
   .tabbar {
-    height: 75px;
     position: absolute;
     left: 0;
     right: 0;
     display: flex;
     align-items: center;
     justify-content: space-around;
-    top: calc(25% + 50px);
     background-color: #fff;
-    border-radius: 30px 30px 0 0;
-    border-bottom: 1px solid #eee;
     box-sizing: border-box;
     @include font_size($ms);
     z-index: 1;
@@ -209,14 +190,6 @@ export default {
         @include font_active_color();
       }
     }
-  }
-  .scroll-wrapper {
-    position: fixed;
-    top: calc(135px + 25%);
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: hidden;
   }
 }
 </style>

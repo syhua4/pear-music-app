@@ -24,9 +24,9 @@ export function getArtistInfo(id) {
     params: { id }
   });
 }
-export function getArtistAlbum(id, offset = 0, limit = 20) {
+export function getArtistAlbum(id, limit = 20) {
   return request({
     url: '/artist/album',
-    params: { id, offset, limit }
+    params: { id, limit }
   });
 }

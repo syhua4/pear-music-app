@@ -12,7 +12,7 @@
       </swiper-item>
       <swiper-item class="slide">
         <router-link class="tabnav" to="/playlists">
-          <i class="iconfont icon-playlist1" />
+          <i class="iconfont icon-playlist" />
           <span class="tabnav-text">歌单</span>
         </router-link>
       </swiper-item>

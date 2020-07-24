@@ -16,14 +16,16 @@
       :key="song.id"
       @click.stop="playSong(index)"
     >
-      <div class="index">{{ index + 1 }}</div>
-      <div class="song-info">
-        <div class="name">{{ song.name }}</div>
-        <div class="album">
-          {{ song.al.name }}
+      <song-view>
+        <div class="index" slot="left">{{ index + 1 }}</div>
+        <div class="song-info" slot="center">
+          <div class="name">{{ song.name }}</div>
+          <span class="album">
+            {{ song.al.name }}
+          </span>
         </div>
-      </div>
-      <i class="iconfont icon-more" />
+        <i class="iconfont icon-more--line" slot="right" />
+      </song-view>
     </div>
   </div>
 </template>
@@ -31,10 +33,12 @@
 <script>
 import { getArtistTopSong } from 'networks/artist';
 import { mapActions, mapGetters } from 'vuex';
+import SongView from '../../../components/content/SongView.vue';
 export default {
   name: 'ArtistTopSongs',
+  components: { SongView },
   created() {
-    getArtistTopSong(this.$route.params.id).then(res => {
+    getArtistTopSong(this.id).then(res => {
       this.songs = res.songs;
     });
   },
@@ -42,6 +46,13 @@ export default {
     return {
       songs: []
     };
+  },
+  props: {
+    id: {
+      type: Number,
+      default: 0,
+      required: true
+    }
   },
   methods: {
     ...mapActions(['setPlayList', 'setShowPlayer', 'setCurrentIndex', 'setIsLoading']),
@@ -70,17 +81,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'assets/css/mixin.scss';
 .artist-top-song {
-  margin: 0 24px;
   position: relative;
-  top: calc(25% + 30px);
   .song-tools {
+    margin: 0 24px;
     height: 60px;
     align-items: center;
     justify-content: space-between;
     display: flex;
     font-weight: 500;
+    @include font_size($ms);
+
     .icon-play {
       display: inline-block;
       margin-right: 10px;
@@ -98,28 +109,9 @@ export default {
   }
   .song-wrapper {
     display: flex;
-    align-items: center;
-    padding: 16px 0;
-    @include font_size($ms);
-
     .index {
-      color: #ccc;
-      width: 40px;
-      margin-right: 5px;
-    }
-    .song-info {
-      width: 70%;
-      div {
-        @include clamp(1);
-      }
-      .album {
-        @include font_size($s);
-      }
-    }
-    .icon-more {
-      color: #ccc;
-      margin-left: auto;
-      @include font_size($icon_m);
+      min-width: 50px;
+      margin-right: 10px;
     }
   }
 }

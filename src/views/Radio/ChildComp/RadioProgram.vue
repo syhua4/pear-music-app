@@ -4,30 +4,40 @@
       <i class="iconfont icon-back" slot="left" @click="goBack" />
       <div slot="center">电台</div>
     </nav-bar>
-    <div class="cover" :style="{ backgroundImage: `url(${fmtUrl(result.picUrl)})` }">
-      <div class="cover-text">
-        <div class="dj-name">{{ result.name }}</div>
-        <div class="dj-sub">{{ result.subCount | round }}人订阅</div>
-      </div>
-    </div>
-    <div class="tabbar">
-      <span
-        v-for="(item, index) in tabbar"
-        :key="item"
-        :class="{ active: index === activeTab }"
-        @click.stop="tabClick(index)"
-        >{{ item }}</span
+    <scroll-view height="25%" ref="scrollView">
+      <div
+        slot="cover"
+        :style="[
+          { backgroundImage: `url(${fmtUrl(result.picUrl)})`, '--height': coverHeight + 'px' }
+        ]"
+        class="cover"
       >
-    </div>
-    <div class="component-wrapper">
-      <loading :isShow="loading" />
-      <component
-        :is="currentComponent"
-        v-bind="currentProp"
-        @playProgram="playProgram"
-        @contentLoaded="contentLoaded"
-      />
-    </div>
+        <div class="cover-text">
+          <div class="dj-name">{{ result.name }}</div>
+          <div class="dj-sub">{{ result.subCount | round }}人订阅</div>
+        </div>
+      </div>
+
+      <div class="tabbar" slot="tab">
+        <span
+          v-for="(item, index) in tabbar"
+          :key="item"
+          :class="{ active: index === activeTab }"
+          @click.stop="tabClick(index)"
+          >{{ item }}</span
+        >
+      </div>
+
+      <div class="component-wrapper" slot="component">
+        <loading :isShow="loading" />
+        <component
+          :is="currentComponent"
+          v-bind="currentProp"
+          @playProgram="playProgram"
+          @contentLoaded="contentLoaded"
+        />
+      </div>
+    </scroll-view>
   </div>
 </template>
 
@@ -37,10 +47,12 @@ import ProgramList from './RadioProgramList';
 import { roundCountMixin, getTracksMixin, getUrlMixin, loadingMixin } from 'common/mixin';
 import { getRadioDetail, getProgramList } from 'networks/radio';
 import NavBar from 'components/common/NavBar/NavBar';
+import ScrollView from '../../../components/content/ScrollView.vue';
+
 import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'RadioProgram',
-  components: { NavBar },
+  components: { NavBar, ScrollView },
   mixins: [roundCountMixin, getTracksMixin, getUrlMixin, loadingMixin],
   data() {
     return {
@@ -48,7 +60,8 @@ export default {
       programs: [],
       tracks: [],
       tabbar: ['详情', '节目'],
-      activeTab: 1
+      activeTab: 1,
+      coverHeight: 0
     };
   },
   created() {
@@ -67,6 +80,9 @@ export default {
         });
       });
     });
+  },
+  mounted() {
+    this.coverHeight = this.$refs.scrollView.$refs.cover.clientHeight;
   },
   computed: {
     ...mapGetters(['isLoading']),
@@ -111,7 +127,7 @@ export default {
   top: 0;
   right: 0;
   left: 0;
-  bottom: 0;
+  bottom: 98px;
   z-index: 1;
   background-color: #fff;
   .nav {
@@ -128,8 +144,7 @@ export default {
     top: 0;
     left: 0;
     right: 0;
-    padding-top: 100px;
-    height: 35%;
+    height: calc(var(--height) - 100px);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -155,16 +170,12 @@ export default {
     }
   }
   .tabbar {
-    height: 80px;
     position: absolute;
     left: 0;
     right: 0;
     display: flex;
     align-items: center;
     justify-content: space-around;
-    top: calc(35% + 50px);
-    background-color: #fff;
-    border-radius: 30px 30px 0 0;
     @include font_size($ms);
     z-index: 1;
     .active {
@@ -172,13 +183,6 @@ export default {
       border-color: $font-active-color-theme;
       @include font_active_color();
     }
-  }
-  .component-wrapper {
-    position: absolute;
-    top: calc(35% + 50px + 80px);
-    left: 0;
-    right: 0;
-    bottom: 0;
   }
 }
 </style>

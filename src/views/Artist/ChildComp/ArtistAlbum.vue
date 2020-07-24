@@ -6,16 +6,16 @@
       :key="album.id"
       @click="albumClick(album.id)"
     >
-      <img v-lazy="fmtUrl(album.picUrl)" />
-      <div class="album-info">
-        <div class="title">
-          {{ album.name }}
-        </div>
-        <div class="album-desc">
+      <song-view>
+        <img v-lazy="fmtUrl(album.picUrl)" slot="left" />
+        <div class="album-info" slot="center">
+          <div class="title">
+            {{ album.name }}
+          </div>
           <span class="pubDate">{{ getDate(album.publishTime) }} </span>
           <span class="count">{{ album.size }}首</span>
         </div>
-      </div>
+      </song-view>
     </div>
   </div>
 </template>
@@ -24,18 +24,28 @@
 import { getArtistAlbum } from 'networks/artist';
 import { fmtDate } from 'common/utils';
 import { getUrlMixin } from 'common/mixin';
+import SongView from '../../../components/content/SongView.vue';
 
 export default {
   name: 'ArtistAlbum',
+  components: { SongView },
   mixins: [getUrlMixin],
   data() {
     return {
       albums: []
     };
   },
-  created() {
-    getArtistAlbum(this.$route.params.id).then(res => {
-      this.albums = res.hotAlbums;
+  props: {
+    id: {
+      type: Number,
+      default: 0,
+      required: true
+    }
+  },
+  async created() {
+    await getArtistAlbum(this.id).then(res => {
+      let count = res.artist.albumSize;
+      getArtistAlbum(this.id, count).then(res => (this.albums = res.hotAlbums));
     });
   },
   computed: {
@@ -74,32 +84,13 @@ export default {
 <style lang="scss" scoped>
 @import 'assets/css/mixin.scss';
 .artist-album {
-  margin: 0 24px;
-  @include font_size($m);
   .album-wrapper {
     display: flex;
-    align-items: center;
-    padding: 10px 0;
     img {
       width: 100px;
       height: 100px;
       border-radius: 10px;
       margin-right: 24px;
-    }
-    .title,
-    .album-desc {
-      @include clamp(1);
-    }
-    .album-info {
-      width: calc(100% - 130px);
-      .album-desc {
-        @include font_size($s);
-        @include font_color();
-
-        span {
-          margin-right: 20px;
-        }
-      }
     }
   }
 }

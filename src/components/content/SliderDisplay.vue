@@ -62,18 +62,25 @@ export default {
     changeIcon: {
       type: String,
       default: ''
+    },
+    sliderOption: {
+      type: Object,
+      default: () => {}
     }
   },
   data() {
     return {
       songClicked: false,
       options: this.isSong
-        ? {
-            freemode: true,
-            autoplay: '',
-            slidesPerView: 1.1,
-            slidesPerColumn: 3
-          }
+        ? Object.assign(
+            {
+              freemode: true,
+              autoplay: '',
+              slidesPerView: 1.1,
+              slidesPerColumn: 3
+            },
+            this.sliderOption
+          )
         : { freemode: true, autoplay: '', slidesPerView: 3.3, spaceBetween: 30 }
     };
   },

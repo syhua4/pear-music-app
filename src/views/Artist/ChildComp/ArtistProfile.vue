@@ -1,5 +1,5 @@
 <template>
-  <div class="artist-profile">
+  <div class="artist-profile" v-if="desc">
     <div class="header">歌手简介</div>
     <div class="desc">{{ desc }}</div>
   </div>
@@ -11,7 +11,7 @@ import { getArtistInfo } from 'networks/artist';
 export default {
   name: 'ArtistProfile',
   created() {
-    getArtistInfo(this.$route.params.id).then(res => {
+    getArtistInfo(this.id).then(res => {
       this.desc = res.briefDesc;
     });
   },
@@ -20,7 +20,13 @@ export default {
       desc: ''
     };
   },
-
+  props: {
+    id: {
+      type: Number,
+      default: 0,
+      required: true
+    }
+  },
   watch: {
     desc: {
       handler() {

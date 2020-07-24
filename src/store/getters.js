@@ -18,8 +18,8 @@ export default {
     }
   },
 
-  favouriteList(state) {
-    return state.favouriteList;
+  historyList(state) {
+    return state.historyList;
   },
 
   isLoading(state) {

@@ -11,67 +11,74 @@
       <span class="login-btn" v-if="!isLogin" @click="loginClick">立即登录</span>
     </div>
     <div class="mine-wrapper">
-      <div class="header">我的音乐</div>
-      <div class="panel-wrapper">
-        <div class="panel like" @click="myFavListClick">
-          <i class="iconfont icon-heart-filled" />
-          <div class="text">我喜欢的音乐</div>
-        </div>
-        <div class="panel" @click="playSong">
-          <i class="iconfont icon-radio2" />
-          <div class="text">私人FM</div>
-        </div>
-      </div>
-      <slider-display
-        title="最近播放"
-        ref="slider"
-        :isSong="true"
-        :items="getSlicedSongs"
-        changeIcon="icon-play-btn"
-        class="slider"
-      >
-        <div class="more" slot="more">
-          更多
-          <i class="iconfont icon-next" />
-        </div>
-      </slider-display>
-      <div class="no-content" v-if="!songs.length" :style="{ color: isLogin ? '#4d7daf' : '#ccc' }">
-        快开启音乐之旅吧!
-      </div>
-      <div class="header">
-        <span
-          v-for="(item, index) in tabbar"
-          :key="index"
-          :class="{ inactive: activeTab !== index }"
-          @click="tabClick(index)"
-          >{{ item }}</span
-        >
-        <div class="icons">
-          <i class="iconfont icon-plus" @click.stop="togglePopUp" />
-          <i class="iconfont icon-setting" @click.stop="settingClick" />
-        </div>
-      </div>
-      <div class="playlist-wrapper" v-if="currentPlaylist.length">
-        <div
-          class="playlist"
-          v-for="item in currentPlaylist"
-          :key="item.id"
-          @click="playlistClick(item.id)"
-        >
-          <img class="playlist-img" :src="fmtUrl(item.coverImgUrl)" />
-          <div class="desc">
-            <div class="title">{{ item.name }}</div>
-            <div class="count">{{ item.trackCount }}首</div>
+      <scroll>
+        <div class="header">我的音乐</div>
+        <div class="panel-wrapper">
+          <div class="panel like" @click="myFavListClick">
+            <i class="iconfont icon-heart-filled" />
+            <div class="text">我喜欢的音乐</div>
+          </div>
+          <div class="panel" @click="playSong">
+            <i class="iconfont icon-radio2" />
+            <div class="text">私人FM</div>
           </div>
         </div>
-      </div>
-      <div
-        class="no-content"
-        v-if="!playlist.length"
-        :style="{ color: isLogin ? '#4d7daf' : '#ccc' }"
-      >
-        新建歌单
-      </div>
+        <slider-display
+          title="最近播放"
+          ref="slider"
+          :isSong="true"
+          :sliderOption="{ slidesPerView: 2.1, slidesPerColumn: 1 }"
+          :items="getSlicedSongs"
+          changeIcon="icon-play-btn"
+          class="slider"
+        >
+          <div class="more" slot="more">
+            更多
+            <i class="iconfont icon-next" />
+          </div>
+        </slider-display>
+        <div
+          class="no-content"
+          v-if="!historyList.length"
+          :style="{ color: isLogin ? '#4d7daf' : '#ccc' }"
+        >
+          快开启音乐之旅吧!
+        </div>
+        <div class="header">
+          <span
+            v-for="(item, index) in tabbar"
+            :key="index"
+            :class="{ inactive: activeTab !== index }"
+            @click="tabClick(index)"
+            >{{ item }}</span
+          >
+          <div class="icons">
+            <i class="iconfont icon-plus" @click.stop="togglePopUp" />
+            <i class="iconfont icon-setting" @click.stop="settingClick" />
+          </div>
+        </div>
+        <div class="playlist-wrapper" v-if="currentPlaylist.length">
+          <div
+            class="playlist"
+            v-for="item in currentPlaylist"
+            :key="item.id"
+            @click="playlistClick(item.id)"
+          >
+            <img class="playlist-img" v-lazy="fmtUrl(item.coverImgUrl)" />
+            <div class="desc">
+              <div class="title">{{ item.name }}</div>
+              <div class="count">{{ item.trackCount }}首</div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="no-content"
+          v-if="!playlist.length"
+          :style="{ color: isLogin ? '#4d7daf' : '#ccc' }"
+        >
+          新建歌单
+        </div>
+      </scroll>
     </div>
     <transition name="slide">
       <pop-up
@@ -88,15 +95,16 @@
 <script>
 import PopUp from './ChildComp/MinePopUp';
 
+import Scroll from 'components/common/Scroll/Scroll';
 import NavBar from 'components/common/NavBar/NavBar';
 import SliderDisplay from 'components/content/SliderDisplay';
 
 import { getUrlMixin } from 'common/mixin';
 import { mapActions, mapGetters } from 'vuex';
-import { getPlayerHistory, getPlaylist, createPlaylist, getFM } from 'networks/user';
+import { getPlaylist, createPlaylist, getFM } from 'networks/user';
 export default {
   name: 'Mine',
-  components: { PopUp, NavBar, SliderDisplay },
+  components: { PopUp, Scroll, NavBar, SliderDisplay },
   mixins: [getUrlMixin],
   data() {
     return {
@@ -110,8 +118,12 @@ export default {
   },
   created() {
     if (this.isLogin && this.cookie && this.profile.uid) {
+      let list = JSON.parse(window.localStorage.getItem('historyList'));
+      if (!list) {
+        return;
+      }
+      this.setHistoryList(list);
       getFM(this.cookie).then(res => {
-        console.log(res.data);
         res.data.map(song => {
           this.fm.push({
             id: song.id,
@@ -121,30 +133,20 @@ export default {
           });
         });
       });
-      getPlayerHistory(this.profile.uid, this.cookie).then(res => {
-        res.weekData.map(item => {
-          this.songs.push(item.song);
-        });
-      });
+
       getPlaylist(this.profile.uid, this.cookie).then(res => {
-        console.log(res.playlist);
         this.playlist = res.playlist;
       });
     }
   },
-  mounted() {
-    delete this.$refs.slider.options.slidesPerColumn;
-    this.$refs.slider.options.slidesPerView = 2.1;
-  },
   computed: {
-    ...mapGetters(['isLogin', 'cookie', 'profile', 'isLoading']),
+    ...mapGetters(['isLogin', 'cookie', 'profile', 'isLoading', 'historyList']),
     currentPlaylist() {
       let list;
       if (this.activeTab === 0) {
         let t = this.playlist.filter(item => {
           return item.creator.userId === this.profile.uid;
         });
-        console.log(t);
         list = t.slice(1);
       } else {
         list = this.playlist.filter(item => {
@@ -155,14 +157,21 @@ export default {
     },
 
     getSlicedSongs() {
-      return this.songs.slice(0, 3);
+      let revList = [...this.historyList].reverse();
+      return revList.slice(0, 3);
     },
     getSlicedPlaylist() {
       return this.playlist.slice(1);
     }
   },
   methods: {
-    ...mapActions(['setPlayList', 'setShowPlayer', 'setCurrentIndex', 'setIsLoading']),
+    ...mapActions([
+      'setPlayList',
+      'setShowPlayer',
+      'setCurrentIndex',
+      'setIsLoading',
+      'setHistoryList'
+    ]),
     async createList(name) {
       await createPlaylist(name, this.cookie).then(res => {
         console.log(res);
@@ -271,6 +280,7 @@ export default {
       @include font_size($s);
     }
   }
+
   .mine-wrapper {
     position: absolute;
     background-color: #fff;
@@ -279,6 +289,14 @@ export default {
     left: 0;
     right: 0;
     border-radius: 30px 30px 0 0;
+    .scroll-wrapper {
+      position: fixed;
+      top: calc(15% + 100px);
+      bottom: 100px;
+      left: 0;
+      right: 0;
+      overflow: hidden;
+    }
     .header {
       padding: 20px 24px;
       font-weight: 500;
@@ -355,6 +373,8 @@ export default {
           height: 120px;
           border-radius: 15px;
           margin-right: 20px;
+          flex-shrink: 0;
+          object-fit: cover;
         }
         .swiper-item-desc {
           .swiper-item-text {
@@ -395,6 +415,8 @@ export default {
           height: 120px;
           border-radius: 15px;
           margin-right: 20px;
+          flex-shrink: 0;
+          object-fit: cover;
         }
         .desc {
           display: flex;
@@ -422,6 +444,7 @@ export default {
       border-radius: 15px;
     }
   }
+
   .pop-up {
     position: fixed;
     bottom: 0;

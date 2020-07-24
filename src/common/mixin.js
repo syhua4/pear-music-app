@@ -22,7 +22,7 @@ export const roundCountMixin = {
   filters: {
     round: function(val, roundTo = 0) {
       if (!val) {
-        return '';
+        return '0';
       } else if (val >= 100000000) {
         return (val / 100000000).toFixed(roundTo) + '亿';
       } else if (val >= 10000) {

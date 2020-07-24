@@ -7,11 +7,11 @@ import {
   SET_PLAY_MODE,
   SET_SHUFFLED_LIST,
   SET_LOADING,
-  SET_FAVOURITE,
-  SET_UNFAVOURITE,
   SET_LOGIN,
   SET_COOKIE,
-  SET_USER_PROFILE
+  SET_USER_PROFILE,
+  SET_HISTORY_LIST,
+  SET_HISTORY_SONG
 } from './mutation-types';
 
 import { mode } from './mode-type';
@@ -29,10 +29,20 @@ export default {
     state.currentIndex = payload;
   },
 
-  [SET_FAVOURITE](state, payload) {
-    let temp = [...state.favouriteList];
-    temp.push(payload);
-    state.favouriteList = temp;
+  [SET_HISTORY_LIST](state, payload) {
+    state.historyList = payload;
+  },
+
+  [SET_HISTORY_SONG](state, payload) {
+    let result = state.historyList.find(val => {
+      console.log(val.id, payload.id);
+      return val.id === payload.id;
+    });
+    console.log(result);
+    if (!result) {
+      console.log('add');
+      state.historyList.push(payload);
+    }
   },
 
   [SET_LOADING](state, payload) {
@@ -73,10 +83,5 @@ export default {
     state.profile['uid'] = payload.userId;
     state.profile['nickname'] = payload.nickname;
     state.profile['avatar'] = payload.avatarUrl;
-  },
-
-  [SET_UNFAVOURITE](state, payload) {
-    let temp = state.favouriteList.filter(item => item !== payload);
-    state.favouriteList = temp;
   }
 };

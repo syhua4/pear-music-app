@@ -1,6 +1,10 @@
 <template>
   <div class="player-toolbar">
-    <i class="iconfont" :class="isFavourite" @click="toggleFavourite"></i>
+    <i
+      class="iconfont"
+      :class="like ? 'icon-heart-filled' : 'icon-heart'"
+      @click="toggleFavourite"
+    ></i>
     <i class="iconfont icon-download"></i>
     <i class="iconfont icon-comment"></i>
     <i class="iconfont icon-more--line"></i>
@@ -8,31 +12,49 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { setLikelist, getLikelist } from 'networks/user';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'PlayerToolbar',
+  data() {
+    return {
+      like: false
+    };
+  },
   methods: {
-    ...mapActions(['setFavourite', 'setUnfavourite']),
-    toggleFavourite() {
-      let songId = this.currentPlaying.id;
-      this.isFavourite.includes('fill')
-        ? this.setUnfavourite(songId).then(res => this.$toast.show(res, 1000))
-        : this.setFavourite(songId).then(res => this.$toast.show(res, 1000));
-    },
-    toggleDownload() {
-      let aEl = document.createElement('a');
-      aEl.download = this.currentPlaying.url;
+    async toggleFavourite() {
+      if (this.isLogin) {
+        await setLikelist(this.currentPlaying.id, !this.like, this.cookie).then(res => {
+          if (res.code === 200) {
+            this.like = !this.like;
+            this.like
+              ? this.$toast.show('添加至我喜欢', 1000)
+              : this.$toast.show('已删除我喜欢', 1000);
+          }
+        });
+      } else {
+        this.$toast.show('请先登录', 1000);
+      }
     }
   },
   computed: {
-    ...mapGetters(['currentPlaying', 'favouriteList']),
-    isFavourite() {
-      let favClass = 'icon-heart';
-      if (this.currentPlaying && this.favouriteList.includes(this.currentPlaying.id)) {
-        favClass = 'icon-heart-filled';
+    ...mapGetters(['currentPlaying', 'favouriteList', 'profile', 'cookie', 'isLogin'])
+  },
+  watch: {
+    currentPlaying: {
+      deep: true,
+      immediate: true,
+      handler(val) {
+        if (this.isLogin && val) {
+          getLikelist(this.profile.uid, this.cookie).then(res => {
+            let result = res.ids.findIndex(item => {
+              return item === val.id;
+            });
+            this.like = result < 0 ? false : true;
+          });
+        }
       }
-      return favClass;
     }
   }
 };

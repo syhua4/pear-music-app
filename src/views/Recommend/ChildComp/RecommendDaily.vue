@@ -3,18 +3,22 @@
     <nav-bar class="nav">
       <i class="iconfont icon-back" slot="left" @click="goBack" />
     </nav-bar>
-    <div class="play-all iconfont fixed" v-show="showFixed" @click="playSong">
-      {{ '\ue624' }} 播放全部
-    </div>
-    <div class="top">
-      <div class="date">
-        <span class="day">{{ getDate.date }}</span>
-        {{ getDate.month }}
+    <scroll-view height="20%">
+      <div class="cover" slot="cover">
+        <div class="date">
+          <span class="day">{{ getDate.date }}</span>
+          {{ getDate.month }}
+        </div>
       </div>
-    </div>
-    <scroll ref="scroll" :probeType="3" @scrolling="scrollPosition">
-      <div class="list-wrapper">
-        <div class="play-all iconfont" @click="playSong">{{ '\ue624' }} 播放全部</div>
+      <div class="play-all" @click.stop="playSong" slot="left">
+        <i class="iconfont icon-play" />
+        <span class="tool-header">播放全部</span>
+      </div>
+      <div class="multi-select" slot="right">
+        <i class="iconfont icon-select-list" /><span>多选</span>
+      </div>
+
+      <div slot="component">
         <loading :isShow="loading" v-if="loading" />
         <div
           v-else
@@ -23,30 +27,34 @@
           :key="index"
           @click="playSong(index)"
         >
-          <img v-lazy="fmtUrl(song.al.picUrl)" />
-          <div class="song-desc">
-            <div class="title">{{ song.name }}</div>
-            <span class="artist">{{ artists(song.ar) }}</span>
-            <span class="album">{{ song.al.name }}</span>
-          </div>
-          <i class="iconfont icon-more" />
+          <song-view>
+            <img v-lazy="fmtUrl(song.al.picUrl)" slot="left" />
+            <div class="song-desc" slot="center">
+              <div class="title">{{ song.name }}</div>
+              <span class="artist">{{ artists(song.ar) }}</span>
+              <span class="album">{{ song.al.name }}</span>
+            </div>
+            <i class="iconfont icon-more--line" slot="right" />
+          </song-view>
         </div>
       </div>
-    </scroll>
+    </scroll-view>
   </div>
 </template>
 
 <script>
 import NavBar from 'components/common/NavBar/NavBar';
-import Scroll from 'components/common/Scroll/Scroll';
+import ScrollView from 'components/content/ScrollView.vue';
+
 import { fmtDate } from 'common/utils';
 import { getArtistsMixin, getUrlMixin, loadingMixin } from 'common/mixin';
 import { getDailySong } from 'networks/recommend';
 import { mapGetters, mapActions } from 'vuex';
+import SongView from 'components/content/SongView.vue';
 
 export default {
   name: 'RecommendDaily',
-  components: { NavBar, Scroll },
+  components: { NavBar, ScrollView, SongView },
   mixins: [getArtistsMixin, getUrlMixin, loadingMixin],
   data() {
     return {
@@ -114,7 +122,7 @@ export default {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 100px;
   z-index: 1;
   background-color: #fff;
   .nav {
@@ -126,7 +134,7 @@ export default {
       @include font_size($icon_ms);
     }
   }
-  .top {
+  .cover {
     position: absolute;
     top: 0;
     left: 0;
@@ -134,7 +142,8 @@ export default {
     bottom: 0;
     height: 300px;
     padding-top: 100px;
-    background-color: #444;
+    background: #444;
+    background-image: url('~assets/images/bg_default.jpg');
     padding: 24px 48px;
     z-index: 0;
     .date {
@@ -154,74 +163,14 @@ export default {
       }
     }
   }
-  .play-all {
-    height: 50px;
-    padding: 16px 0 8px;
-    @include font_size($m);
-    &.fixed {
-      padding: 12px 24px;
-      border-radius: 25px 25px 0 0;
-      background-color: #fff;
-      position: fixed;
-      top: 100px;
-      bottom: 0;
-      right: 0;
-      left: 0;
-      z-index: 5;
-    }
-  }
-  .scroll-wrapper {
-    position: fixed;
-    border-radius: 25px 25px;
-    overflow: hidden;
-    top: 100px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    .scroll-content {
-      position: relative;
-      top: 100px;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      .list-wrapper {
-        background-color: #fff;
-        padding: 0 24px;
-        border-radius: 25px 25px;
-        position: relative;
-        top: 200px;
-        bottom: 0;
-        padding-bottom: 200px;
+  .song-wrapper {
+    display: flex;
 
-        .song-wrapper {
-          display: flex;
-          align-items: center;
-          padding: 12px 0;
-
-          img {
-            width: 100px;
-            height: 100px;
-            margin-right: 20px;
-            border-radius: 10px;
-          }
-          .title {
-            @include font_size($ms);
-            @include clamp(1);
-          }
-          span {
-            @include font_color();
-            @include font_size($s);
-          }
-          .artist {
-            margin-right: 8px;
-          }
-          .icon-more {
-            margin-left: auto;
-            color: #ccc;
-            @include font_size($icon_m);
-          }
-        }
-      }
+    img {
+      width: 80px;
+      height: 80px;
+      margin-right: 20px;
+      border-radius: 10px;
     }
   }
 }

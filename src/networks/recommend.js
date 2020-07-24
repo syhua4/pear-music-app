@@ -21,7 +21,8 @@ export function getPlaylists(cat, limit = 30, offset = 0) {
 
 export function getPlaylistTrackId(id) {
   return request({
-    url: '/playlist/detail',
+    url: `/playlist/detail?timestamps=${Date.now()}`,
+    method: 'post',
     params: {
       id
     }
@@ -37,11 +38,12 @@ export function getTrack(ids) {
   });
 }
 
-export function getSongUrl(id) {
+export function getSongUrl(id, cookie) {
   return request({
     url: '/song/url',
     params: {
-      id
+      id,
+      cookie
     }
   });
 }

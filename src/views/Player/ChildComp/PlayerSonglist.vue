@@ -25,15 +25,23 @@
           :key="track.id"
           @click="changeSong(index)"
         >
-          <div
-            class="track-info"
-            :class="{ active: currentPlaying.id === track.id, disabled: songAvailable(index) }"
-          >
-            <i class="iconfont icon-speaker" v-show="currentPlaying.id === track.id"></i>
-            <span class="track-name">{{ track.name }}</span>
-            <span class="artist">{{ track.ar && artists(track.ar) }}</span>
-          </div>
-          <i class="iconfont icon-cross" @click.stop="deleteSong(index)" />
+          <song-view>
+            <i
+              class="iconfont icon-speaker"
+              v-show="currentPlaying.id === track.id"
+              slot="left"
+              :class="{ active: currentPlaying.id === track.id }"
+            />
+            <div
+              slot="center"
+              class="track-info"
+              :class="{ active: currentPlaying.id === track.id, disabled: songAvailable(index) }"
+            >
+              <span class="track-name">{{ track.name }}</span>
+              <span class="artist">{{ track.ar && artists(track.ar) }}</span>
+            </div>
+            <i class="iconfont icon-cross" @click.stop="deleteSong(index)" slot="right" />
+          </song-view>
         </div>
       </scroll>
     </div>
@@ -46,9 +54,10 @@ import { mapActions, mapGetters } from 'vuex';
 import { getArtistsMixin, changeModeMixin } from 'common/mixin';
 
 import Scroll from 'components/common/Scroll/Scroll';
+import SongView from '../../../components/content/SongView.vue';
 export default {
   name: 'PlayerSonglist',
-  components: { Scroll },
+  components: { Scroll, SongView },
   mixins: [getArtistsMixin, changeModeMixin],
   methods: {
     ...mapActions(['setPlayStatus', 'setCurrentIndex', 'setRemoveSong']),
@@ -102,13 +111,14 @@ export default {
 @import 'assets/css/mixin';
 
 .player-songlist {
-  padding: 25px 30px 5px;
   position: relative;
   z-index: 10;
   .iconfont {
     @include font_size($icon_m);
   }
   .list-header {
+    padding: 25px 30px 5px;
+
     height: 130px;
     display: flex;
     flex-direction: column;
@@ -149,34 +159,33 @@ export default {
     height: 80px;
     border-bottom: 1px solid #ccc;
     @include font_size($ms);
-    .track-info {
+    .track-info,
+    .icon-speaker {
       display: flex;
-      @include clamp(1);
-
-      .artist {
-        @include font_size($s);
-        @include font_color();
-        &:before {
+      .track-name {
+        color: #333 !important;
+        &:after {
           content: '-';
           display: inline-block;
-          padding: 0 5px;
+          padding-left: 10px;
           font-size: 15px;
         }
       }
       &.active,
+      &.active .track-name,
       &.active .artist {
-        @include font_active_color();
+        color: $font-active-color-theme !important;
       }
       &.disabled,
+      &.disabled .track-name,
       &.disabled .artist {
-        color: #ccc;
-      }
-      .icon-speaker {
-        @include font_size($icon_s);
-        margin-right: 8px;
+        color: #ccc !important;
       }
     }
-
+    .icon-speaker {
+      @include font_size($icon_s);
+      margin-right: 8px;
+    }
     .icon-cross {
       @include font_size($s);
       @include font_color();

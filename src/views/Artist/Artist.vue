@@ -86,7 +86,7 @@ export default {
       console.log(artist);
       this.$router.push({
         name: 'artist-info',
-        params: { id: artist.id, uid: artist.accountId, bgUrl: artist.picUrl }
+        params: { id: artist.accountId }
       });
     },
     goBack() {

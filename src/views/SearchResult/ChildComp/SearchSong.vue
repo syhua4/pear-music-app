@@ -4,19 +4,14 @@
       {{ '\ue624' }} 播放全部
     </div>
     <div class="song" v-for="(song, index) in results" :key="song.id" @click.stop="playSong(index)">
-      <div class="wrapper-left">
-        <div class="song-name">{{ song.name }}</div>
-        <div class="song-desc">
+      <song-view padding="0">
+        <div class="song-info" slot="center">
+          <div class="song-name">{{ song.name }}</div>
           <span class="song-artist">{{ artists(song.artists || song.ar) }}</span>
           <span class="song-album">{{ song.album ? song.album.name : song.al.name }}</span>
         </div>
-        <div class="song-alias">
-          {{ (song.alias && song.alias[0]) || (song.alia && song.alia[0]) }}
-        </div>
-      </div>
-      <div class="wrapper-right">
-        <i class="iconfont icon-more"></i>
-      </div>
+        <i class="iconfont icon-more--line" slot="right" />
+      </song-view>
     </div>
   </div>
 </template>
@@ -25,9 +20,11 @@
 import { getTrack } from 'networks/recommend';
 import { getArtistsMixin, getTracksMixin } from 'common/mixin';
 import { mapGetters, mapActions } from 'vuex';
+import SongView from '../../../components/content/SongView.vue';
 
 export default {
   name: 'SearchSong',
+  components: { SongView },
   mixins: [getArtistsMixin, getTracksMixin],
   methods: {
     ...mapActions(['setPlayList', 'setShowPlayer', 'setCurrentIndex', 'setIsLoading']),
@@ -75,45 +72,18 @@ export default {
 @import 'assets/css/mixin';
 
 .result-song {
-  margin: 0 24px;
   .play-all {
-    padding-top: 20px;
+    margin: 0 24px;
     height: 60px;
     line-height: 60px;
-    &.iconfont {
-      @include font_size($m);
-    }
+    @include font_size($ms);
   }
   .song {
-    border-top: 1px solid #eee;
     border-bottom: 1px solid #eee;
     padding: 10px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .icon-more {
-      margin-left: 20px;
-      @include font_color();
-      @include font_size($icon_m);
-    }
-    .song-name {
-      @include font_size($ms);
-    }
-    .song-name,
-    .song-desc {
-      @include clamp(1);
-    }
-    .song-desc,
-    .song-alias {
-      padding-top: 10px;
-      @include font_size($s);
-      @include font_color();
-    }
-    .song-artist::after {
-      content: '-';
-      display: inline-block;
-      padding: 0 4px;
-    }
   }
 }
 </style>

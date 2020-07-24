@@ -77,6 +77,7 @@ export default {
       bgColor: 'white'
     };
   },
+  created() {},
   mounted() {
     this.audio = this.$refs.audio;
     let observer = new MutationObserver(() => {
@@ -110,7 +111,13 @@ export default {
     observer.observe(this.$refs.audio, config);
   },
   methods: {
-    ...mapActions(['setShowPlayer', 'setPlayStatus', 'setShuffledList']),
+    ...mapActions([
+      'setShowPlayer',
+      'setPlayStatus',
+      'setShuffledList',
+      'setHistorySong',
+      'setHistoryList'
+    ]),
     changeProgress(percent) {
       this.audio.currentTime = (percent.slice(0, -1) / 100) * this.totalTime;
     },
@@ -173,7 +180,9 @@ export default {
       'currentIndex',
       'isPlaying',
       'playMode',
-      'isLoading'
+      'isLoading',
+      'historyList',
+      'isLogin'
     ]),
     song() {
       let url = '';
@@ -199,7 +208,6 @@ export default {
     currentPlaying: {
       handler(val) {
         if (val && Object.keys(val).length > 0) {
-          // let colorthief = new ColorThief();
           let preloader = document.createElement('img');
           preloader.src = val.al.picUrl;
           preloader.crossOrigin = 'anonymous';
@@ -207,7 +215,6 @@ export default {
             console.log('img load');
             this.bgVar['--bg'] = `url("${this.fmtUrl(val.al.picUrl + '?param=50y50')}")`;
             this.bgVar['--opacity'] = 1;
-            // this.bgColor = colorthief.getColor(preloader);
             async function color(img) {
               let c = await analyze(
                 img,
@@ -222,9 +229,6 @@ export default {
             color(`${preloader.src}?param=50y50`).then(res => {
               this.bgColor = res;
             });
-
-            // console.log(color);
-            // console.log(this.bgColor);
             preloader = null;
           });
         }
@@ -244,11 +248,20 @@ export default {
       }
     },
     isPlaying(newVal) {
-      newVal && this.audio.src.includes('mp3')
-        ? this.audio.play()
-        : this.audio.play().then(() => {
-            this.audio.pause();
-          });
+      if (newVal && this.audio.src.includes('mp3')) {
+        this.audio.play();
+        if (this.isLogin) {
+          this.setHistorySong(this.currentPlaying);
+        }
+      } else {
+        this.audio.play().then(() => {
+          this.audio.pause();
+        });
+      }
+    },
+    historyList(newVal) {
+      console.log(newVal);
+      window.localStorage.setItem('historyList', JSON.stringify(newVal));
     },
     playMode(newVal) {
       if (newVal === 'random') {
