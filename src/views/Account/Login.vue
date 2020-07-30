@@ -1,10 +1,5 @@
 <template>
   <div class="login">
-    <nav-bar class="nav">
-      <i class="iconfont icon-back" slot="left" />
-      <div class="nav-title" slot="center">网易邮箱账号登入</div>
-      <i class="iconfont icon-back" slot="right" />
-    </nav-bar>
     <form>
       <input type="text" placeholder="登录邮箱" v-model="email" />
       <input type="password" placeholder="密码" v-model="password" />
@@ -15,13 +10,11 @@
 </template>
 
 <script>
-import NavBar from 'components/common/NavBar/NavBar';
 import { isEmail } from 'common/utils';
 import testAccount from 'common/test_account';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 export default {
   name: 'Login',
-  components: { NavBar },
   data() {
     return {
       email: '',
@@ -29,7 +22,6 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['isLogin']),
     isDisable() {
       return !this.email.trim() || !this.password.trim();
     }
@@ -40,24 +32,15 @@ export default {
       !isEmail(this.email) ? this.$toast.show('请输入正确的网易邮箱', 1000) : this.login();
     },
     login() {
-      this.setLogin({ email: this.email, password: this.password }).then(res =>
-        this.$toast.show(res, 1000)
-      );
+      this.setLogin({ email: this.email, password: this.password }).then(res => {
+        this.$toast.show(res, 1000);
+        this.$router.push('/user');
+      });
     },
     testLogin() {
       this.email = testAccount.test_acc;
       this.password = testAccount.test_pwd;
       this.login();
-    }
-  },
-  watch: {
-    isLogin: {
-      immediate: true,
-      handler(val) {
-        if (val) {
-          this.$router.push('/recommend');
-        }
-      }
     }
   }
 };
@@ -66,15 +49,6 @@ export default {
 <style lang="scss" scoped>
 @import 'assets/css/mixin.scss';
 .login {
-  .nav {
-    color: #fff;
-    .icon-back {
-      @include font_size($icon_ms);
-    }
-    .right-nav .icon-back {
-      color: transparent;
-    }
-  }
   form {
     margin: 50px 24px 0;
     input {

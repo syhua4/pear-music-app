@@ -1,5 +1,14 @@
 import { request } from './request';
 
+export function getArtist(id) {
+  return request({
+    url: '/artists/',
+    params: {
+      id
+    }
+  });
+}
+
 export function getArtistList(type = -1, area = -1, offset = 0) {
   return request({
     url: '/artist/list',

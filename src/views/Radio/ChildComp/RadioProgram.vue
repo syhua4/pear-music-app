@@ -3,6 +3,7 @@
     <nav-bar class="nav">
       <i class="iconfont icon-back" slot="left" @click="goBack" />
       <div slot="center">电台</div>
+      <i class="iconfont icon-share" slot="right" @click.stop="shareRadio" />
     </nav-bar>
     <scroll-view height="25%" ref="scrollView">
       <div
@@ -35,25 +36,52 @@
           v-bind="currentProp"
           @playProgram="playProgram"
           @contentLoaded="contentLoaded"
+          @showMore="showMore"
         />
       </div>
     </scroll-view>
+    <transition name="slide">
+      <popup
+        v-show="showMoreOption"
+        @togglePopUp="togglePopUp"
+        :popUpHeight="-1"
+        v-if="programInfo && Object.keys(programInfo).length"
+      >
+        <div class="option-header">电台节目: {{ programInfo.name }}</div>
+        <div class="option-wrapper">
+          <div class="comment" @click.stop="noFunc">
+            <i class="iconfont icon-comment" />
+            <span>评论 {{ '(' + programInfo.commentCount + ')' }}</span>
+          </div>
+          <div class="share" @click.stop="shareProgram">
+            <i class="iconfont icon-share" />
+            <span>分享</span>
+          </div>
+        </div>
+      </popup>
+    </transition>
   </div>
 </template>
 
 <script>
 import ProgramDesc from './RadioProgramDesc';
 import ProgramList from './RadioProgramList';
-import { roundCountMixin, getTracksMixin, getUrlMixin, loadingMixin } from 'common/mixin';
+import {
+  roundCountMixin,
+  getTracksMixin,
+  getUrlMixin,
+  loadingMixin,
+  playSongMixin
+} from 'common/mixin';
 import { getRadioDetail, getProgramList } from 'networks/radio';
 import NavBar from 'components/common/NavBar/NavBar';
 import ScrollView from '../../../components/content/ScrollView.vue';
+import Popup from 'components/content/Popup.vue';
 
-import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'RadioProgram',
-  components: { NavBar, ScrollView },
-  mixins: [roundCountMixin, getTracksMixin, getUrlMixin, loadingMixin],
+  components: { NavBar, Popup, ScrollView },
+  mixins: [roundCountMixin, getTracksMixin, getUrlMixin, loadingMixin, playSongMixin],
   data() {
     return {
       result: [],
@@ -61,7 +89,9 @@ export default {
       tracks: [],
       tabbar: ['详情', '节目'],
       activeTab: 1,
-      coverHeight: 0
+      coverHeight: 0,
+      showMoreOption: false,
+      programInfo: {}
     };
   },
   created() {
@@ -85,7 +115,6 @@ export default {
     this.coverHeight = this.$refs.scrollView.$refs.cover.clientHeight;
   },
   computed: {
-    ...mapGetters(['isLoading']),
     currentComponent() {
       return this.activeTab === 1 ? ProgramList : ProgramDesc;
     },
@@ -94,20 +123,48 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setPlayList', 'setShowPlayer', 'setCurrentIndex', 'setIsLoading']),
     contentLoaded() {
       this.loading = false;
     },
     goBack() {
       this.$router.go(-1);
     },
+    noFunc() {
+      this.$toast.show('功能未完成', 1000);
+    },
     playProgram(index) {
-      if (!this.isLoading) {
-        this.setIsLoading(true);
-      }
-      this.setPlayList(this.tracks);
-      this.setCurrentIndex(index);
-      this.setShowPlayer(true);
+      this.playSong(this.tracks, index);
+    },
+    showMore(program) {
+      console.log(program);
+      this.programInfo = program;
+      this.showMoreOption = true;
+    },
+    shareProgram() {
+      let msg = `分享#${this.result.name}#的电台节目 ${'\u00AB' +
+        this.programInfo.name +
+        '\u00BB'} https://syhua4.github.io/pear-music-app/#/radio/program/${this.programInfo.id}`;
+      this.$copyText(msg).then(
+        () => {
+          this.$toast.show('复制链接成功', 1000);
+        },
+        () => {
+          this.$toast.show('复制链接失败, 请重试', 1000);
+        }
+      );
+    },
+    shareRadio() {
+      let msg = `分享电台 ${'\u00AB' +
+        this.result.name +
+        '\u00BB'} https://syhua4.github.io/pear-music-app/#/radio/program/${this.result.id}`;
+      this.$copyText(msg).then(
+        () => {
+          this.$toast.show('复制链接成功', 1000);
+        },
+        () => {
+          this.$toast.show('复制链接失败, 请重试', 1000);
+        }
+      );
     },
     tabClick(index) {
       if (this.loading) {
@@ -115,6 +172,9 @@ export default {
       } else {
         this.activeTab = index;
       }
+    },
+    togglePopUp() {
+      this.showMoreOption = false;
     }
   }
 };
@@ -135,7 +195,7 @@ export default {
     color: #fff;
     background-color: transparent;
     z-index: 2;
-    .icon-back {
+    .iconfont {
       @include font_size($icon_ms);
     }
   }
@@ -182,6 +242,39 @@ export default {
       border-bottom: 3px solid;
       border-color: $font-active-color-theme;
       @include font_active_color();
+    }
+  }
+  .pop-up {
+    .option-header {
+      margin: 24px 24px 0;
+      height: 60px;
+      border-bottom: 1px solid #eee;
+      @include font_color();
+      @include clamp(1);
+    }
+    .option-wrapper,
+    .track-option-wrapper {
+      padding: 0 24px 24px;
+      line-height: 80px;
+      .add-more,
+      .edit-playlist,
+      .play-next,
+      .add-playlist,
+      .comment,
+      .share,
+      .artist,
+      .album {
+        display: flex;
+        align-items: center;
+        span {
+          flex: 1;
+          border-bottom: 1px solid #eee;
+        }
+      }
+      .iconfont {
+        margin-right: 20px;
+        @include font_size($icon_ms);
+      }
     }
   }
 }

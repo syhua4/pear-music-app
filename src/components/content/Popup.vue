@@ -24,15 +24,11 @@ export default {
       default: 45
     }
   },
-  updated() {
-    this.offsetTop = this.$refs.popup.offsetTop;
-  },
   methods: {
     closePopUp(e) {
-      console.log(this.offsetTop, e.clientY);
+      this.offsetTop = this.$refs.popup.offsetTop;
       if (e.clientY < this.offsetTop) {
         this.$emit('togglePopUp');
-        console.log('click');
       }
     }
   }
@@ -57,6 +53,8 @@ export default {
     right: 0;
     background-color: #fff;
     z-index: 11;
+    overflow: hidden;
+
     border-radius: 30px 30px 0 0;
   }
 }

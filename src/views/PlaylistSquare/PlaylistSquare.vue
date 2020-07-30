@@ -3,7 +3,6 @@
     <nav-bar class="nav">
       <i class="iconfont icon-back" slot="left" @click="goBack" />
       <div class="nav-header" slot="center">歌单广场</div>
-      <i class="iconfont icon-back" slot="right" />
     </nav-bar>
     <tab-nav :titles="getTabNavTitles" :tabIndex="tabNavIndex" @tabClick="tabClick" class="tab">
       <i class="icon-category iconfont" slot="more" @click="clickMore" />
@@ -141,9 +140,6 @@ export default {
     z-index: 1;
     .icon-back {
       @include font_size($icon_ms);
-    }
-    .right-nav .icon-back {
-      color: transparent;
     }
   }
   ::v-deep.tabnav {

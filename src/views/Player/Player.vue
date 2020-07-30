@@ -4,7 +4,7 @@
       <div v-show="!isLoading">
         <audio ref="audio" :src="song" preload="auto" @timeupdate="timeUpdate" @ended="end" />
       </div>
-      <nav-bar class="player-nav">
+      <nav-bar class="player-nav" :isDisabled="true">
         <i class="iconfont icon-back" slot="left" @click="goBack" />
         <div slot="center" class="header">
           <span class="track-name">{{ currentPlaying && currentPlaying.name }}</span>

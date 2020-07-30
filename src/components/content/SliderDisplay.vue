@@ -14,7 +14,7 @@
             {{ item.playCount | round }}
           </span>
         </a>
-        <a class="swiper-item-wrapper" v-if="isSong" @click="playSong(index)">
+        <a class="swiper-item-wrapper" v-if="isSong" @click="play(index)">
           <img v-lazy="fmtUrl(item.al.picUrl)" class="swiper-item-img" />
 
           <div class="swiper-item-desc">
@@ -37,11 +37,10 @@
 <script>
 import { Swiper, SwiperItem } from 'components/common/Slider/Slider.js';
 
-import { roundCountMixin, getArtistsMixin, getUrlMixin } from 'common/mixin';
-import { mapActions, mapGetters } from 'vuex';
+import { roundCountMixin, getArtistsMixin, getUrlMixin, playSongMixin } from 'common/mixin';
 export default {
   name: 'SliderDisplay',
-  mixins: [roundCountMixin, getArtistsMixin, getUrlMixin],
+  mixins: [roundCountMixin, getArtistsMixin, getUrlMixin, playSongMixin],
   components: {
     Swiper,
     SwiperItem
@@ -85,27 +84,12 @@ export default {
     };
   },
   methods: {
-    ...mapActions([
-      'setPlayList',
-      'setShowPlayer',
-      'setPlayStatus',
-      'setCurrentIndex',
-      'setIsLoading'
-    ]),
     itemClick(id) {
       this.$emit('itemClick', id);
     },
-    playSong(index) {
-      if (!this.isLoading) {
-        this.setIsLoading(true);
-      }
-      this.setPlayList(this.items);
-      this.setCurrentIndex(index);
-      this.setShowPlayer(true);
+    play(index) {
+      this.playSong(this.items, index);
     }
-  },
-  computed: {
-    ...mapGetters(['isLoading'])
   }
 };
 </script>

@@ -26,11 +26,11 @@
         </div>
       </div>
       <div class="sub-display">
-        <div class="btn-wrapper">
+        <div class="btn-wrapper" @click.stop="noFunc">
           <i class="iconfont icon-comment" />
           <span class="btn-text">{{ item.commentCount | round }}</span>
         </div>
-        <div class="btn-wrapper">
+        <div class="btn-wrapper" @click="share">
           <i class="iconfont icon-share" />
           <span class="btn-text">{{ item.shareCount | round }}</span>
         </div>
@@ -42,6 +42,10 @@
           <i class="iconfont icon-select" />
           <span class="btn-text">多选</span>
         </div>
+        <div class="btn-wrapper" @click="moreOption" v-if="myList">
+          <i class="iconfont icon-more--line" />
+          <span class="btn-text">编辑</span>
+        </div>
       </div>
     </div>
   </div>
@@ -49,6 +53,7 @@
 
 <script>
 import { roundCountMixin, getUrlMixin } from 'common/mixin';
+import { mapGetters } from 'vuex';
 export default {
   name: 'PlaylistDisplay',
   mixins: [roundCountMixin, getUrlMixin],
@@ -57,6 +62,10 @@ export default {
       type: Object,
       default: () => {},
       required: true
+    },
+    myList: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -69,12 +78,31 @@ export default {
     this.coverHeight = this.$parent.$refs.cover.clientHeight;
   },
   methods: {
+    moreOption() {
+      this.$emit('moreOption');
+    },
     multiSelect() {
       this.$emit('multiSelect');
     },
     noFunc() {
       this.$toast.show('暂时还不支持哦', 1000);
+    },
+    share() {
+      let msg = `分享${this.item.creator.nickname}的歌单 ${'\u00AB' +
+        this.item.name +
+        '\u00BB'} https://syhua4.github.io/pear-music-app/#/playlists/${this.item.id}`;
+      this.$copyText(msg).then(
+        () => {
+          this.$toast.show('复制链接成功', 1000);
+        },
+        () => {
+          this.$toast.show('复制链接失败, 请重试', 1000);
+        }
+      );
     }
+  },
+  computed: {
+    ...mapGetters(['cookie'])
   },
   watch: {
     item: {

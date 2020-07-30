@@ -2,7 +2,6 @@
   <div class="search">
     <nav-bar class="nav">
       <i slot="left" @click="goBack" class="iconfont icon-back" />
-
       <div slot="center" class="bar">
         <search-bar
           ref="searchBar"
@@ -129,6 +128,9 @@ export default {
     .icon-back {
       color: #fff;
       @include font_size($icon_ms);
+    }
+    ::v-deep .center-nav {
+      width: 80%;
     }
   }
 

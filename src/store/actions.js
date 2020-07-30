@@ -15,7 +15,7 @@ import {
 } from './mutation-types';
 
 import { getSongUrl } from 'networks/recommend';
-import { signIn } from 'networks/user';
+import { signIn, signOut } from 'networks/user';
 
 function getIds(list) {
   let ids = list
@@ -43,6 +43,18 @@ export default {
     commit(SET_LOADING, status);
   },
 
+  async setLogout({ commit }, status) {
+    let isLogout = false;
+    await signOut().then(res => {
+      if (res.code === 200) {
+        isLogout = true;
+        commit(SET_LOGIN, status);
+        commit(SET_COOKIE, '');
+        commit(SET_USER_PROFILE, {});
+      }
+    });
+    return isLogout;
+  },
   setPlayMode({ commit }, modeType) {
     commit(SET_PLAY_MODE, modeType);
   },

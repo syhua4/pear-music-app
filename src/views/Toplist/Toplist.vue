@@ -3,7 +3,6 @@
     <nav-bar class="nav">
       <i class="iconfont icon-back" @click="goBack" slot="left" />
       <div class="title" slot="center">排行榜</div>
-      <i class="iconfont icon-back" @click="goBack" slot="right" />
     </nav-bar>
     <scroll>
       <list :results="officialList" />
@@ -50,9 +49,6 @@ export default {
     position: relative;
     z-index: 1;
     color: #fff;
-    .right-nav i {
-      color: transparent;
-    }
     .icon-back {
       @include font_size($icon_ms);
     }

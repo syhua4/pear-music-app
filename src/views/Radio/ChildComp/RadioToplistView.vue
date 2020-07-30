@@ -54,11 +54,10 @@
 </template>
 
 <script>
-import { getUrlMixin, roundCountMixin } from 'common/mixin';
-import { mapActions, mapGetters } from 'vuex';
+import { getUrlMixin, roundCountMixin, playSongMixin } from 'common/mixin';
 export default {
   name: 'RadioToplistView',
-  mixins: [getUrlMixin, roundCountMixin],
+  mixins: [getUrlMixin, roundCountMixin, playSongMixin],
   data() {
     return {
       tracks: []
@@ -81,7 +80,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isLoading']),
     rankStat() {
       return function(item) {
         return item.lastRank - item.rank;
@@ -113,17 +111,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setPlayList', 'setShowPlayer', 'setCurrentIndex', 'setIsLoading']),
     toRadio(id) {
       this.$router.push(`/radio/program/${id}`);
     },
     playProgram(index) {
-      if (!this.isLoading) {
-        this.setIsLoading(true);
-      }
-      this.setPlayList(this.tracks);
-      this.setCurrentIndex(index);
-      this.setShowPlayer(true);
+      this.playSong(this.tracks, index);
     }
   }
 };

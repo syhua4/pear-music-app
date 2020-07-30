@@ -10,7 +10,7 @@
           {{ getDate.month }}
         </div>
       </div>
-      <div class="play-all" @click.stop="playSong" slot="left">
+      <div class="play-all" @click.stop="play" slot="left">
         <i class="iconfont icon-play" />
         <span class="tool-header">播放全部</span>
       </div>
@@ -19,13 +19,13 @@
       </div>
 
       <div slot="component">
-        <loading :isShow="loading" v-if="loading" />
+        <loading :isShow="loading" v-if="loading && isLogin" />
         <div
           v-else
           class="song-wrapper"
           v-for="(song, index) in songs"
           :key="index"
-          @click="playSong(index)"
+          @click="play(index)"
         >
           <song-view>
             <img v-lazy="fmtUrl(song.al.picUrl)" slot="left" />
@@ -47,15 +47,15 @@ import NavBar from 'components/common/NavBar/NavBar';
 import ScrollView from 'components/content/ScrollView.vue';
 
 import { fmtDate } from 'common/utils';
-import { getArtistsMixin, getUrlMixin, loadingMixin } from 'common/mixin';
+import { getArtistsMixin, getUrlMixin, loadingMixin, playSongMixin } from 'common/mixin';
 import { getDailySong } from 'networks/recommend';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 import SongView from 'components/content/SongView.vue';
 
 export default {
   name: 'RecommendDaily',
   components: { NavBar, ScrollView, SongView },
-  mixins: [getArtistsMixin, getUrlMixin, loadingMixin],
+  mixins: [getArtistsMixin, getUrlMixin, loadingMixin, playSongMixin],
   data() {
     return {
       date: { day: 1, month: 1 },
@@ -73,11 +73,11 @@ export default {
         }
       });
     } else {
-      this.$toast.show('请先登录', 1000);
+      this.$toast.show('请先登录', 5000);
     }
   },
   computed: {
-    ...mapGetters(['isLogin', 'isLoading', 'cookie']),
+    ...mapGetters(['isLogin', 'cookie']),
     getDate() {
       let timestamp = new Date().getTime();
       let time = fmtDate(timestamp / 1000);
@@ -89,17 +89,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setPlayList', 'setShowPlayer', 'setCurrentIndex', 'setIsLoading']),
     goBack() {
       this.$router.go(-1);
     },
-    playSong(index) {
-      if (!this.isLoading) {
-        this.setIsLoading(true);
-      }
-      this.setPlayList(this.songs);
-      typeof index === 'number' ? this.setCurrentIndex(index) : this.setCurrentIndex(0);
-      this.setShowPlayer(true);
+    play(index) {
+      this.playSong(this.songs, index);
     },
     scrollPosition(position) {
       position.y <= -300 ? (this.showFixed = true) : (this.showFixed = false);

@@ -24,13 +24,12 @@ export function getUserInfo(uid, cookie) {
   });
 }
 
-export function share(id, msg, cookie) {
+export function share(id, cookie) {
   return request({
     method: 'post',
-    url: '/share/resource',
+    url: `/share/resource`,
     params: {
       id,
-      msg,
       cookie
     }
   });
@@ -88,6 +87,18 @@ export function changeSongInPlaylist(op, pid, tracks, cookie) {
       op,
       pid,
       tracks,
+      cookie
+    }
+  });
+}
+
+export function subscribePlaylist(t, id, cookie) {
+  return request({
+    method: 'post',
+    url: `/playlist/subscribe?timestamps=${Date.now()}`,
+    params: {
+      t,
+      id,
       cookie
     }
   });

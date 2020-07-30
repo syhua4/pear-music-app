@@ -8,13 +8,24 @@
     </div>
     <div class="right-nav">
       <slot name="right" />
+      <mini-player :disabled="isDisabled" />
     </div>
   </div>
 </template>
 
 <script>
+import MiniPlayer from '../../content/MiniPlayer.vue';
 export default {
-  name: 'NavBar'
+  name: 'NavBar',
+  components: {
+    MiniPlayer
+  },
+  props: {
+    isDisabled: {
+      type: Boolean,
+      default: false
+    }
+  }
 };
 </script>
 
@@ -45,7 +56,21 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    // width: 100%;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .right-nav {
+    min-width: 0px;
+    max-width: 120px;
+    display: flex;
+    align-items: center;
+    .mini-player {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
   }
 }
 </style>

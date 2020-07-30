@@ -1,6 +1,6 @@
 <template>
   <div class="add-song">
-    <nav-bar class="nav">
+    <nav-bar class="nav" :isDisabled="true">
       <span slot="center">添加音乐到歌单</span>
       <span slot="right" @click="goBack">完成</span>
     </nav-bar>

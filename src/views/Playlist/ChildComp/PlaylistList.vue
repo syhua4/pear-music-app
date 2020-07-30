@@ -18,7 +18,7 @@
           <span class="track-artist">{{ artists(track.ar) }}</span>
           <span class="track-album">{{ track.al.name }}</span>
         </div>
-        <i class="iconfont icon-more--line" slot="right" />
+        <i class="iconfont icon-more--line" slot="right" @click.stop="showMore(track)" />
       </song-view>
     </div>
   </div>
@@ -64,6 +64,9 @@ export default {
       this.item.map(item => {
         this.checkedList.push(item.id);
       });
+    },
+    showMore(item) {
+      this.$emit('trackMoreClick', item);
     },
     trackClick(index) {
       this.$emit('trackClick', index);

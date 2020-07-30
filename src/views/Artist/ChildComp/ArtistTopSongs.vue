@@ -1,7 +1,7 @@
 <template>
   <div class="artist-top-song" v-if="songs && songs.length">
     <div class="song-tools">
-      <div class="playall" @click.stop="playSong">
+      <div class="playall" @click.stop="play">
         <i class="iconfont icon-play" />
         <span>播放热门50</span>
       </div>
@@ -14,7 +14,7 @@
       class="song-wrapper"
       v-for="(song, index) in songs"
       :key="song.id"
-      @click.stop="playSong(index)"
+      @click.stop="play(index)"
     >
       <song-view>
         <div class="index" slot="left">{{ index + 1 }}</div>
@@ -32,11 +32,12 @@
 
 <script>
 import { getArtistTopSong } from 'networks/artist';
-import { mapActions, mapGetters } from 'vuex';
 import SongView from '../../../components/content/SongView.vue';
+import { playSongMixin } from '../../../common/mixin';
 export default {
   name: 'ArtistTopSongs',
   components: { SongView },
+  mixins: [playSongMixin],
   created() {
     getArtistTopSong(this.id).then(res => {
       this.songs = res.songs;
@@ -55,18 +56,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setPlayList', 'setShowPlayer', 'setCurrentIndex', 'setIsLoading']),
-    playSong(index) {
-      if (!this.isLoading) {
-        this.setIsLoading(true);
-      }
-      this.setPlayList(this.songs);
-      typeof index !== 'number' ? this.setCurrentIndex(0) : this.setCurrentIndex(index);
-      this.setShowPlayer(true);
+    play(index) {
+      this.playSong(this.songs, index);
     }
-  },
-  computed: {
-    ...mapGetters(['isLoading'])
   },
   watch: {
     songs: {

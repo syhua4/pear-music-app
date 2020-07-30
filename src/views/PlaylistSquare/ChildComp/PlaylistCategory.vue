@@ -3,7 +3,6 @@
     <nav-bar class="nav">
       <i class="iconfont icon-back" slot="left" @click="goBack" />
       <div class="header" slot="center">{{ category ? category : '所有歌单' }}</div>
-      <i class="iconfont icon-back" slot="right" />
     </nav-bar>
     <transition :name="category ? 'right' : 'left'">
       <component :is="currentComponent" v-bind="currentProps" @toCategory="toCategory" />
@@ -74,9 +73,6 @@ export default {
     z-index: 1;
     .icon-back {
       @include font_size($icon_ms);
-    }
-    .right-nav i {
-      color: transparent;
     }
   }
 }

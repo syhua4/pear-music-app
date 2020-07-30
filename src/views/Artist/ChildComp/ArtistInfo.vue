@@ -8,8 +8,8 @@
         <img :src="fmtUrl(artistInfo[0].avatar)" />
         <div class="name">{{ artistInfo[0].name }}</div>
         <div class="follow-wrapper">
-          <span>关注 {{ artistInfo[0].follows }}</span>
-          <span>粉丝 {{ artistInfo[0].followeds | round(1) }}</span>
+          <span v-if="artistInfo[0].follows">关注 {{ artistInfo[0].follows }}</span>
+          <span v-if="artistInfo[0].followeds">粉丝 {{ artistInfo[0].followeds | round(1) }}</span>
         </div>
       </div>
 
@@ -45,6 +45,7 @@ import NavBar from 'components/common/NavBar/NavBar';
 import ScrollView from 'components/content/ScrollView.vue';
 
 import { getUserInfo } from 'networks/user';
+import { getArtist } from 'networks/artist';
 import { getUrlMixin, roundCountMixin, loadingMixin } from 'common/mixin';
 
 export default {
@@ -61,16 +62,23 @@ export default {
     };
   },
   async created() {
-    if (this.$route.params.id) {
-      await getUserInfo(this.$route.params.id).then(res => {
-        this.id = res.profile.artistId;
-        this.artistInfo.push({
-          name: res.profile.artistName,
-          avatar: res.profile.avatarUrl,
-          mainAuthType: res.profile.mainAuthType,
-          followeds: res.profile.followeds,
-          follows: res.profile.follows
-        });
+    this.id = Number(this.$route.params.id);
+    if (this.$route.params.uid) {
+      this.userInfo(this.$route.params.uid);
+    } else {
+      await getArtist(this.id).then(res => {
+        if (res.artist.accountId) {
+          console.log(res.artist.accountId);
+          console.log('有 uid');
+          this.userInfo(res.artist.accountId);
+        } else {
+          console.log('没有 uid');
+
+          this.artistInfo.push({
+            name: res.artist.name,
+            avatar: res.artist.img1v1Url
+          });
+        }
       });
     }
   },
@@ -88,6 +96,18 @@ export default {
 
     noData(toggle) {
       this.loading = toggle;
+    },
+    async userInfo(uid) {
+      await getUserInfo(uid).then(res => {
+        console.log(res);
+
+        this.artistInfo.push({
+          name: res.profile.artistName,
+          avatar: res.profile.avatarUrl,
+          followeds: res.profile.followeds || null,
+          follows: res.profile.follows || null
+        });
+      });
     },
 
     tabClick(index) {
@@ -154,7 +174,6 @@ export default {
     height: var(--height);
     background: #444;
     background-image: url('~assets/images/bg_default.jpg');
-
     z-index: 1;
     img {
       width: 80px;

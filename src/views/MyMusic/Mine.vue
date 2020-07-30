@@ -1,8 +1,6 @@
 <template>
   <div id="mine" :style="{ '--position': popUp ? 'fixed' : 'relative' }" @click.stop="screenClick">
-    <nav-bar class="nav">
-      <i class="iconfont icon-next" slot="right" />
-    </nav-bar>
+    <nav-bar class="nav" />
     <div class="top-display">
       <img v-if="!isLogin" src="~assets/images/user_default.png" class="avatar" />
       <img v-else :src="fmtUrl(profile.avatar)" class="avatar" />
@@ -18,7 +16,7 @@
             <i class="iconfont icon-heart-filled" />
             <div class="text">我喜欢的音乐</div>
           </div>
-          <div class="panel" @click="playSong">
+          <div class="panel" @click="play">
             <i class="iconfont icon-radio2" />
             <div class="text">私人FM</div>
           </div>
@@ -99,13 +97,13 @@ import Scroll from 'components/common/Scroll/Scroll';
 import NavBar from 'components/common/NavBar/NavBar';
 import SliderDisplay from 'components/content/SliderDisplay';
 
-import { getUrlMixin } from 'common/mixin';
+import { getUrlMixin, playSongMixin } from 'common/mixin';
 import { mapActions, mapGetters } from 'vuex';
 import { getPlaylist, createPlaylist, getFM } from 'networks/user';
 export default {
   name: 'Mine',
   components: { PopUp, Scroll, NavBar, SliderDisplay },
-  mixins: [getUrlMixin],
+  mixins: [getUrlMixin, playSongMixin],
   data() {
     return {
       songs: [],
@@ -117,6 +115,7 @@ export default {
     };
   },
   created() {
+    console.log(this.cookie, this.profile);
     if (this.isLogin && this.cookie && this.profile.uid) {
       let list = JSON.parse(window.localStorage.getItem('historyList'));
       if (!list) {
@@ -135,12 +134,13 @@ export default {
       });
 
       getPlaylist(this.profile.uid, this.cookie).then(res => {
+        console.log(res);
         this.playlist = res.playlist;
       });
     }
   },
   computed: {
-    ...mapGetters(['isLogin', 'cookie', 'profile', 'isLoading', 'historyList']),
+    ...mapGetters(['isLogin', 'cookie', 'profile', 'historyList']),
     currentPlaylist() {
       let list;
       if (this.activeTab === 0) {
@@ -165,13 +165,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      'setPlayList',
-      'setShowPlayer',
-      'setCurrentIndex',
-      'setIsLoading',
-      'setHistoryList'
-    ]),
+    ...mapActions(['setHistoryList']),
     async createList(name) {
       await createPlaylist(name, this.cookie).then(res => {
         console.log(res);
@@ -196,13 +190,8 @@ export default {
     playlistClick(id) {
       this.$router.push(`/playlists/${id}`);
     },
-    playSong() {
-      if (!this.isLoading) {
-        this.setIsLoading(true);
-      }
-      this.setPlayList(this.fm);
-      this.setCurrentIndex(0);
-      this.setShowPlayer(true);
+    play() {
+      this.playSong(this.fm);
     },
     screenClick(e) {
       if (this.popUp) {

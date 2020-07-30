@@ -1,6 +1,11 @@
 <template>
   <div class="result-artist" v-if="results && results.length > 0">
-    <div class="artist" v-for="artist in results" :key="artist.id">
+    <div
+      class="artist"
+      v-for="artist in results"
+      :key="artist.id"
+      @click.once="goArtist(artist.id)"
+    >
       <song-view>
         <img v-lazy="fmtUrl(artist.picUrl)" class="artist-img" slot="left" />
         <div class="artist-name" slot="center">{{ artist.name }}</div>
@@ -22,6 +27,11 @@ export default {
       type: Array,
       default: () => [],
       required: true
+    }
+  },
+  methods: {
+    goArtist(id) {
+      this.$router.push(`/artist/${id}`);
     }
   }
 };

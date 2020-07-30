@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     btnClick() {
-      this.$refs.song.playSong();
+      this.$refs.song.play();
     },
     footerClick(index) {
       this.$emit('changeTabNav', index);

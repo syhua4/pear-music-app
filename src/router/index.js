@@ -17,7 +17,7 @@ const Toplist = () => import('views/Toplist/Toplist');
 
 const Search = () => import('views/Search/Search');
 
-const Login = () => import('views/Login/Login');
+const Account = () => import('views/Account/Account');
 const Mine = () => import('views/MyMusic/Mine');
 
 const Album = () => import('views/Album/Album');
@@ -118,8 +118,8 @@ const routes = [
   },
   {
     path: '/account',
-    component: Login,
-    name: 'login',
+    component: Account,
+    name: 'account',
     meta: { index: 0 }
   },
   {

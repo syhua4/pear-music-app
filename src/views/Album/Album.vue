@@ -8,7 +8,7 @@
       v-show="showFixed"
       :item="songs"
       :subCount="songs.length"
-      @playAll="playSong"
+      @playAll="play"
       class="fixed"
     />
 
@@ -57,13 +57,13 @@
     </div>
     <scroll ref="scroll" :probeType="3" @scrolling="scrollPosition">
       <div class="playlist-list" ref="list">
-        <player-toolbar :item="songs" :subCount="songs.length" @playAll="playSong" />
+        <player-toolbar :item="songs" :subCount="songs.length" @playAll="play" />
         <loading :isShow="loading" />
         <div
           class="track-wrapper"
           v-for="(track, index) in songs"
           :key="track.id"
-          @click="playSong(index)"
+          @click="play(index)"
         >
           <span class="index">{{ index + 1 }}</span>
           <div class="track-info">
@@ -87,12 +87,17 @@ import NavBar from 'components/common/NavBar/NavBar';
 import Scroll from 'components/common/Scroll/Scroll';
 
 import { fmtDate } from 'common/utils';
-import { roundCountMixin, getUrlMixin, getArtistsMixin, loadingMixin } from 'common/mixin';
+import {
+  roundCountMixin,
+  getUrlMixin,
+  getArtistsMixin,
+  loadingMixin,
+  playSongMixin
+} from 'common/mixin';
 import { getAlbum } from 'networks/album';
-import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'Album',
-  mixins: [roundCountMixin, getUrlMixin, getArtistsMixin, loadingMixin],
+  mixins: [roundCountMixin, getUrlMixin, getArtistsMixin, loadingMixin, playSongMixin],
   components: { NavBar, PlayerToolbar, Scroll },
   data() {
     return {
@@ -113,7 +118,6 @@ export default {
     this.offsetTop = this.$refs.list.offsetTop;
   },
   computed: {
-    ...mapGetters(['isLoading']),
     getDate() {
       return function(date) {
         let time = fmtDate(date / 1000);
@@ -122,18 +126,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setPlayList', 'setCurrentIndex', 'setShowPlayer', 'setIsLoading']),
     goBack() {
       this.$router.go(-1);
     },
-    playSong(index) {
-      if (!this.isLoading) {
-        this.setIsLoading(true);
-      }
-      this.setPlayList(this.songs);
-      typeof index !== 'number' ? this.setCurrentIndex(0) : this.setCurrentIndex(index);
-
-      this.setShowPlayer(true);
+    play(index) {
+      this.playSong(this.songs, index);
     },
     scrollPosition(position) {
       if (this.offsetTop && position.y <= -this.offsetTop) {

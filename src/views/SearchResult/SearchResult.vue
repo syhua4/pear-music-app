@@ -1,11 +1,5 @@
 <template>
   <div class="result">
-    <!-- <nav-bar class="nav">
-      <i slot="left" class="iconfont icon-back" @click="goBack" />
-      <div slot="center" class="bar">
-        <search-bar ref="searchBar" @click.native="goBack" />
-      </div>
-    </nav-bar> -->
     <tab-nav :titles="getTabNavTitles" :tabIndex="tabNavIndex" @tabClick="tabClick" />
     <loading :isShow="loading" v-if="loading" />
     <scroll

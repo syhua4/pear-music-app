@@ -3,7 +3,6 @@
     <nav-bar class="nav">
       <i class="iconfont icon-back" @click="goBack" slot="left" />
       <div slot="center">{{ Object.keys(catInfo).length ? catInfo.name : '电台分类' }}</div>
-      <i class="iconfont icon-back" slot="right" />
     </nav-bar>
     <!-- <transition :name="Object.keys(catInfo).length ? 'right' : 'left'"> -->
     <loading :isShow="loading" />
@@ -79,9 +78,6 @@ export default {
     color: #fff;
     .icon-back {
       @include font_size($icon_ms);
-    }
-    .right-nav i {
-      color: transparent;
     }
   }
 }

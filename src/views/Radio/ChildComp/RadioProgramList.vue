@@ -1,15 +1,12 @@
 <template>
   <div class="program-list" v-if="list && list.length">
     <div class="header">共{{ list.length }}期</div>
-    <div
-      class="song-wrapper"
-      v-for="(program, index) in list"
-      :key="program.id"
-      @click="playProgram(index)"
-    >
+    <div class="song-wrapper" v-for="(program, index) in list" :key="program.id">
       <song-view>
-        <div class="index" slot="left">{{ list.length - (index % list.length) }}</div>
-        <div class="song-info" slot="center">
+        <div class="index" slot="left" @click="playProgram(index)">
+          {{ list.length - (index % list.length) }}
+        </div>
+        <div class="song-info" slot="center" @click="playProgram(index)">
           <div class="title">{{ program.name }}</div>
           <span class="date">{{ getDate(program.createTime) }}</span>
           <span class="play-count "
@@ -19,7 +16,7 @@
             ><i class="iconfont icon-duration" />{{ getTime(program.duration) }}</span
           >
         </div>
-        <i class="iconfont icon-more--line" slot="right" />
+        <i class="iconfont icon-more--line" slot="right" @click="showMore(program)" />
       </song-view>
     </div>
   </div>
@@ -59,6 +56,9 @@ export default {
   methods: {
     playProgram(index) {
       this.$emit('playProgram', index);
+    },
+    showMore(program) {
+      this.$emit('showMore', program);
     }
   },
   watch: {

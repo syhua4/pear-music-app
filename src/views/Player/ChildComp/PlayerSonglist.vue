@@ -162,6 +162,7 @@ export default {
     .track-info,
     .icon-speaker {
       display: flex;
+      @include clamp(1);
       .track-name {
         color: #333 !important;
         &:after {

@@ -1,3 +1,6 @@
+import { mapActions, mapGetters } from 'vuex';
+import { mode } from 'store/mode-type';
+
 export const getTracksMixin = {
   data() {
     return {
@@ -66,9 +69,6 @@ export const getUrlMixin = {
   }
 };
 
-import { mapActions, mapGetters } from 'vuex';
-import { mode } from 'store/mode-type';
-
 export const changeModeMixin = {
   methods: {
     ...mapActions(['setPlayMode', 'setCurrentIndex']),
@@ -108,4 +108,21 @@ export const loadingMixin = {
     };
   },
   components: { Loading }
+};
+
+export const playSongMixin = {
+  methods: {
+    ...mapActions(['setIsLoading', 'setPlayList', 'setCurrentIndex', 'setShowPlayer']),
+    playSong(list, index) {
+      if (!this.isLoading) {
+        this.setIsLoading(true);
+      }
+      this.setPlayList(list);
+      this.setCurrentIndex(index || 0);
+      this.setShowPlayer(true);
+    }
+  },
+  computed: {
+    ...mapGetters(['isLoading'])
+  }
 };

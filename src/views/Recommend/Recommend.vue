@@ -5,14 +5,6 @@
       <div slot="center" class="header" @click="searchBarClick">
         <search-bar :disable="true" />
       </div>
-      <img
-        slot="right"
-        class="cd"
-        v-show="currentPlaying"
-        :src="currentPlaying && currentPlaying.al.picUrl + '?param=50x50'"
-        :class="!isPlaying ? 'paused' : null"
-        @click="togglePlayer"
-      />
     </nav-bar>
 
     <scroll ref="scroll">
@@ -26,16 +18,16 @@
         title="华语精选站"
         @itemClick="playlistClick"
       >
-        <div slot="more" class="more">查看更多</div>
+        <div slot="more" class="more" @click.stop="goPlaylist">查看更多</div>
       </slider-display>
       <slider-display
         :items="tracks"
         title="欧美流行"
         class="tracks"
         :isSong="true"
-        @playSong="playSong"
+        @playSong="playSongUrl"
       >
-        <div slot="more" class="more">
+        <div slot="more" class="more" @click.stop="play">
           <i class="iconfont icon-play-s" />
           播放全部
         </div>
@@ -46,7 +38,7 @@
         title="百听不厌的KPOP"
         @itemClick="playlistClick"
       >
-        <div slot="more" class="more">查看更多</div>
+        <div slot="more" class="more" @click.stop="goPlaylist">查看更多</div>
       </slider-display>
     </scroll>
     <transition :name="transitionName">
@@ -66,8 +58,7 @@ import SliderDisplay from 'components/content/SliderDisplay';
 import SearchBar from 'components/content/SearchBar';
 
 import { getBanners, getPlaylists, getPlaylistTrackId, getTrack } from 'networks/recommend';
-import { getTracksMixin } from '../../common/mixin';
-import { mapGetters, mapActions } from 'vuex';
+import { getTracksMixin, playSongMixin } from '../../common/mixin';
 export default {
   name: 'Recommend',
   components: {
@@ -78,7 +69,7 @@ export default {
     SearchBar,
     Scroll
   },
-  mixins: [getTracksMixin],
+  mixins: [getTracksMixin, playSongMixin],
   created() {
     console.log('--recommend page loaded-');
     getBanners(2).then(res => (this.banners = res.banners));
@@ -103,23 +94,23 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['setShowPlayer']),
+    goPlaylist() {
+      this.$router.push('/playlists');
+    },
+    play() {
+      this.playSong(this.tracks);
+    },
     playlistClick(id) {
       this.$router.push(`/playlists/${id}`);
     },
     searchBarClick() {
       this.$router.push(`/search`);
     },
-    playSong(picUrl) {
+    playSongUrl(picUrl) {
       this.coverUrl = picUrl;
-    },
-    togglePlayer() {
-      this.setShowPlayer(true);
     }
   },
-  computed: {
-    ...mapGetters(['isPlaying', 'currentPlaying'])
-  },
+
   beforeRouteUpdate(to, from, next) {
     to.meta.index === 0 && from.matched.length > 1
       ? (this.transitionName = 'right')
@@ -149,17 +140,8 @@ export default {
       @include font_size($icon_m);
       font-weight: 500;
     }
-    .cd {
-      vertical-align: middle;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      border: 5px solid rgba($color: #fff, $alpha: 0.2);
-      animation: spin 3s linear infinite;
-
-      &.paused {
-        animation-play-state: paused;
-      }
+    ::v-deep .center-nav {
+      width: 75%;
     }
   }
   .scroll-wrapper {
@@ -230,15 +212,6 @@ export default {
         }
       }
     }
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
 </style>

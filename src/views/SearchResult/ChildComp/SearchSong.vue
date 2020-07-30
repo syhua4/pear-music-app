@@ -1,9 +1,9 @@
 <template>
   <div class="result-song" v-if="results && results.length > 0">
-    <div class="play-all iconfont" @click="playSong" v-show="isShow || $attrs.isShow">
+    <div class="play-all iconfont" @click="play" v-show="isShow || $attrs.isShow">
       {{ '\ue624' }} 播放全部
     </div>
-    <div class="song" v-for="(song, index) in results" :key="song.id" @click.stop="playSong(index)">
+    <div class="song" v-for="(song, index) in results" :key="song.id" @click.stop="play(index)">
       <song-view padding="0">
         <div class="song-info" slot="center">
           <div class="song-name">{{ song.name }}</div>
@@ -18,29 +18,19 @@
 
 <script>
 import { getTrack } from 'networks/recommend';
-import { getArtistsMixin, getTracksMixin } from 'common/mixin';
-import { mapGetters, mapActions } from 'vuex';
+import { getArtistsMixin, getTracksMixin, playSongMixin } from 'common/mixin';
 import SongView from '../../../components/content/SongView.vue';
 
 export default {
   name: 'SearchSong',
   components: { SongView },
-  mixins: [getArtistsMixin, getTracksMixin],
+  mixins: [getArtistsMixin, getTracksMixin, playSongMixin],
   methods: {
-    ...mapActions(['setPlayList', 'setShowPlayer', 'setCurrentIndex', 'setIsLoading']),
-    playSong(index) {
-      if (!this.isLoading) {
-        this.setIsLoading(true);
-      }
+    play(index) {
       typeof index === 'number'
-        ? this.setPlayList([this.tracks[index]])
-        : this.setPlayList(this.tracks);
-      this.setCurrentIndex(0);
-      this.setShowPlayer(true);
+        ? this.playSong([this.tracks[index]], 0)
+        : this.playSong(this.tracks, 0);
     }
-  },
-  computed: {
-    ...mapGetters(['isLoading'])
   },
   props: {
     results: {
