@@ -113,7 +113,8 @@ export const loadingMixin = {
 export const playSongMixin = {
   methods: {
     ...mapActions(['setIsLoading', 'setPlayList', 'setCurrentIndex', 'setShowPlayer']),
-    playSong(list, index) {
+    playSong(list, e, index) {
+      console.log(index);
       if (!this.isLoading) {
         this.setIsLoading(true);
       }
