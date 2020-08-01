@@ -30,10 +30,13 @@
           :id="id"
           @noData="noData"
           @contentLoaded="contentLoaded"
+          @addToList="addToList"
+          @showMore="showMore"
           ref="comp"
         />
       </div>
     </scroll-view>
+    <more-song-options :song="song" v-show="Object.keys(song).length" ref="trackPopUp" />
   </div>
 </template>
 
@@ -43,22 +46,24 @@ import Album from './ArtistAlbum';
 import Profile from './ArtistProfile';
 import NavBar from 'components/common/NavBar/NavBar';
 import ScrollView from 'components/content/ScrollView.vue';
+import MoreSongOptions from 'components/content/MoreSongOptions.vue';
 
 import { getUserInfo } from 'networks/user';
 import { getArtist } from 'networks/artist';
-import { getUrlMixin, roundCountMixin, loadingMixin } from 'common/mixin';
+import { getUrlMixin, roundCountMixin, loadingMixin, getTracksMixin } from 'common/mixin';
 
 export default {
   name: 'ArtistInfo',
-  components: { NavBar, ScrollView },
-  mixins: [getUrlMixin, roundCountMixin, loadingMixin],
+  components: { NavBar, ScrollView, MoreSongOptions },
+  mixins: [getUrlMixin, roundCountMixin, loadingMixin, getTracksMixin],
   data() {
     return {
       artistInfo: [],
       tabbar: ['歌曲', '专辑', '关于TA'],
       activeTab: 0,
       coverHeight: 0,
-      id: 0
+      id: 0,
+      song: {}
     };
   },
   async created() {
@@ -86,6 +91,23 @@ export default {
     this.coverHeight = this.$refs.scrollView.$refs.cover.clientHeight;
   },
   methods: {
+    showMore(song) {
+      this.song = song;
+      this.$refs.trackPopUp.showMore = true;
+    },
+    addToList() {
+      let songs =
+        this.$refs &&
+        this.$refs.comp &&
+        this.$refs.comp.songs &&
+        this.$refs.comp.songs.length &&
+        this.$refs.comp.songs;
+      if (songs.length) {
+        this.song = songs[0];
+        let ids = this.getTrackIds(songs);
+        this.$refs.trackPopUp.selectPlaylist('', ids);
+      }
+    },
     contentLoaded() {
       this.loading = false;
     },

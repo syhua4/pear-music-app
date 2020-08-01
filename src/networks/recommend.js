@@ -69,3 +69,17 @@ export function getToplist() {
     url: '/toplist/detail'
   });
 }
+
+export function getSimSong(id) {
+  return request({
+    url: '/simi/song',
+    params: { id }
+  });
+}
+
+export function getSimPlaylist(id) {
+  return request({
+    url: '/simi/playlist',
+    params: { id }
+  });
+}

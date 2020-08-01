@@ -81,6 +81,15 @@ export default {
       .iconfont {
         margin-right: 20px;
       }
+      .icon-select-fill,
+      .icon-select-unfill {
+        @include font_size($icon_m);
+        @include font_color();
+      }
+
+      .icon-select-fill {
+        @include font_active_color();
+      }
       font-weight: 500;
     }
     .right-tool {

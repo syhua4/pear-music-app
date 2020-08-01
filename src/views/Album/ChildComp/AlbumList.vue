@@ -1,7 +1,5 @@
 <template>
-  <div class="playlist-list">
-    <loading :isShow="loading" v-if="!newList" />
-    <span class="add-btn" @click="addSong" v-if="newList">添加歌曲</span>
+  <div class="album-list">
     <div class="track-wrapper" v-for="(track, index) in item" :key="track.id">
       <song-view>
         <span class="index" slot="left" v-if="!multiSelect">{{ index + 1 }}</span>
@@ -25,12 +23,18 @@
 </template>
 
 <script>
-import { getArtistsMixin, loadingMixin, selectionMixin } from 'common/mixin';
+import { getArtistsMixin, loadingMixin } from 'common/mixin';
+
 import SongView from 'components/content/SongView.vue';
 export default {
-  name: 'PlaylistList',
+  name: 'AlbumList',
   components: { SongView },
-  mixins: [getArtistsMixin, loadingMixin, selectionMixin],
+  mixins: [getArtistsMixin, loadingMixin],
+  data() {
+    return {
+      checkedList: []
+    };
+  },
   props: {
     item: {
       type: Array,
@@ -40,21 +44,28 @@ export default {
     multiSelect: {
       type: Boolean,
       default: false
-    },
-    newList: {
-      type: Boolean,
-      default: false
     }
   },
+
   methods: {
-    addSong() {
-      this.$emit('addSong');
+    check(id) {
+      let i = this.checkedList.indexOf(id);
+      i === -1 ? this.checkedList.push(id) : this.checkedList.splice(i, 1);
+    },
+    checkAll() {
+      this.checkedList = [];
+      this.item.map(item => {
+        this.checkedList.push(item.id);
+      });
     },
     showMore(item) {
       this.$emit('trackMoreClick', item);
     },
     trackClick(index) {
       this.$emit('trackClick', index);
+    },
+    unCheckAll() {
+      this.checkedList = [];
     }
   },
   watch: {
@@ -63,15 +74,19 @@ export default {
         this.loading = false;
         this.$emit('dataLoaded');
       });
+    },
+    checkedList: {
+      handler(val) {
+        val.length ? this.$emit('isChecked', true) : this.$emit('isChecked', false);
+      }
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-@import 'assets/css/mixin';
-
-.playlist-list {
+@import 'assets/css/mixin.scss';
+.album-list {
   position: relative;
   width: 100%;
   .track-wrapper {

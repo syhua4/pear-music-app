@@ -113,8 +113,8 @@ export const loadingMixin = {
 export const playSongMixin = {
   methods: {
     ...mapActions(['setIsLoading', 'setPlayList', 'setCurrentIndex', 'setShowPlayer']),
-    playSong(list, e, index) {
-      console.log(index);
+    playSong(list, index) {
+      index instanceof Event ? (index = 0) : index;
       if (!this.isLoading) {
         this.setIsLoading(true);
       }
@@ -125,5 +125,36 @@ export const playSongMixin = {
   },
   computed: {
     ...mapGetters(['isLoading'])
+  }
+};
+
+export const selectionMixin = {
+  data() {
+    return {
+      checkedList: []
+    };
+  },
+  methods: {
+    check(id) {
+      let i = this.checkedList.indexOf(id);
+      i === -1 ? this.checkedList.push(id) : this.checkedList.splice(i, 1);
+    },
+    checkAll(list) {
+      this.checkedList = [];
+      console.log(list);
+      list.map(item => {
+        this.checkedList.push(item.id);
+      });
+    },
+    unCheckAll() {
+      this.checkedList = [];
+    }
+  },
+  watch: {
+    checkedList: {
+      handler(val) {
+        val.length ? this.$emit('isChecked', true) : this.$emit('isChecked', false);
+      }
+    }
   }
 };

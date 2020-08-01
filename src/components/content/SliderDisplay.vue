@@ -37,10 +37,17 @@
 <script>
 import { Swiper, SwiperItem } from 'components/common/Slider/Slider.js';
 
-import { roundCountMixin, getArtistsMixin, getUrlMixin, playSongMixin } from 'common/mixin';
+import {
+  roundCountMixin,
+  getArtistsMixin,
+  getUrlMixin,
+  playSongMixin,
+  getTracksMixin
+} from 'common/mixin';
+import { getTrack } from 'networks/recommend';
 export default {
   name: 'SliderDisplay',
-  mixins: [roundCountMixin, getArtistsMixin, getUrlMixin, playSongMixin],
+  mixins: [roundCountMixin, getArtistsMixin, getUrlMixin, playSongMixin, getTracksMixin],
   components: {
     Swiper,
     SwiperItem
@@ -87,8 +94,15 @@ export default {
     itemClick(id) {
       this.$emit('itemClick', id);
     },
-    play(index) {
-      this.playSong(this.items, index);
+    async play(index) {
+      if (this.$parent.$parent.historyList) {
+        let ids = this.getTrackIds(this.items);
+        await getTrack(ids).then(res => {
+          this.playSong(res.songs, index);
+        });
+      } else {
+        this.playSong(this.items, index);
+      }
     }
   }
 };

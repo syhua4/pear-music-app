@@ -1,12 +1,12 @@
 <template>
   <div class="account">
     <nav-bar :class="isLogin ? 'account-nav' : 'nav'">
-      <i class="iconfont icon-back" slot="left" />
+      <i class="iconfont icon-back" v-if="!isLogin" slot="left" />
       <div class="nav-title" slot="center">网易邮箱账号登入</div>
     </nav-bar>
     <login v-if="!isLogin" />
     <div class="account-info" v-else>
-      <scroll-view height="300px" ref="scrollView">
+      <scroll-view height="20%" ref="scrollView">
         <div class="cover" slot="cover" />
         <div class="profile" slot="left">
           <img :src="profile.avatar" />
@@ -55,11 +55,11 @@ export default {
 <style lang="scss" scoped>
 @import 'assets/css/mixin.scss';
 .account {
-  position: fixed;
+  position: fixed !important;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 100px;
+  bottom: 100px !important;
   z-index: 2;
   background-color: #fff;
   .nav,
@@ -67,25 +67,25 @@ export default {
     color: #fff;
     position: relative;
     z-index: 1;
+    .iconfont {
+      @include font_size($icon_ms);
+    }
   }
   .account-nav {
     background-color: transparent;
   }
 
   .cover {
-    color: #fff;
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     top: 0;
     left: 0;
     right: 0;
-    padding: 0 24px;
-    height: 400px;
+    bottom: 0;
+    height: 300px;
+    padding-top: 100px;
     background: #444;
     background-image: url('~assets/images/bg_default.jpg');
-    z-index: 1;
+    z-index: 0;
   }
   ::v-deep .tools {
     height: 100px;
@@ -102,10 +102,6 @@ export default {
       margin-right: 20px;
     }
   }
-  ::v-deep .scroll-wrapper {
-    top: calc(var(--height) + 200px);
-    overflow: initial;
-  }
   .content {
     position: relative;
     width: 100%;
@@ -115,7 +111,7 @@ export default {
     div {
       color: #4d7daf;
       @include font_size($ms);
-      margin: 50px 0;
+      margin: 60px 0;
     }
     button {
       height: 70px;

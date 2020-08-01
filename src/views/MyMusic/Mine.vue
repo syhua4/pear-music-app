@@ -30,7 +30,7 @@
           changeIcon="icon-play-btn"
           class="slider"
         >
-          <div class="more" slot="more">
+          <div class="more" slot="more" @click.stop="toggleRecentlyPlayed">
             更多
             <i class="iconfont icon-next" />
           </div>
@@ -52,7 +52,7 @@
           >
           <div class="icons">
             <i class="iconfont icon-plus" @click.stop="togglePopUp" />
-            <i class="iconfont icon-setting" @click.stop="settingClick" />
+            <i class="iconfont icon-setting" @click.stop="toggleEditPlaylist" />
           </div>
         </div>
         <div class="playlist-wrapper" v-if="currentPlaylist.length">
@@ -78,6 +78,12 @@
         </div>
       </scroll>
     </div>
+    <transition name="right">
+      <recently-played v-if="showRecentlyPlayed" />
+    </transition>
+    <transition name="right">
+      <edit-playlist v-if="showEditPlaylist" :playlists="currentPlaylist" :type="activeTab" />
+    </transition>
     <transition name="slide">
       <pop-up
         class="pop-up"
@@ -92,18 +98,21 @@
 
 <script>
 import PopUp from './ChildComp/MinePopUp';
+import RecentlyPlayed from './ChildComp/MineRecentlyPlayed';
+import EditPlaylist from './ChildComp/MineEditPlaylist';
 
 import Scroll from 'components/common/Scroll/Scroll';
 import NavBar from 'components/common/NavBar/NavBar';
 import SliderDisplay from 'components/content/SliderDisplay';
 
-import { getUrlMixin, playSongMixin } from 'common/mixin';
+import { getUrlMixin, playSongMixin, getTracksMixin } from 'common/mixin';
 import { mapActions, mapGetters } from 'vuex';
 import { getPlaylist, createPlaylist, getFM } from 'networks/user';
+
 export default {
   name: 'Mine',
-  components: { PopUp, Scroll, NavBar, SliderDisplay },
-  mixins: [getUrlMixin, playSongMixin],
+  components: { PopUp, RecentlyPlayed, EditPlaylist, Scroll, NavBar, SliderDisplay },
+  mixins: [getUrlMixin, playSongMixin, getTracksMixin],
   data() {
     return {
       songs: [],
@@ -111,17 +120,18 @@ export default {
       tabbar: ['创建歌单', '收藏歌单'],
       activeTab: 0,
       popUp: false,
-      fm: []
+      fm: [],
+      showRecentlyPlayed: false,
+      showEditPlaylist: false
     };
   },
   created() {
-    console.log(this.cookie, this.profile);
     if (this.isLogin && this.cookie && this.profile.uid) {
       let list = JSON.parse(window.localStorage.getItem('historyList'));
-      if (!list) {
-        return;
+      if (list.length) {
+        this.setHistoryList(list);
       }
-      this.setHistoryList(list);
+
       getFM(this.cookie).then(res => {
         res.data.map(song => {
           this.fm.push({
@@ -133,10 +143,7 @@ export default {
         });
       });
 
-      getPlaylist(this.profile.uid, this.cookie).then(res => {
-        console.log(res);
-        this.playlist = res.playlist;
-      });
+      this.getMyLists();
     }
   },
   computed: {
@@ -164,6 +171,14 @@ export default {
       return this.playlist.slice(1);
     }
   },
+  watch: {
+    playlist: {
+      deep: true,
+      handler(val) {
+        console.log(val);
+      }
+    }
+  },
   methods: {
     ...mapActions(['setHistoryList']),
     async createList(name) {
@@ -177,6 +192,12 @@ export default {
         }
       });
       this.togglePopUp();
+    },
+    getMyLists() {
+      console.log('getting playlists');
+      getPlaylist(this.profile.uid, this.cookie).then(res => {
+        this.playlist = res.playlist;
+      });
     },
     loginClick() {
       this.$router.push('/account');
@@ -201,16 +222,26 @@ export default {
         }
       }
     },
-    settingClick() {
+    toggleEditPlaylist() {
       if (!this.currentPlaylist.length) {
         this.$toast.show('请先添加歌单至收藏哦', 1000);
       }
+      this.showEditPlaylist = !this.showEditPlaylist;
     },
     tabClick(index) {
       this.activeTab = index;
     },
     togglePopUp() {
       this.popUp = !this.popUp;
+    },
+    toggleRecentlyPlayed() {
+      if (this.historyList.length) {
+        this.showRecentlyPlayed = !this.showRecentlyPlayed;
+      } else if (!this.isLogin) {
+        this.$toast.show('请先登录', 1000);
+      } else {
+        this.$toast.show('您还没开始听歌哦', 1000);
+      }
     }
   }
 };

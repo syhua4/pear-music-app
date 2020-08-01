@@ -1,24 +1,21 @@
 <template>
   <div
-    class="playlist-display"
+    class="album-display"
     v-if="item && Object.keys(item).length > 0"
     :style="{ backgroundImage: backgroundImage }"
   >
     <div class="display-wrapper" :style="{ '--height': coverHeight + 'px' }">
       <div class="main-display">
         <div class="display-img-wrapper">
-          <img v-lazy="fmtUrl(item.coverImgUrl)" />
-          <span>
-            <i class="iconfont icon-play-s"></i>
-            {{ item.playCount | round }}
-          </span>
+          <img v-lazy="fmtUrl(item.picUrl)" />
         </div>
         <div class="display-content-wrapper">
           <div class="title">{{ item.name }}</div>
           <div class="creator">
-            <img v-lazy="fmtUrl(item.creator.avatarUrl)" class="creator-avatar" />
-            <span class="creator-name">{{ item.creator.nickname }}</span>
+            <span class="creator-name">歌手: {{ item.artist.name }}</span>
+            <i class="iconfont icon-next" />
           </div>
+          <div class="pub-time">发行时间: {{ getDate(item.publishTime) }}</div>
           <div class="desc">
             <div class="desc-content">{{ item.description }}</div>
             <i class="iconfont icon-next"></i>
@@ -28,11 +25,11 @@
       <div class="sub-display">
         <div class="btn-wrapper" @click.stop="noFunc">
           <i class="iconfont icon-comment" />
-          <span class="btn-text">{{ item.commentCount | round }}</span>
+          <span class="btn-text">{{ item.info.commentCount | round }}</span>
         </div>
         <div class="btn-wrapper" @click="share">
           <i class="iconfont icon-share" />
-          <span class="btn-text">{{ item.shareCount | round }}</span>
+          <span class="btn-text">{{ item.info.shareCount | round }}</span>
         </div>
         <div class="btn-wrapper" @click="noFunc">
           <i class="iconfont icon-download" />
@@ -42,31 +39,21 @@
           <i class="iconfont icon-select" />
           <span class="btn-text">多选</span>
         </div>
-        <div class="btn-wrapper" @click="moreOption" v-if="myList">
-          <i class="iconfont icon-more--line" />
-          <span class="btn-text">编辑</span>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { roundCountMixin, getUrlMixin } from 'common/mixin';
+import { getUrlMixin, roundCountMixin } from 'common/mixin';
+import { fmtDate } from 'common/utils';
+
 import { mapGetters } from 'vuex';
 export default {
-  name: 'PlaylistDisplay',
-  mixins: [roundCountMixin, getUrlMixin],
-  props: {
-    item: {
-      type: Object,
-      default: () => {},
-      required: true
-    },
-    myList: {
-      type: Boolean,
-      default: false
-    }
+  name: 'AlbumDisplay',
+  mixins: [getUrlMixin, roundCountMixin],
+  mounted() {
+    this.coverHeight = this.$parent.$refs.cover.clientHeight;
   },
   data() {
     return {
@@ -74,13 +61,24 @@ export default {
       coverHeight: 0
     };
   },
-  mounted() {
-    this.coverHeight = this.$parent.$refs.cover.clientHeight;
+  props: {
+    item: {
+      type: Object,
+      default: () => {},
+      required: true
+    }
+  },
+  computed: {
+    ...mapGetters(['cookie']),
+
+    getDate() {
+      return function(date) {
+        let time = fmtDate(date / 1000);
+        return `${time.year}-${time.month}-${time.date}`;
+      };
+    }
   },
   methods: {
-    moreOption() {
-      this.$emit('moreOption');
-    },
     multiSelect() {
       this.$emit('multiSelect');
     },
@@ -88,9 +86,9 @@ export default {
       this.$toast.show('暂时还不支持哦', 1000);
     },
     share() {
-      let msg = `分享${this.item.creator.nickname}的歌单 ${'\u00AB' +
+      let msg = `分享${this.item.artist.name}的专辑 ${'\u00AB' +
         this.item.name +
-        '\u00BB'} https://syhua4.github.io/pear-music-app/#/playlists/${this.item.id}`;
+        '\u00BB'} https://syhua4.github.io/pear-music-app/#/album/${this.item.id}`;
       this.$copyText(msg).then(
         () => {
           this.$toast.show('复制链接成功', 1000);
@@ -101,14 +99,11 @@ export default {
       );
     }
   },
-  computed: {
-    ...mapGetters(['cookie'])
-  },
   watch: {
     item: {
       handler(val) {
         if (Object.keys(val).length > 0) {
-          this.backgroundImage = `url(${this.fmtUrl(val.coverImgUrl)})`;
+          this.backgroundImage = `url(${this.fmtUrl(val.blurPicUrl)})`;
         }
       }
     }
@@ -117,10 +112,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'assets/css/mixin';
-@import 'assets/css/variable';
-
-.playlist-display {
+@import 'assets/css/mixin.scss';
+.album-display {
   width: 100%;
   position: absolute;
   top: 0px;
@@ -178,27 +171,13 @@ export default {
           border-radius: 15px;
           box-shadow: 0 5px 10px rgba($color: #000000, $alpha: 0.4);
         }
-        span {
-          position: absolute;
-          z-index: 1;
-          top: 10px;
-          right: 16px;
-          align-self: flex-start;
-          color: #fff;
-          @include font_size($s);
-          .icon-play-s {
-            margin-right: -8px;
-            @include font_size($ms);
-          }
-        }
       }
       .display-content-wrapper {
         display: flex;
         flex-direction: column;
         height: calc((var(--height) - 100px) * 0.55);
         @include font_color_sub();
-        .title,
-        .desc-content {
+        .title {
           @include clamp(2);
         }
         .title {
@@ -218,11 +197,15 @@ export default {
             margin-right: 5px;
           }
         }
-        .desc {
+        .desc,
+        .pub-time {
           display: flex;
           margin-top: auto;
           align-items: center;
           @include font_size($s);
+        }
+        .desc-content {
+          @include clamp(1);
         }
         .icon-next {
           margin-left: 5px;
@@ -241,7 +224,6 @@ export default {
       text-align: center;
       .btn-wrapper {
         margin: 0 24px;
-
         display: flex;
         flex-direction: column;
         .iconfont {
@@ -255,7 +237,5 @@ export default {
       }
     }
   }
-
-  // z-index: 1000;
 }
 </style>

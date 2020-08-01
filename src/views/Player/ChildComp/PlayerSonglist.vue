@@ -10,7 +10,7 @@
           <i class="iconfont" :class="mode" />
           <span>{{ changeModeText }}</span>
         </div>
-        <div class="add-collection">
+        <div class="add-collection" @click="addToList">
           <i class="iconfont icon-folder" />
           <span>收藏全部</span>
         </div>
@@ -61,6 +61,9 @@ export default {
   mixins: [getArtistsMixin, changeModeMixin],
   methods: {
     ...mapActions(['setPlayStatus', 'setCurrentIndex', 'setRemoveSong']),
+    addToList() {
+      this.$emit('addToList');
+    },
     play() {
       this.setPlayStatus(!this.isPlaying);
     },

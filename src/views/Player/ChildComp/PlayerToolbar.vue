@@ -4,10 +4,10 @@
       class="iconfont"
       :class="like ? 'icon-heart-filled' : 'icon-heart'"
       @click="toggleFavourite"
-    ></i>
-    <i class="iconfont icon-download"></i>
-    <i class="iconfont icon-comment"></i>
-    <i class="iconfont icon-more--line"></i>
+    />
+    <i class="iconfont icon-comment" @click.stop="noFunc" />
+    <i class="iconfont icon-sim-rec" @click.stop="moreRecommend" />
+    <i class="iconfont icon-more--line" @click.stop="showPopup" />
   </div>
 </template>
 
@@ -23,6 +23,18 @@ export default {
     };
   },
   methods: {
+    moreRecommend() {
+      console.log('object');
+      if (Object.keys(this.currentPlaying).length) {
+        this.$emit('recommend', this.currentPlaying.id);
+      }
+    },
+    noFunc() {
+      this.$toast.show('功能还没完成哦', 1000);
+    },
+    showPopup() {
+      this.$emit('showMore');
+    },
     async toggleFavourite() {
       if (this.isLogin) {
         await setLikelist(this.currentPlaying.id, !this.like, this.cookie).then(res => {

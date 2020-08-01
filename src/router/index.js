@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 const Recommend = () => import('views/Recommend/Recommend');
 const RecommendSong = () => import('views/Recommend/ChildComp/RecommendDaily');
 
+const Song = () => import('views/Song');
 const Radio = () => import('views/Radio/Radio');
 const RadioCategory = () => import('views/Radio/ChildComp/RadioCategory');
 const RadioToplist = () => import('views/Radio/ChildComp/RadioToplist');
@@ -31,6 +32,10 @@ const routes = [
   {
     path: '',
     redirect: '/recommend'
+  },
+  {
+    path: '/song/:id',
+    component: Song
   },
   {
     path: '/recommend',

@@ -13,7 +13,7 @@
         <i class="iconfont icon-share" slot="right"></i>
       </nav-bar>
       <player-cd ref="cd" :bgColor="bgColor" />
-      <player-toolbar />
+      <player-toolbar @recommend="recommend" @showMore="moreOption" />
       <player-controls
         ref="controls"
         @toggleSonglist="toggleSonglist"
@@ -27,20 +27,33 @@
           class="songlist"
           v-if="songlistToggler"
           @toggleSonglist="toggleSonglist"
+          @addToList="addToList"
           ref="songlist"
         />
       </transition>
+      <transition name="right">
+        <sim-recommend :id="currentPlaying.id" v-if="showRecommend" @closeRecommend="recommend" />
+      </transition>
+
+      <more-song-options
+        :song="currentPlaying"
+        @minimizePlayer="minimizePlayer"
+        v-show="currentPlaying && Object.keys(currentPlaying).length"
+        ref="trackPopUp"
+      />
     </div>
   </transition>
 </template>
 
 <script>
-import NavBar from 'components/common/NavBar/NavBar';
 import PlayerCd from './ChildComp/PlayerCD';
-
 import PlayerToolbar from './ChildComp/PlayerToolbar';
 import PlayerControls from './ChildComp/PlayerControls';
 import PlayerSonglist from './ChildComp/PlayerSonglist';
+import SimRecommend from './ChildComp/PlayerSimRecommend';
+import MoreSongOptions from 'components/content/MoreSongOptions.vue';
+
+import NavBar from 'components/common/NavBar/NavBar';
 
 import Velocity from 'velocity-animate';
 import 'velocity-animate/velocity.ui';
@@ -48,18 +61,20 @@ import 'velocity-animate/velocity.ui';
 import analyze from 'rgbaster';
 
 import { mapGetters, mapActions } from 'vuex';
-import { getArtistsMixin, getUrlMixin } from 'common/mixin';
+import { getArtistsMixin, getUrlMixin, getTracksMixin } from 'common/mixin';
 import { shuffle } from 'common/utils';
 
 export default {
   name: 'Player',
-  mixins: [getArtistsMixin, getUrlMixin],
+  mixins: [getArtistsMixin, getUrlMixin, getTracksMixin],
   components: {
     NavBar,
     PlayerCd,
     PlayerToolbar,
     PlayerControls,
-    PlayerSonglist
+    PlayerSonglist,
+    SimRecommend,
+    MoreSongOptions
   },
   data() {
     return {
@@ -74,10 +89,11 @@ export default {
       ready: false,
       playedPosition: 0,
       scrolled: false,
-      bgColor: 'white'
+      bgColor: 'white',
+      showRecommend: false,
+      showMoreOption: false
     };
   },
-  created() {},
   mounted() {
     this.audio = this.$refs.audio;
     let observer = new MutationObserver(() => {
@@ -118,6 +134,22 @@ export default {
       'setHistorySong',
       'setHistoryList'
     ]),
+    addToList() {
+      this.toggleSonglist(false);
+      let ids = this.getTrackIds(this.songlist);
+      this.$refs.trackPopUp.selectPlaylist('', ids);
+    },
+    recommend() {
+      this.showRecommend = !this.showRecommend;
+    },
+
+    minimizePlayer() {
+      this.$refs.trackPopUp.showMore = false;
+      this.setShowPlayer(false);
+    },
+    moreOption() {
+      this.$refs.trackPopUp.showMore = true;
+    },
     changeProgress(percent) {
       this.audio.currentTime = (percent.slice(0, -1) / 100) * this.totalTime;
     },

@@ -79,6 +79,14 @@ export function createPlaylist(name, cookie) {
   });
 }
 
+export function deletePlaylists(id, cookie) {
+  return request({
+    method: 'post',
+    url: '/playlist/delete',
+    params: { id, cookie }
+  });
+}
+
 export function changeSongInPlaylist(op, pid, tracks, cookie) {
   return request({
     method: 'post',

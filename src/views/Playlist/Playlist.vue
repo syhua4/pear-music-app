@@ -8,8 +8,8 @@
       <playlist-display
         :item="playlistInfo"
         slot="cover"
-        @multiSelect="multiSelect"
         :myList="myPlaylist"
+        @multiSelect="multiSelect"
         @moreOption="moreOption"
       />
       <div class="play-all" @click.stop="play" slot="left" v-if="!selectMode">
@@ -61,44 +61,7 @@
       </div>
     </div>
     <transition name="slide">
-      <popup ref="popup" v-show="showUserPlaylist" @togglePopUp="togglePopUp">
-        <div class="header">
-          <span>收藏到歌单</span>
-          <div class="btn">
-            <i class="iconfont icon-plus" />
-            <span @click="createPlaylist">新建歌单</span>
-          </div>
-        </div>
-        <scroll :style="{ '--height': offsetTop + 'px' }" ref="scroll">
-          <div
-            class="playlist-wrapper"
-            v-for="playlist in userPlaylists"
-            :key="playlist.id"
-            @click.stop="addToPlaylist(playlist.id)"
-          >
-            <song-view>
-              <img :src="fmtUrl(playlist.coverImgUrl)" slot="left" />
-              <div class="song" slot="center">
-                <div class="title">{{ playlist.name }}</div>
-                <span class="artist">{{ playlist.trackCount + '首' }}</span>
-              </div>
-            </song-view>
-          </div>
-        </scroll>
-      </popup>
-    </transition>
-    <transition name="slide">
-      <popup v-show="showCreatePlaylist" @togglePopUp="togglePopUp" :popUpHeight="-1">
-        <div class="input-header">
-          <span @click="togglePopUp">取消</span>
-          <span class="title">新建歌单</span>
-          <span @click="submit">完成</span>
-        </div>
-        <input type="text" placeholder="歌单标题" v-model="playlistName" />
-      </popup>
-    </transition>
-    <transition name="slide">
-      <popup v-show="showMoreOption" @togglePopUp="togglePopUp" :popUpHeight="-1">
+      <popup v-show="showMoreOption" @togglePopUp="moreOption" :popUpHeight="-1">
         <div class="option-header">{{ playlistInfo.name }}</div>
         <div class="option-wrapper">
           <div class="add-more" @click.stop="addSong">
@@ -112,50 +75,11 @@
         </div>
       </popup>
     </transition>
-    <transition name="slide">
-      <popup
-        v-show="showMoreTrackOption"
-        @togglePopUp="togglePopUp"
-        :popUpHeight="-1"
-        v-if="trackInfo && Object.keys(trackInfo).length"
-      >
-        <div class="track-option-header">
-          <song-view>
-            <img :src="fmtUrl(trackInfo.al.picUrl)" slot="left" />
-            <div class="song" slot="center">
-              <div class="title">{{ trackInfo.name }}</div>
-              <span class="artist">{{ artists(trackInfo.ar) }}</span>
-            </div>
-          </song-view>
-        </div>
-        <div class="track-option-wrapper">
-          <div class="play-next" @click.stop="addToPlayer">
-            <i class="iconfont icon-add-next" />
-            <span>下一首播放</span>
-          </div>
-          <div class="add-playlist" @click.stop="selectPlaylist">
-            <i class="iconfont icon-folder" />
-            <span>收藏到歌单</span>
-          </div>
-          <div class="comment" @click.stop="noFunc">
-            <i class="iconfont icon-comment" />
-            <span>评论</span>
-          </div>
-          <div class="share" @click.stop="share">
-            <i class="iconfont icon-share" />
-            <span>分享</span>
-          </div>
-          <div class="artist" @click="goToArtist">
-            <i class="iconfont icon-artist" />
-            <span>歌手: {{ artists(this.trackInfo.ar) }}</span>
-          </div>
-          <div class="album" @click="goToAlbum">
-            <i class="iconfont icon-album" />
-            <span>专辑: {{ this.trackInfo.al.name }}</span>
-          </div>
-        </div>
-      </popup>
-    </transition>
+    <more-song-options
+      :song="song"
+      v-show="(song && Object.keys(song).length) | isChecked"
+      ref="trackPopUp"
+    />
   </div>
 </template>
 
@@ -165,18 +89,12 @@ import PlaylistList from './ChildComp/PlaylistList';
 import AddSong from './ChildComp/PlaylistAdd';
 
 import NavBar from 'components/common/NavBar/NavBar';
-import Scroll from 'components/common/Scroll/Scroll';
 
 import ScrollView from 'components/content/ScrollView.vue';
 import Popup from 'components/content/Popup.vue';
-import SongView from 'components/content/SongView';
+import MoreSongOptions from 'components/content/MoreSongOptions.vue';
 
-import {
-  getPlaylist,
-  changeSongInPlaylist,
-  createPlaylist,
-  subscribePlaylist
-} from 'networks/user.js';
+import { getPlaylist, changeSongInPlaylist, subscribePlaylist } from 'networks/user.js';
 import { getPlaylistTrackId, getTrack } from 'networks/recommend.js';
 import {
   getTracksMixin,
@@ -193,11 +111,10 @@ export default {
     PlaylistDisplay,
     PlaylistList,
     NavBar,
-    Scroll,
     ScrollView,
-    SongView,
     AddSong,
-    Popup
+    Popup,
+    MoreSongOptions
   },
   mixins: [getTracksMixin, roundCountMixin, getUrlMixin, getArtistsMixin, playSongMixin],
   created() {
@@ -227,31 +144,20 @@ export default {
       this.getUserPlaylist();
     }
   },
-  updated() {
-    if (this.showUserPlaylist) {
-      this.offsetTop = this.$refs.popup.$refs.popup.offsetTop;
-    }
-  },
   data() {
     return {
       playlistInfo: {},
       tracks: [],
       userPlaylists: [],
       subscribePlaylists: [],
-      offsetTop: 0,
       newList: false,
       toggleAddMenu: false,
       myPlaylist: false,
-      coverHeight: 0,
       selectMode: false,
       checkAll: false,
       isChecked: false,
       showMoreOption: false,
-      showMoreTrackOption: false,
-      showUserPlaylist: false,
-      showCreatePlaylist: false,
-      playlistName: '',
-      trackInfo: {}
+      song: {}
     };
   },
   methods: {
@@ -261,85 +167,34 @@ export default {
       this.togglePopUp();
     },
     addToPlayer() {
-      if (this.isChecked || (this.showMoreTrackOption && Object.keys(this.trackInfo).length)) {
+      if (this.isChecked) {
         let ids = this.$refs.list.checkedList;
         let selectedTracks;
         if (this.isChecked) {
           selectedTracks = this.tracks.filter(track => {
             return ids.includes(track.id);
           });
-        } else {
-          selectedTracks = [this.trackInfo];
         }
-
-        if (this.songlist && this.songlist.length) {
-          let newSong = selectedTracks.filter(song => {
-            return !this.songlist.some(track => {
-              return song.id === track.id;
-            });
-          });
-          if (newSong.length) {
-            let newList = [...this.songlist];
-            newList.splice(this.currentIndex + 1, 0, ...newSong);
-            this.setPlayList(newList);
-            this.$toast.show('已添加到播放列表', 500);
-          }
-        } else {
-          this.playSong(selectedTracks);
-        }
+        console.log(selectedTracks);
+        this.$refs.trackPopUp.addToPlayer('', selectedTracks);
         this.$refs.list.unCheckAll();
         this.checkAll = false;
       }
-    },
-    async addToPlaylist(pid) {
-      let ids = this.$refs.list.checkedList.join(',') || this.trackInfo.id;
-      await changeSongInPlaylist('add', pid, ids, this.cookie).then(res => {
-        if (res.code === 200) {
-          this.$toast.show('已收藏到歌单', 1000);
-          this.getUserPlaylist();
-        } else if (res.code === 502) {
-          this.$toast.show(res.message, 1000);
-        } else {
-          this.$toast.show(res.message, 1000);
-        }
-        this.showUserPlaylist = false;
-        this.$refs.list.unCheckAll();
-        this.checkAll = false;
-      });
-    },
-    createPlaylist() {
-      this.showUserPlaylist = false;
-      this.showCreatePlaylist = true;
-    },
-    goToArtist() {
-      if (this.trackInfo.ar.length === 1) {
-        console.log(this.trackInfo.ar[0]);
-        this.$router.push(`/artist/${this.trackInfo.ar[0].id}`);
-      }
-    },
-    goToAlbum() {
-      this.$router.push(`/album/${this.trackInfo.al.id}`);
     },
     moreOption() {
-      this.showMoreOption = true;
+      this.showMoreOption = !this.showMoreOption;
     },
     noFunc() {
       this.$toast.show('暂时还没完成哦', 500);
     },
     selectPlaylist() {
-      this.togglePopUp();
-
-      if (this.isLogin) {
-        this.showUserPlaylist = true;
-      } else {
-        this.$toast.show('请先登录', 500);
-      }
+      let ids = this.$refs.list.checkedList.join(',');
+      this.$refs.trackPopUp.selectPlaylist('', ids);
     },
     share() {
-      console.log('1111');
       let msg = `分享${this.artists(this.trackInfo.ar)}的单曲 ${'\u00AB' +
         this.trackInfo.name +
-        '\u00BB'} https://syhua4.github.io/pear-music-app/#/playlists/${this.trackInfo.id}`;
+        '\u00BB'} https://syhua4.github.io/pear-music-app/#/song/${this.trackInfo.id}`;
       this.$copyText(msg).then(
         () => {
           this.$toast.show('复制链接成功', 1000);
@@ -383,6 +238,11 @@ export default {
     },
     checked(status) {
       this.isChecked = status;
+      if (this.$refs.list.checkedList.length === this.tracks.length) {
+        this.checkAll = true;
+      } else {
+        this.checkAll = false;
+      }
     },
     multiSelect() {
       this.selectMode = !this.selectMode;
@@ -411,29 +271,8 @@ export default {
       this.playSong(this.tracks, index);
     },
     trackMoreClick(track) {
-      this.showMoreTrackOption = true;
-      this.trackInfo = track;
-      console.log(track);
-    },
-    togglePopUp() {
-      this.showUserPlaylist = false;
-      this.showCreatePlaylist = false;
-      this.showMoreOption = false;
-      this.showMoreTrackOption = false;
-    },
-    async submit() {
-      await createPlaylist(this.playlistName, this.cookie).then(res => {
-        if (res.code === 200) {
-          this.addToPlaylist(res.id);
-        } else {
-          this.$toast.show('创建歌单失败, 请重试', 1000);
-        }
-      });
-      this.togglePopUp();
-      this.$refs.list.unCheckAll();
-      this.checkAll = false;
-
-      this.playlistName = this.playlistInfo.name;
+      this.song = track;
+      this.$refs.trackPopUp.showMore = true;
     }
   },
   computed: {

@@ -27,9 +27,7 @@ export default {
   mixins: [getArtistsMixin, getTracksMixin, playSongMixin],
   methods: {
     play(index) {
-      typeof index === 'number'
-        ? this.playSong([this.tracks[index]], 0)
-        : this.playSong(this.tracks, 0);
+      typeof index === 'number' ? this.playSong([this.tracks[index]]) : this.playSong(this.tracks);
     }
   },
   props: {
